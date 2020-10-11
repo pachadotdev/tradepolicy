@@ -1,0 +1,51 @@
+Package: yotover
+Title: An Advanced Guide to Trade Policy Analysis
+Version: 0.0.0.9000
+Authors@R: c( 
+        person(given = "Mauricio",
+               family = "Vargas",
+               role = c("aut", "cre"),
+               email = "mvargas@dcc.uchile.cl",
+               comment = c(ORCID = "0000-0003-1017-7574")),
+        person(given = "Alexey",
+               family = "Kravchenko",
+               role = c("ths"),
+               email = "kravchenkoa@un.org"),
+        person(given = "Alexey",
+               family = "Kravchenko",
+               role = c("ths"),
+               email = "kravchenkoa@un.org"),
+        person(family = "The United Nations",
+               role = c("dtc", "cph", "fnd")
+        )
+    )
+Description: What the package does (one paragraph).
+License: CC BY 4.0
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1.9000
+Imports:
+    magrittr,
+    tibble,
+    dplyr,
+    tidyr,
+    purrr,
+    cli,
+    crayon,
+    multiwayvcov,
+    lmtest,
+    broom,
+    Matrix,
+    msm,
+    DBI,
+    duckdb,
+    R.utils,
+    rappdirs,
+    httr,
+    rstudioapi
+Suggests:
+    devtools,
+    usethis
+Depends: 
+    R (>= 3.5)

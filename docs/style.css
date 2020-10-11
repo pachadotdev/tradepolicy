@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans&display=swap');
+
+body, h1, h2, h3, h4, h5, p, ul, li {
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+code, kbd, pre, samp {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+button, input, select, textarea {
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.book .book-header, .book .book-summary {
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.book .book-summary {
+  background-color: #414446;
+  color: white;
+}
+
+.book .book-summary ul.summary li a {
+  padding: 5px 5px 5px 5px;
+  color: #ddd;
+}
+
+.book .book-summary ul.summary li a:hover, .book .book-summary ul.summary li.active > a {
+  color: #d1b62a;
+}
+
+b, strong {
+  font-weight: normal;
+}

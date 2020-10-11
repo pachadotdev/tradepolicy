@@ -1,0 +1,540 @@
+# Partial equilibrium trade policy analysis with structural gravity
+
+## Traditional Gravity Estimates
+
+### Preparing the data
+
+If you haven't used R before, or to be more precise, you have only fitted a few regressions without much practice on transforming and cleaning data before, check chapters 5 and 18 from @wickham2016r.
+
+Please see the note from page 42 in @yotov2016advanced. It's a really important note, which tells us that we need to:
+
+1. Filter observations for a range of years (1986, 1990, 1994, 1998, 2002 and 2006)
+2. Transform some variables to logarithm scale (trade and dist) and create new variables from those in the original dataset
+3. Remove cases where both the exporter and the importer are the same
+4. Drop observations where the trade flow is zero
+
+Provided that the datasets use 3 GB on disk, we opted to use a local SQL database ([DuckDB](https://duckdb.org)) instead of spreadsheets or even native R files. If you are not familiar with SQL, do not worry because we provide the function `yotov_data()`, so that `yotov_data("ch1_application1")` goes to the database and returns the data for this exercise.
+
+Step 1 is straightforward:
+
+```{r ch1_app1_data_1}
+library(yotover)
+
+ch1_application1_2 <-  yotov_data("ch1_application1") %>% 
+  filter(year %in% seq(1986, 2006, 4))
+```
+
+For step 2, this can be divided in parts, starting with the log transformation of `trade` and `dist`:
+
+```{r ch1_app1_data_2}
+ch1_application1_2 <- ch1_application1_2 %>% 
+  mutate(
+    log_trade = log(trade),
+    log_dist = log(dist)
+  )
+```
+
+Continuing step 2, we can now create the variables $Y_{i,t}$ and $E_{i,t}$ that appear on the OLS model equation:
+
+```{r ch1_app1_data_3}
+ch1_application1_2 <- ch1_application1_2 %>% 
+  # Create Yit
+  group_by(exporter, year) %>% 
+  mutate(
+    y = sum(trade),
+    log_y = log(y)
+  ) %>% 
+  
+  # Create Eit
+  group_by(importer, year) %>% 
+  mutate(
+    e = sum(trade),
+    log_e = log(e)
+  )
+```
+
+The OLS model with remoteness index needs both exporter and importer index, which can be created by grouping variables:
+
+```{r ch1_app1_data_4}
+ch1_application1_2 <- ch1_application1_2 %>%
+  # Replicate total_e
+  group_by(exporter, year) %>%
+  mutate(total_e = sum(e)) %>%
+  group_by(year) %>%
+  mutate(total_e = max(total_e)) %>%
+
+  # Replicate rem_exp
+  group_by(exporter, year) %>%
+  mutate(
+    remoteness_exp = sum(dist *  total_e / e),
+    log_remoteness_exp = log(remoteness_exp)
+  ) %>%
+
+  # Replicate total_y
+  group_by(importer, year) %>%
+  mutate(total_y = sum(y)) %>%
+  group_by(year) %>%
+  mutate(total_y = max(total_y)) %>%
+
+  # Replicate rem_imp
+  group_by(importer, year) %>%
+  mutate(
+    remoteness_imp = sum(dist / (y / total_y)),
+    log_remoteness_imp = log(remoteness_imp)
+  )
+```
+
+To create the variables for the OLS with Fixed Effects Model, we followed box #1 in page 44 from @yotov2016advanced:
+
+```{r ch1_app1_data_5}
+ch1_application1_2 <- ch1_application1_2 %>%
+  # This merges the columns exporter/importer with year
+  mutate(
+    exp_year = paste0(exporter, year),
+    imp_year = paste0(importer, year)
+  )
+```
+
+This concludes step 2.
+
+Now we need to perform step 3:
+
+```{r ch1_app1_data_6}
+ch1_application1_2 <- ch1_application1_2 %>% 
+  filter(exporter != importer)
+```
+
+Step 4 is used in some cases and we will be explicit about it.
+
+### OLS estimation ignoring multilateral resistance terms
+
+The general equation for this model is:
+$$
+\begin{align}
+\log X_{ij,t} =& \:\beta_0 + \beta_1 DIST_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \beta_5 \log Y_{i,t} +\\ 
+\text{ }& \:\beta_6 \log E_{j,t} + \varepsilon_{ij,t}
+\end{align}
+$$
+
+See page 41 in @yotov2016advanced for a full detail of each variable.
+
+The model for this case is straightforward, and in this case we need to apply step 4 from thje previous section to drop cases where the trade is zero:
+
+```{r ch1_app1_ols_1}
+fit_ols <- lm(
+  log_trade ~ log_dist + cntg + lang + clny + log_y + log_e,
+  data = ch1_application1_2 %>% 
+    filter(trade > 0)
+)
+
+summary(fit_ols)
+```
+
+Now the model is almost ready! Now we only need to stick to the methodology from
+@yotov2016advanced and cluster the standard errors by country pair (see the note in page 42, it is extremely important). This is not straightforward and requieres additional work.
+
+The `yotover` package provides a nice function to do this and more. Please read
+the documentation of the package and look the `yotov_model_summary()` function, it 
+summarises the model in the exact way as reported in the book by providing:
+
+* Clustered standard errors
+* Number of observations
+* $R^2$ (if applicable)
+* Presence (or absence) of exporter and exporter time fixed effects
+* RESET test p-value
+
+This is returned as a list to keep it simple.
+
+Finally, here is the model as reported in the book:
+
+```{r ch1_app1_ols_2}
+yotov_model_summary(
+  formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e",
+  method = "lm",
+  data = filter(ch1_application1_2, trade > 0)
+)
+```
+
+### OLS estimation controlling for multilateral resistance terms with remote indexes
+
+The remoteness model adds variables to the OLS model. The general equation for this model is:
+$$
+\begin{align}
+\log X_{ij,t} =& \:\beta_0 + \beta_1 DIST_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \beta_5 \log Y_{i,t} +\\
+\text{ }& \beta_6 \log E_{j,t} + \beta_7 \log(REM\_EXP_i,t) + \beta_8 \log(REM\_IMP_i,t) + \varepsilon_{ij,t}
+\end{align}
+$$
+
+Where
+$$
+\log(REM\_EXP_{i,t}) = \log \left( \sum_j \frac{DIST_{i,j}}{E_{j,t} / Y_t} \right)\\
+\log(REM\_IMP_{i,t}) = \log \left( \sum_i \frac{DIST_{i,j}}{E_{i,t} / Y_t} \right)
+$$
+
+See page 43 in @yotov2016advanced for a full detail of each variable.
+
+We can start from the dataset for the OLS model, and add the additional variables to it. Our ch1_approach follows box #1 in page 43 from @yotov2016advanced:
+
+Now fitting the regression is straightforward, it's just about adding more regressors to what we did in the last section:
+
+```{r ch1_app1_ols_remoteness_1}
+fit_ols_remoteness <- lm(
+  log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
+    log_remoteness_exp + log_remoteness_imp,
+  data = filter(ch1_application1_2, trade > 0)
+)
+```
+
+As we did with OLS, we can create a list with a summary for the model:
+
+```{r ch1_app1_ols_remoteness_2}
+yotov_model_summary(
+  formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
+    log_remoteness_exp + log_remoteness_imp",
+  method = "lm",
+  data = filter(ch1_application1_2, trade > 0)
+)
+```
+
+### OLS estimation controlling for multilateral resistance terms with fixed effects
+
+The general equation for this model is:
+$$
+\begin{align}
+\log X_{ij,t} =& \:\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\\
+\text{ }& \:\beta_4 CLNY_{i,j} + \varepsilon_{ij,t}
+\end{align}
+$$
+
+Where the added terms, with respect to the OLS model, are $\pi_{i,t}$ and $\chi_{i,t}$ that
+account for exporter-time and importer-time fixed effects respectively. See page 44 in @yotov2016advanced for a full detail of each variable.
+
+We can start from the dataset for the OLS model, and add the additional variables to it. In this case we take the OLS dataset and combine both exporter and importer variables with the year in order to create the fixed effects variables.
+
+The difference between this model and the two previous is that we specify the cluster specification (`pair_id`) inside `felm()` for the standard error, while in the two previous cases the `yotov_model_summary()` function performs additional computation by calling `multiwayvcov` and `lmtest` packages.
+
+With the data from above, the model specification is straightforward:
+
+```{r ch1_app1_fe_1}
+fit_fe <- lm(
+  log_trade ~ log_dist + cntg + lang + clny + exp_year + imp_year,
+  data = filter(ch1_application1_2, trade > 0)
+)
+```
+
+Here we won't print the output of `summary(fit_fe)` because the model estimates `r length(fit_fe$coefficients)` coefficients in this case because of time exporter/importer fixed effects.
+
+Now we can easily generate a list as we did with the previous models:
+
+```{r ch1_app1_fe_2}
+yotov_model_summary(
+  formula = "log_trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
+  method = "lm",
+  data = filter(ch1_application1_2, trade > 0)
+)
+```
+
+### PPML estimation controlling for multilateral resistance terms with fixed effects
+
+The general equation for this model is:
+
+$$
+\begin{align}
+X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} +\right.\\
+\text{ }& \:\left.\beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j}\right] \times \varepsilon_{ij,t}
+\end{align}
+$$
+
+The reason to compute this model even in spite of speed is that PPML is the only estimator that is perfectly consistent with the theoretical gravity model. By estimating with PPML the fixed effects correspond exactly to the corresponding theoretical terms.
+
+The data for this model is exactly the same as for the fixed effects model.
+
+One option in R is to use the `glm()` function and a quasi-poisson family to avoid overdispersion problems:
+
+```{r ch1_app1_ppml_1}
+fit_ppml <- glm(trade ~ log_dist + cntg + lang + clny + exp_year + imp_year,
+  family = quasipoisson(link = "log"),
+  data = ch1_application1_2
+)
+```
+
+The summary won't be printed for the same reason as for the OLS Fixed Effects model. If you decide to print the summary yourself, you'll notice that it doesn't report $R^2$, as it needs to be computed afterwards as a function of the correlation between the observed and predicted values. Please see @silva2006log for the details as well as for the RESET test for PPML (GLM) models.
+
+Software such as Stata reports an incorrect $R^2$ for PPML model, it actually reports a pseudo-$R^2$. To construct a proper $R^2$, `yotov_model_summary()` takes the correlation between actual and predicted trade flows.
+
+Finally we can obtain a detailed list as in the previous examples:
+
+```{r ch1_app1_ppml_2}
+yotov_model_summary(
+  formula = "trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
+  method = "glm",
+  data = ch1_application1_2
+)
+```
+
+Please notice that the previous summary intentionally doesn't show time exporter/importer fixed effects.
+
+## The "distance puzzle" resolved
+
+### Preparing the data
+
+Please see the note from page 47 in @yotov2016advanced. We need to proceed with similar steps as in the previous section.
+
+Unlike the previous section, we will create different tables for OLS, PPML and its variations, because the solution for the "distance puzzle" implies different transformations and filters for each case.
+
+The distance puzzle proposes this gravity specification:
+
+$$
+\begin{align}
+X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j}\right]\times\\
+\text{ }& \:\exp\left[\beta_4 CLNY_{i,j} + \beta_5 \log(DIST\_INTRA_{i,i})\right] \times \varepsilon_{ij,t}
+\end{align}
+$$
+The difference with respect to the last section is that now we need to separate the `log_dist` variable into multiple columns that account for discrete time effects. This is expressed into the $\beta_T$ terms of the equation. Perhaps the easiest option to do this is to transform `year` into a text column and then use the `spread()` function.
+
+For the OLS model we need to remove cases where the exporter is the same as the importer and cases where trade is zero. For the PPML models we need to mark rows where the exporter and the importer are the same, and we need to create the `smctry` column, which is also required to transform the `log_dist_*` variables as shown in box #1 in page 48 from @yotov2016advanced:
+
+In order to avoid creating  two datasets that are very similar, we shall create one dataset to cover both OLS and PPML:
+
+```{r ch1_app2_data_1}
+ch1_application2_2 <- yotov_data("ch1_application2") %>% 
+  # this filter covers both OLS and PPML
+  filter(year %in% seq(1986, 2006, 4)) %>% 
+  mutate(
+    # variables for both OLS and PPML
+    exp_year = paste0(exporter, year),
+    imp_year = paste0(importer, year),
+    year = paste0("log_dist_", year),
+    log_trade = log(trade),
+    log_dist = log(dist),
+    
+    # PPML specific variables
+    smctry = ifelse(importer != exporter, 0, 1),
+    log_dist_intra = log_dist * smctry,
+    intra_pair = ifelse(exporter == importer, exporter, "inter")
+  ) %>% 
+  spread(year, log_dist, fill = 0) %>% 
+  mutate(across(log_dist_1986:log_dist_2006, ~ .x * (1 - smctry)))
+```
+
+Here the `across()` function is a shortcut to avoid writing something like:
+
+```{r ch1_app2_data_3, eval = FALSE}
+ch1_application2_2 %>% 
+  mutate(
+    log_dist_1986 =  log_dist_1986 * (1 - smctry),
+    log_dist_1990 =  log_dist_1990 * (1 - smctry),
+    ... REPEAT log_dist_T many_times ....
+    log_dist_2006 =  log_dist_2006 * (1 - smctry)
+  )
+```
+
+Also notice that the OLS model shall require filtering when we specify the model, because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same.
+
+### OLS solution for the "distance puzzle"
+
+The gravity specification, which includes $\pi_{i,t} + \chi_{i,t}$, means that we need to do something very similar to what we did in the last section.
+
+With the data from above, the model specification is straightforward:
+
+```{r ch1_app2_ols_1}
+yotov_model_summary2(
+  formula = "log_trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
+    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg +
+    lang + clny + exp_year + imp_year",
+  method = "lm",
+  data = filter(ch1_application2_2, importer != exporter, trade > 0)
+)
+```
+
+Notice that, unlike the previous section, we used the notation `y ~ 0 + ...`. The zero means not to include a constant.
+
+### PPML solution for the "distance puzzle"
+
+This model is very similar to the one specified in the PPML section from the last section. We can fit the model in a direct way:
+
+```{r ch1_app2_ppml_1}
+yotov_model_summary2(
+  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + 
+    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 + 
+    cntg + lang + clny + exp_year + imp_year",
+  method = "glm",
+  data = filter(ch1_application2_2, importer != exporter)
+)
+```
+
+### Internal distance solution for the "distance puzzle"
+
+This model just requires us to add the `log_dist_intra` variable to the PPML model and not to filter the rows where the exporter and the importer are the same:
+
+```{r ch1_app2_intra_1}
+yotov_model_summary2(
+  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + 
+    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
+    cntg + lang + clny + exp_year + imp_year + log_dist_intra",
+  method = "glm",
+  data = ch1_application2_2
+)
+```
+
+### Internal distance and home bias solution for the "distance puzzle"
+
+This model just requires us to add the `smctry` variable to the internal distance model and repeat the rest of the steps from the last section:
+
+```{r ch1_app2_home_1}
+yotov_model_summary2(
+  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + 
+    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
+    cntg + lang + clny + exp_year + imp_year + log_dist_intra + smctry",
+  method = "glm",
+  data = ch1_application2_2
+)
+```
+
+### Fixed effects solution for the "distance puzzle"
+
+This model just requires us to remove the variables `log_dist_intra` and `smctry` from the last model and include the `intra_pair` variable to account for the intra-national fixed effects:
+
+```{r ch1_app2_fe_1}
+yotov_model_summary2(
+  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + 
+    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
+    cntg + lang + clny + exp_year + imp_year + intra_pair",
+  method = "glm",
+  data = ch1_application2_2
+)
+```
+
+## Regional trade agreements effects
+
+### Preparing the data
+
+This model specification includes gravity covariates, including both importer and exporter time fixed effects:
+
+$$
+\begin{align}
+X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\right.\\
+\text{ }& \:\left.\beta_4 CLNY_{i,j} + \beta_5 RTA_{ij,t}\right] \times \varepsilon_{ij,t}
+\end{align}
+$$
+We need to create additional variables, in comparison to the previous examples, to include fixed effects that account for the observations where the exporter and the importer are the same. These variables are `intl_brdr`, `pair_id_2` and the columns of the form `intl_border_Y` where Y corresponds to the year. 
+
+The direct way of obtaining the desired variables is quite similar to what we did in the previous sections:
+
+```{r ch1_app3_data_1}
+ch1_application3_2 <- yotov_data("ch1_application3") %>% 
+  filter(year %in% seq(1986, 2006, 4)) %>% 
+  mutate(
+    exp_year = paste0(exporter, year),
+    imp_year = paste0(importer, year),
+    year = paste0("intl_border_", year),
+    log_trade = log(trade),
+    log_dist = log(dist),
+    intl_brdr = ifelse(exporter == importer, pair_id, "inter"),
+    intl_brdr_2 = ifelse(exporter == importer, 0, 1),
+    pair_id_2 = ifelse(exporter == importer, "intra", pair_id)
+  ) %>% 
+  spread(year, intl_brdr_2, fill = 0)
+```
+
+In addition, we need to create the variable `sum_trade` to filter the cases where the sum by `pair_id` is zero:
+
+```{r ch1_app3_data_2}
+ch1_application3_2 <- ch1_application3_2 %>% 
+  group_by(pair_id) %>% 
+  mutate(sum_trade = sum(trade)) %>% 
+  ungroup()
+```
+
+### OLS standard RTA estimates with international trade only
+
+The gravity specification, which includes $\pi_{i,t} + \chi_{i,t}$, means that we need to do something very similar to what we did in the last section.
+
+With the data from above, the model specification is straightforward:
+
+```{r ch1_app3_ols_1}
+yotov_model_summary3(
+  formula = "log_trade ~ 0 + log_dist + cntg + lang + clny + 
+    rta + exp_year + imp_year",
+  method = "lm",
+  data = filter(ch1_application3_2, trade > 0, importer != exporter)
+)
+```
+
+### PPML standard RTA estimates with international trade only
+
+The model specification is very similar to OLS and we only need to change the function `lm()`:
+
+```{r ch1_app3_ppml_1}
+yotov_model_summary3(
+  formula = "trade ~ 0 + log_dist + cntg + lang + clny + 
+    rta + exp_year + imp_year",
+  method = "glm",
+  data = filter(ch1_application3_2, importer != exporter)
+)
+```
+
+### Addressing potential domestic trade diversion
+
+The model specification is quite the same as PPML and we only need to add the variable `intl_brdr` but using the full dataset instead of removing rows where the importer and the exporter are the same:
+
+```{r ch1_app3_intra_1}
+yotov_model_summary3(
+  formula = "trade ~ 0 + log_dist + cntg + lang + clny + 
+    rta + exp_year + imp_year + intl_brdr",
+  method = "glm",
+  data = ch1_application3_2
+)
+```
+
+### Addressing potential endogeneity of RTAs
+
+The model specification consists in including the `rta` variable and the fixed effects `exp_year`, `imp_year` and `pair_id_2` to account for domestic trade:
+
+```{r ch1_app3_endg_1}
+yotov_model_summary3(
+  formula = "trade ~ 0 + rta + exp_year + imp_year + pair_id_2",
+  method = "glm",
+  data = filter(ch1_application3_2, sum_trade > 0)
+)
+```
+
+### Testing for potential "reverse causality" between trade and RTAs
+
+We need to modify the previous model in order to include the variable `rta_lead4` and to consider where `sum_trade` is greater than zero:
+
+```{r ch1_app3_lead_1}
+yotov_model_summary3(
+  formula = "trade ~ 0 + rta + rta_lead4 + exp_year + imp_year + pair_id_2",
+  method = "glm",
+  data = filter(ch1_application3_2, sum_trade > 0)
+)
+```
+
+### Addressing potential non-linear and phasing-in effects of RTAs
+
+Instead of future-lagged `rta` variable, as in the previous model, we modify the previous model and include the `rta_lagN` past-lagged variables instead:
+
+```{r ch1_app3_phsng_1}
+yotov_model_summary3(
+  formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
+    exp_year + imp_year + pair_id_2",
+  method = "glm",
+  data = filter(ch1_application3_2, sum_trade > 0)
+)
+```
+
+### Addressing globalization effects
+
+Just as an addition to the previous model, we include the variables `intl_border_T` variables in addition to `rta_lagN`:
+
+```{r ch1_app3_glbzn_1}
+yotov_model_summary3(
+  formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
+    intl_border_1986 + intl_border_1990 + intl_border_1994 +
+    intl_border_1998 + intl_border_2002 +
+    exp_year + imp_year + pair_id_2",
+  method = "glm",
+  data = filter(ch1_application3_2, sum_trade > 0)
+)
+```

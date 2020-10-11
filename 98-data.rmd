@@ -1,0 +1,82 @@
+# Appendix: Importing the original datasets {#data}
+
+## Software
+
+I followed the standards and conventions from the [Tidyverse](https://www.tidyverse.org/), and I converted all the original datasets in Stata with this software:
+
+```{r software_info, echo=FALSE}
+pander::pander(sessionInfo())
+```
+
+## Downloading the original datasets
+
+```{r download}
+appfiles_url <- "https://vi.unctad.org/tpa/web/zips/vol2/Advanced%20Guide%20to%20TPA.zip"
+appfiles_zip <- "00-application-files.zip"
+appfiles_dir <- "00-application-files"
+
+if (!file.exists(appfiles_zip)) {
+  download.file(appfiles_url, appfiles_zip)
+}
+
+if (!dir.exists(appfiles_dir)) {
+  unzip(appfiles_zip)
+  file.rename("Advanced Guide to TPA", appfiles_dir)
+}
+```
+
+## Converting the original datasets
+
+This code chunk can be a bit obscure. It is only shown to make all of my steps transparent.
+
+```{r covert, results='hide', message=FALSE}
+# these packages are only used to import the data
+library(haven)
+library(stringr)
+library(janitor)
+library(purrr)
+
+try(dir.create("data-tsv"))
+
+dta_files <- list.files("00-application-files",
+                        pattern = "dta",
+                        full.names = TRUE,
+                        recursive = TRUE)
+
+read_and_clean <- function(finp) {
+  message(finp)
+  
+  fout <- finp %>% 
+    str_replace(appfiles_dir, "") %>% 
+    str_replace("Chapter", "ch") %>% 
+    str_replace_all("Chapter[0-9]|\\.dta", "")
+  
+  fout <- fout %>% 
+    str_replace_all("(/)", "_") %>% 
+    make_clean_names()
+  
+  long_names <- c(
+    "datasets_",
+    "applications_",
+    "exercises_",
+    "1_trade_without_border_results_1",
+    "2_rt_as_effects_results_2_"
+  )
+  
+  fout <- fout %>% 
+    str_replace_all(paste(long_names, collapse = "|"), "")
+  
+  fout <- str_replace(fout, "_([0-9])_|__", "_")
+
+  fout2 <- sprintf("data-tsv/%s.tsv", fout)
+  
+  if (!file.exists(fout2)) {
+    d <- read_dta(finp) %>% 
+      clean_names()
+    
+    data.table::fwrite(d, fout2, sep = "\t")
+  }
+}
+
+map(dta_files, read_and_clean)
+```

@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.RData
+*.zip
+00-application-files
+_bookdown_files
+data-tsv
+yotov-trade-db.zip

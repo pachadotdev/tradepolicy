@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Appendix: Importing the original datasets | Solutions Manual for An Advanced Guide to Trade Policy Analysis</title>
+  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Appendix: Importing the original datasets | Solutions Manual for An Advanced Guide to Trade Policy Analysis" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Appendix: Importing the original datasets | Solutions Manual for An Advanced Guide to Trade Policy Analysis" />
+  
+  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+<meta name="author" content="Mauricio “Pachá” Vargas Sepúlveda" />
+
+
+<meta name="date" content="2020-10-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Solutions Manual for An Advanced Guide to Trade Policy Analysis</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#welcome"><i class="fa fa-check"></i><b>1.1</b> Welcome</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#obtaining-the-datasets-and-functions"><i class="fa fa-check"></i><b>1.2</b> Obtaining the datasets and functions</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#getting-the-most-out-of-this-material"><i class="fa fa-check"></i><b>1.3</b> Getting the most out of this material</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><i class="fa fa-check"></i><b>2</b> Partial equilibrium trade policy analysis with structural gravity</a><ul>
+<li class="chapter" data-level="2.1" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#traditional-gravity-estimates"><i class="fa fa-check"></i><b>2.1</b> Traditional Gravity Estimates</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data"><i class="fa fa-check"></i><b>2.1.1</b> Preparing the data</a></li>
+<li class="chapter" data-level="2.1.2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-ignoring-multilateral-resistance-terms"><i class="fa fa-check"></i><b>2.1.2</b> OLS estimation ignoring multilateral resistance terms</a></li>
+<li class="chapter" data-level="2.1.3" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes"><i class="fa fa-check"></i><b>2.1.3</b> OLS estimation controlling for multilateral resistance terms with remote indexes</a></li>
+<li class="chapter" data-level="2.1.4" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects"><i class="fa fa-check"></i><b>2.1.4</b> OLS estimation controlling for multilateral resistance terms with fixed effects</a></li>
+<li class="chapter" data-level="2.1.5" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects"><i class="fa fa-check"></i><b>2.1.5</b> PPML estimation controlling for multilateral resistance terms with fixed effects</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#the-distance-puzzle-resolved"><i class="fa fa-check"></i><b>2.2</b> The “distance puzzle” resolved</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data-1"><i class="fa fa-check"></i><b>2.2.1</b> Preparing the data</a></li>
+<li class="chapter" data-level="2.2.2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.2</b> OLS solution for the “distance puzzle”</a></li>
+<li class="chapter" data-level="2.2.3" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.3</b> PPML solution for the “distance puzzle”</a></li>
+<li class="chapter" data-level="2.2.4" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#internal-distance-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.4</b> Internal distance solution for the “distance puzzle”</a></li>
+<li class="chapter" data-level="2.2.5" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#internal-distance-and-home-bias-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.5</b> Internal distance and home bias solution for the “distance puzzle”</a></li>
+<li class="chapter" data-level="2.2.6" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#fixed-effects-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.6</b> Fixed effects solution for the “distance puzzle”</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#regional-trade-agreements-effects"><i class="fa fa-check"></i><b>2.3</b> Regional trade agreements effects</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data-2"><i class="fa fa-check"></i><b>2.3.1</b> Preparing the data</a></li>
+<li class="chapter" data-level="2.3.2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-standard-rta-estimates-with-international-trade-only"><i class="fa fa-check"></i><b>2.3.2</b> OLS standard RTA estimates with international trade only</a></li>
+<li class="chapter" data-level="2.3.3" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-standard-rta-estimates-with-international-trade-only"><i class="fa fa-check"></i><b>2.3.3</b> PPML standard RTA estimates with international trade only</a></li>
+<li class="chapter" data-level="2.3.4" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-domestic-trade-diversion"><i class="fa fa-check"></i><b>2.3.4</b> Addressing potential domestic trade diversion</a></li>
+<li class="chapter" data-level="2.3.5" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-endogeneity-of-rtas"><i class="fa fa-check"></i><b>2.3.5</b> Addressing potential endogeneity of RTAs</a></li>
+<li class="chapter" data-level="2.3.6" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#testing-for-potential-reverse-causality-between-trade-and-rtas"><i class="fa fa-check"></i><b>2.3.6</b> Testing for potential “reverse causality” between trade and RTAs</a></li>
+<li class="chapter" data-level="2.3.7" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-non-linear-and-phasing-in-effects-of-rtas"><i class="fa fa-check"></i><b>2.3.7</b> Addressing potential non-linear and phasing-in effects of RTAs</a></li>
+<li class="chapter" data-level="2.3.8" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-globalization-effects"><i class="fa fa-check"></i><b>2.3.8</b> Addressing globalization effects</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><i class="fa fa-check"></i><b>3</b> General equilibrium trade policy analysis with structural gravity</a><ul>
+<li class="chapter" data-level="3.1" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#trade-without-borders"><i class="fa fa-check"></i><b>3.1</b> Trade without borders</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#initial-data"><i class="fa fa-check"></i><b>3.1.1</b> Initial data</a></li>
+<li class="chapter" data-level="3.1.2" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-i-solve-the-baseline-model"><i class="fa fa-check"></i><b>3.1.2</b> Step I: Solve the baseline model</a></li>
+<li class="chapter" data-level="3.1.3" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-ii-define-a-counterfactual-scenario"><i class="fa fa-check"></i><b>3.1.3</b> Step II: Define a counterfactual scenario</a></li>
+<li class="chapter" data-level="3.1.4" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-iii-solve-the-counterfactual-model"><i class="fa fa-check"></i><b>3.1.4</b> Step III: Solve the counterfactual model</a></li>
+<li class="chapter" data-level="3.1.5" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-iv-collect-construct-and-report-indexes-of-interest"><i class="fa fa-check"></i><b>3.1.5</b> Step IV: Collect, construct, and report indexes of interest</a></li>
+<li class="chapter" data-level="3.1.6" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#figures-replication"><i class="fa fa-check"></i><b>3.1.6</b> Figures replication</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>4</b> Appendix: Importing the original datasets</a><ul>
+<li class="chapter" data-level="4.1" data-path="data.html"><a href="data.html#software"><i class="fa fa-check"></i><b>4.1</b> Software</a></li>
+<li class="chapter" data-level="4.2" data-path="data.html"><a href="data.html#downloading-the-original-datasets"><i class="fa fa-check"></i><b>4.2</b> Downloading the original datasets</a></li>
+<li class="chapter" data-level="4.3" data-path="data.html"><a href="data.html#converting-the-original-datasets"><i class="fa fa-check"></i><b>4.3</b> Converting the original datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://www.unescap.org/" target="blank">UN ESCAP - Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Solutions Manual for An Advanced Guide to Trade Policy Analysis</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="data" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> Appendix: Importing the original datasets</h1>
+<div id="software" class="section level2">
+<h2><span class="header-section-number">4.1</span> Software</h2>
+<p>I followed the standards and conventions from the <a href="https://www.tidyverse.org/">Tidyverse</a>, and I converted all the original datasets in Stata with this software:</p>
+<p><strong>R version 3.6.3 (2020-02-29)</strong></p>
+<p><strong>Platform:</strong> x86_64-pc-linux-gnu (64-bit)</p>
+<p><strong>locale:</strong>
+<em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=es_CL.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=es_CL.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=es_CL.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=es_CL.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
+<p><strong>attached base packages:</strong>
+<em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
+<p><strong>other attached packages:</strong>
+<em>ggplot2(v.3.3.2)</em>, <em>duckdb(v.0.2.1)</em>, <em>DBI(v.1.1.0)</em>, <em>msm(v.1.6.8)</em>, <em>broom(v.0.7.0)</em>, <em>lmtest(v.0.9-38)</em>, <em>zoo(v.1.8-8)</em>, <em>sandwich(v.2.5-1)</em>, <em>multiwayvcov(v.1.2.3)</em>, <em>tidyr(v.1.1.2)</em>, <em>dplyr(v.1.0.2)</em> and <em>yotover(v.0.0.0.9000)</em></p>
+<p><strong>loaded via a namespace (and not attached):</strong>
+<em>tidyselect(v.1.1.0)</em>, <em>xfun(v.0.17)</em>, <em>pander(v.0.6.3)</em>, <em>purrr(v.0.3.4)</em>, <em>splines(v.3.6.3)</em>, <em>lattice(v.0.20-41)</em>, <em>colorspace(v.1.4-1)</em>, <em>vctrs(v.0.3.4)</em>, <em>generics(v.0.0.2)</em>, <em>expm(v.0.999-5)</em>, <em>htmltools(v.0.5.0)</em>, <em>yaml(v.2.2.1)</em>, <em>survival(v.3.1-12)</em>, <em>rlang(v.0.4.7)</em>, <em>R.oo(v.1.24.0)</em>, <em>pillar(v.1.4.6)</em>, <em>glue(v.1.4.2)</em>, <em>withr(v.2.3.0)</em>, <em>R.utils(v.2.10.1)</em>, <em>rappdirs(v.0.3.1)</em>, <em>lifecycle(v.0.2.0)</em>, <em>stringr(v.1.4.0)</em>, <em>munsell(v.0.5.0)</em>, <em>gtable(v.0.3.0)</em>, <em>R.methodsS3(v.1.8.1)</em>, <em>mvtnorm(v.1.1-1)</em>, <em>codetools(v.0.2-16)</em>, <em>evaluate(v.0.14)</em>, <em>labeling(v.0.3)</em>, <em>knitr(v.1.30)</em>, <em>parallel(v.3.6.3)</em>, <em>fansi(v.0.4.1)</em>, <em>Rcpp(v.1.0.5)</em>, <em>backports(v.1.1.10)</em>, <em>scales(v.1.1.1)</em>, <em>farver(v.2.0.3)</em>, <em>digest(v.0.6.25)</em>, <em>stringi(v.1.5.3)</em>, <em>bookdown(v.0.20)</em>, <em>grid(v.3.6.3)</em>, <em>cli(v.2.0.2)</em>, <em>tools(v.3.6.3)</em>, <em>magrittr(v.1.5)</em>, <em>tibble(v.3.0.3)</em>, <em>crayon(v.1.3.4)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>ellipsis(v.0.3.1)</em>, <em>Matrix(v.1.2-18)</em>, <em>assertthat(v.0.2.1)</em>, <em>rmarkdown(v.2.3)</em>, <em>httr(v.1.4.2)</em>, <em>rstudioapi(v.0.11)</em>, <em>R6(v.2.4.1)</em>, <em>boot(v.1.3-25)</em> and <em>compiler(v.3.6.3)</em></p>
+</div>
+<div id="downloading-the-original-datasets" class="section level2">
+<h2><span class="header-section-number">4.2</span> Downloading the original datasets</h2>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="data.html#cb82-1"></a>appfiles_url &lt;-<span class="st"> &quot;https://vi.unctad.org/tpa/web/zips/vol2/Advanced%20Guide%20to%20TPA.zip&quot;</span></span>
+<span id="cb82-2"><a href="data.html#cb82-2"></a>appfiles_zip &lt;-<span class="st"> &quot;00-application-files.zip&quot;</span></span>
+<span id="cb82-3"><a href="data.html#cb82-3"></a>appfiles_dir &lt;-<span class="st"> &quot;00-application-files&quot;</span></span>
+<span id="cb82-4"><a href="data.html#cb82-4"></a></span>
+<span id="cb82-5"><a href="data.html#cb82-5"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw">file.exists</span>(appfiles_zip)) {</span>
+<span id="cb82-6"><a href="data.html#cb82-6"></a>  <span class="kw">download.file</span>(appfiles_url, appfiles_zip)</span>
+<span id="cb82-7"><a href="data.html#cb82-7"></a>}</span>
+<span id="cb82-8"><a href="data.html#cb82-8"></a></span>
+<span id="cb82-9"><a href="data.html#cb82-9"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw">dir.exists</span>(appfiles_dir)) {</span>
+<span id="cb82-10"><a href="data.html#cb82-10"></a>  <span class="kw">unzip</span>(appfiles_zip)</span>
+<span id="cb82-11"><a href="data.html#cb82-11"></a>  <span class="kw">file.rename</span>(<span class="st">&quot;Advanced Guide to TPA&quot;</span>, appfiles_dir)</span>
+<span id="cb82-12"><a href="data.html#cb82-12"></a>}</span></code></pre></div>
+</div>
+<div id="converting-the-original-datasets" class="section level2">
+<h2><span class="header-section-number">4.3</span> Converting the original datasets</h2>
+<p>This code chunk can be a bit obscure. It is only shown to make all of my steps transparent.</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="data.html#cb83-1"></a><span class="co"># these packages are only used to import the data</span></span>
+<span id="cb83-2"><a href="data.html#cb83-2"></a><span class="kw">library</span>(haven)</span>
+<span id="cb83-3"><a href="data.html#cb83-3"></a><span class="kw">library</span>(stringr)</span>
+<span id="cb83-4"><a href="data.html#cb83-4"></a><span class="kw">library</span>(janitor)</span>
+<span id="cb83-5"><a href="data.html#cb83-5"></a><span class="kw">library</span>(purrr)</span>
+<span id="cb83-6"><a href="data.html#cb83-6"></a></span>
+<span id="cb83-7"><a href="data.html#cb83-7"></a><span class="kw">try</span>(<span class="kw">dir.create</span>(<span class="st">&quot;data-tsv&quot;</span>))</span></code></pre></div>
+<pre><code>## Warning in dir.create(&quot;data-tsv&quot;): &#39;data-tsv&#39; already exists</code></pre>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="data.html#cb85-1"></a>dta_files &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span class="st">&quot;00-application-files&quot;</span>,</span>
+<span id="cb85-2"><a href="data.html#cb85-2"></a>                        <span class="dt">pattern =</span> <span class="st">&quot;dta&quot;</span>,</span>
+<span id="cb85-3"><a href="data.html#cb85-3"></a>                        <span class="dt">full.names =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb85-4"><a href="data.html#cb85-4"></a>                        <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb85-5"><a href="data.html#cb85-5"></a></span>
+<span id="cb85-6"><a href="data.html#cb85-6"></a>read_and_clean &lt;-<span class="st"> </span><span class="cf">function</span>(finp) {</span>
+<span id="cb85-7"><a href="data.html#cb85-7"></a>  <span class="kw">message</span>(finp)</span>
+<span id="cb85-8"><a href="data.html#cb85-8"></a>  </span>
+<span id="cb85-9"><a href="data.html#cb85-9"></a>  fout &lt;-<span class="st"> </span>finp <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb85-10"><a href="data.html#cb85-10"></a><span class="st">    </span><span class="kw">str_replace</span>(appfiles_dir, <span class="st">&quot;&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb85-11"><a href="data.html#cb85-11"></a><span class="st">    </span><span class="kw">str_replace</span>(<span class="st">&quot;Chapter&quot;</span>, <span class="st">&quot;ch&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb85-12"><a href="data.html#cb85-12"></a><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot;Chapter[0-9]|</span><span class="ch">\\</span><span class="st">.dta&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
+<span id="cb85-13"><a href="data.html#cb85-13"></a>  </span>
+<span id="cb85-14"><a href="data.html#cb85-14"></a>  fout &lt;-<span class="st"> </span>fout <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb85-15"><a href="data.html#cb85-15"></a><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot;(/)&quot;</span>, <span class="st">&quot;_&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb85-16"><a href="data.html#cb85-16"></a><span class="st">    </span><span class="kw">make_clean_names</span>()</span>
+<span id="cb85-17"><a href="data.html#cb85-17"></a>  </span>
+<span id="cb85-18"><a href="data.html#cb85-18"></a>  long_names &lt;-<span class="st"> </span><span class="kw">c</span>(</span>
+<span id="cb85-19"><a href="data.html#cb85-19"></a>    <span class="st">&quot;datasets_&quot;</span>,</span>
+<span id="cb85-20"><a href="data.html#cb85-20"></a>    <span class="st">&quot;applications_&quot;</span>,</span>
+<span id="cb85-21"><a href="data.html#cb85-21"></a>    <span class="st">&quot;exercises_&quot;</span>,</span>
+<span id="cb85-22"><a href="data.html#cb85-22"></a>    <span class="st">&quot;1_trade_without_border_results_1&quot;</span>,</span>
+<span id="cb85-23"><a href="data.html#cb85-23"></a>    <span class="st">&quot;2_rt_as_effects_results_2_&quot;</span></span>
+<span id="cb85-24"><a href="data.html#cb85-24"></a>  )</span>
+<span id="cb85-25"><a href="data.html#cb85-25"></a>  </span>
+<span id="cb85-26"><a href="data.html#cb85-26"></a>  fout &lt;-<span class="st"> </span>fout <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb85-27"><a href="data.html#cb85-27"></a><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="kw">paste</span>(long_names, <span class="dt">collapse =</span> <span class="st">&quot;|&quot;</span>), <span class="st">&quot;&quot;</span>)</span>
+<span id="cb85-28"><a href="data.html#cb85-28"></a>  </span>
+<span id="cb85-29"><a href="data.html#cb85-29"></a>  fout &lt;-<span class="st"> </span><span class="kw">str_replace</span>(fout, <span class="st">&quot;_([0-9])_|__&quot;</span>, <span class="st">&quot;_&quot;</span>)</span>
+<span id="cb85-30"><a href="data.html#cb85-30"></a></span>
+<span id="cb85-31"><a href="data.html#cb85-31"></a>  fout2 &lt;-<span class="st"> </span><span class="kw">sprintf</span>(<span class="st">&quot;data-tsv/%s.tsv&quot;</span>, fout)</span>
+<span id="cb85-32"><a href="data.html#cb85-32"></a>  </span>
+<span id="cb85-33"><a href="data.html#cb85-33"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="kw">file.exists</span>(fout2)) {</span>
+<span id="cb85-34"><a href="data.html#cb85-34"></a>    d &lt;-<span class="st"> </span><span class="kw">read_dta</span>(finp) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb85-35"><a href="data.html#cb85-35"></a><span class="st">      </span><span class="kw">clean_names</span>()</span>
+<span id="cb85-36"><a href="data.html#cb85-36"></a>    </span>
+<span id="cb85-37"><a href="data.html#cb85-37"></a>    data.table<span class="op">::</span><span class="kw">fwrite</span>(d, fout2, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</span>
+<span id="cb85-38"><a href="data.html#cb85-38"></a>  }</span>
+<span id="cb85-39"><a href="data.html#cb85-39"></a>}</span>
+<span id="cb85-40"><a href="data.html#cb85-40"></a></span>
+<span id="cb85-41"><a href="data.html#cb85-41"></a><span class="kw">map</span>(dta_files, read_and_clean)</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

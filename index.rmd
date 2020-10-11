@@ -1,0 +1,60 @@
+--- 
+title: "Solutions Manual for An Advanced Guide to Trade Policy Analysis"
+author: Mauricio "Pachá" Vargas Sepúlveda
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [00-references.bib, 00-packages.bib]
+biblio-style: apalike
+link-citations: yes
+description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+```
+
+# Introduction {#intro}
+
+## Welcome
+
+<center>
+<img src="cover.png" height="500" alt="Cover image" />
+</center>
+
+</br>
+
+Welcome to our online solutions manual for for An Advanced Guide to Trade Policy Analysis [@yotov2016advanced].
+
+This material is intended to provide a comprehensive explanation to reproduce the book's results in R. We don’t attempt to give a thorough discussion of the theory behind gravity models, the references cited through the chapters shall fill those details.
+
+The manual is written for two audiences:
+
+* People who know R and are interested in learning about gravity models.
+* People with no R knowledge who know gravity models theory.
+
+We only assume that readers are familiar with linear regression, and that they shall read @yotov2016advanced and @wickham2016r alongside this material.
+
+What we did here was to replicate all the results from the book, made with Stata, in R as a way to contribute to Reproducible Research. R is free and available on almost every operating system. It is a wonderful tool for all statistical analysis.
+
+## Obtaining the datasets and functions
+
+`yotover` is an R package and what you are reading here is the package documentation. In specific, it acts as a metapackage which calls other packages to use several functions that augment R capabilities.
+
+You can get all the functions and datasets if you run these lines from your R console:
+
+```{r install_r_package, eval=FALSE}
+if (!require("remotes")) install.packages("remotes")
+remotes::install_github("pachamaltese/yotover")
+```
+
+## Getting the most out of this material
+ 
+Clone this repo to obtain the editable R Markdown files:
+
+```
+git clone https://github.com/pachamaltese/yotover.git
+```
+
+Please read @happygitwithr if you have questions about git or GitHub.
+
