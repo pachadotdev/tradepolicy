@@ -93,7 +93,7 @@ get_gh_release_file <- function(repo, tag_name = NULL, destdir = tempdir(),
   if (!length(release_obj)) stop("No release tagged \"", tag_name, "\"")
 
   if (release_obj[[1]]$prerelease) {
-    message("This is pre-release/sample data! It has not been cleaned or validated.")  #nolint
+    message("This is pre-release/sample data! It has not been cleaned or validated.")
   }
 
   download_url <- release_obj[[1]]$assets[[1]]$url
@@ -110,3 +110,25 @@ get_gh_release_file <- function(repo, tag_name = NULL, destdir = tempdir(),
   attr(out_path, "ver") <- release_obj[[1]]$tag_name
   return(out_path)
 }
+
+#' Remove the local Yotov database
+#'
+#' Deletes all tables from the local database
+#'
+#' @return NULL
+#' @export
+#' @importFrom DBI dbListTables dbRemoveTable
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#' yotov_db_delete()
+#' }
+#' }
+yotov_db_delete <- function() {
+  for (t in yotov_db_tables()) {
+    dbRemoveTable(yotov_db(), t)
+  }
+  update_yotov_pane()
+}
+

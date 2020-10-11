@@ -2,6 +2,7 @@
 
 export(yotov_data)
 export(yotov_db)
+export(yotov_db_delete)
 export(yotov_db_disconnect)
 export(yotov_db_download)
 export(yotov_db_tables)

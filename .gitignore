@@ -6,3 +6,5 @@
 _bookdown_files
 data-tsv
 yotov-trade-db.zip
+inst/paper.md
+inst/paper.bib

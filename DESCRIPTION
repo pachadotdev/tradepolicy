@@ -11,10 +11,6 @@ Authors@R: c(
                family = "Kravchenko",
                role = c("ths"),
                email = "kravchenkoa@un.org"),
-        person(given = "Alexey",
-               family = "Kravchenko",
-               role = c("ths"),
-               email = "kravchenkoa@un.org"),
         person(family = "The United Nations",
                role = c("dtc", "cph", "fnd")
         )
@@ -46,6 +42,7 @@ Imports:
     rstudioapi
 Suggests:
     devtools,
-    usethis
+    usethis,
+    testthat
 Depends: 
     R (>= 3.5)

@@ -1,3 +1,4 @@
+.github
 ^yotover\.Rproj$
 ^\.Rproj\.user$
 ^packrat/

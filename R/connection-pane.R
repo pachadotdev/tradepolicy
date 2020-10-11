@@ -58,7 +58,7 @@ yotov_pane <- function() {
           stringsAsFactors = FALSE
         )
       },
-      previewObject = function(rowLimit, table) {  #nolint
+      previewObject = function(rowLimit, table) {
         DBI::dbGetQuery(yotov_db(),
                         paste("SELECT * FROM", table, "LIMIT", rowLimit))
       },

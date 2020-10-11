@@ -11,7 +11,7 @@ yotov_path <- function() {
 
 yotov_check_status <- function() {
   if (!yotov_status(FALSE)) {
-    stop("Local yotov database empty or corrupt. Download with yotov_db_download()") # nolint
+    stop("Local yotov database empty or corrupt. Download with yotov_db_download()")
   }
 }
 
