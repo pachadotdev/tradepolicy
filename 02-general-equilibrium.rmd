@@ -239,6 +239,8 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
+HASTA ACA OK
+
 And now we run the loop, which cannot be divided into smaller pieces because the step $N$ depends on the step $N-1$:
 ```{r ch2_app1_counterfactual_11}
 # set parameters
@@ -317,8 +319,8 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
       change_imr_full_0 = change_imr_full_1,
       change_p_i_0 = change_p_i_1,
       change_p_j_0 = change_p_j_1,
-      fe_exp_cfl_0 = fe_exporter,
-      fe_imp_cfl_0 = fe_importer,
+      fe_exporter_cfl_0 = fe_exporter,
+      fe_importer_cfl_0 = fe_importer,
       tradehat_0 = tradehat_1,
       e_r_cfl_0 = e_r_cfl_1
     ) %>% 
