@@ -32,27 +32,62 @@ yotov_robust_glm <- function(formula, data) {
   return(coef_test)
 }
 
-#' GLM Regression With Robust Clustered Standard Errors
+#' Extract fixed effects from regression object
 #'
-#' Computes clustered standard errors, tests on coefficients with
-#' clustered standard errors and delta method for percent change in log
+#' Complete description
 #'
 #' @importFrom dplyr %>%
 #' @param fit A regression object
 #' @export
 
 yotov_fixed_effects <- function(fit) {
-  d <- tibble::enframe(fit$coefficients) %>%
-    dplyr::filter(substr(name, 1, 4) %in% c("expo", 'impo')) %>%
-    dplyr::mutate(name = gsub("ter", "ter ", name)) %>%
-    tidyr::separate(col = "name", into = c("type", "country"), sep = " ") %>%
-    tidyr::spread(type, value)
+  panel_coef <- any(grepl("^exp_year|^imp_year|^pair_id_2", names(fit$coefficients)))
 
-  d_exp <- d %>% dplyr::select(exporter = country, fe_exporter = exporter)
-  d_imp <- d %>% dplyr::select(importer = country, fe_importer = importer)
+  if (panel_coef) {
+    exp_coef <- fit$coefficients[grepl("^exp_", names(fit$coefficients))]
+    exp_coef <- tibble::enframe(exp_coef) %>%
+      dplyr::mutate(name = gsub("exp_year", "", name)) %>%
+      rename(exp_year = name, fe_exp_year = value)
 
-  d2 <- tidyr::crossing(d_exp, d_imp) %>%
-    dplyr::mutate_if(is.numeric, function(x) { ifelse(is.na(x), 0, x) })
+    imp_coef <- fit$coefficients[grepl("^imp_", names(fit$coefficients))]
+    imp_coef <- tibble::enframe(imp_coef) %>%
+      dplyr::mutate(name = gsub("imp_year", "", name)) %>%
+      rename(imp_year = name, fe_imp_year = value)
 
-  return(d2)
+    pair_coef <- fit$coefficients[grepl("^pair_id_2", names(fit$coefficients))]
+    pair_coef <- tibble::enframe(pair_coef) %>%
+      dplyr::mutate(name = gsub("pair_id_2", "", name)) %>%
+      rename(pair_id_2 = name, fe_pair_id_2 = value)
+
+    d <- fit$data[, c("exp_year", "imp_year", "pair_id_2")]
+
+    suppressMessages(
+      d <- d %>%
+        dplyr::left_join(exp_coef) %>%
+        dplyr::left_join(imp_coef) %>%
+        dplyr::left_join(pair_coef)
+    )
+  } else {
+    exp_coef <- fit$coefficients[grepl("^exporter", names(fit$coefficients))]
+    exp_coef <- tibble::enframe(exp_coef) %>%
+      dplyr::mutate(name = gsub("exporter", "", name)) %>%
+      rename(exporter = name, fe_exporter = value)
+
+    imp_coef <- fit$coefficients[grepl("^importer", names(fit$coefficients))]
+    imp_coef <- tibble::enframe(imp_coef) %>%
+      dplyr::mutate(name = gsub("importer", "", name)) %>%
+      rename(importer = name, fe_importer = value)
+
+    d <- fit$data[, c("exporter", "importer")]
+
+    suppressMessages(
+      d <- d %>%
+        dplyr::left_join(exp_coef) %>%
+        dplyr::left_join(imp_coef)
+    )
+  }
+
+  d <- dplyr::mutate_if(d, is.numeric, function(x) { ifelse(is.na(x), 0, x) })
+
+  return(d)
 }

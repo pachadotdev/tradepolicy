@@ -432,10 +432,12 @@ ch1_application3_2 <- yotov_data("ch1_application3") %>%
     log_dist = log(dist),
     intl_brdr = ifelse(exporter == importer, pair_id, "inter"),
     intl_brdr_2 = ifelse(exporter == importer, 0, 1),
-    pair_id_2 = ifelse(exporter == importer, "intra", pair_id)
+    pair_id_2 = ifelse(exporter == importer, "0-intra", pair_id)
   ) %>% 
   spread(year, intl_brdr_2, fill = 0)
 ```
+
+Notice that we used `0-intra` and not just `intra`. This is because the rest of the observations in `pair_id_2` are numbers 1,...,N, and R internals shall consider `0-intra` as the reference factor for being the first item when it orders the unique observations alphabetically. This makes the difference between the expected behavior or any behavior in the next chapter.
 
 In addition, we need to create the variable `sum_trade` to filter the cases where the sum by `pair_id` is zero:
 

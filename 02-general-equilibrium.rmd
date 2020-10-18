@@ -61,7 +61,10 @@ With the estimated model, we can proceed as in box #1 from page 105 in @yotov201
 
 ```{r ch2_app1_baseline_3}
 ch2_application1 <- ch2_application1 %>% 
-  left_join(yotov_fixed_effects(fit_baseline))
+  left_join(
+    yotov_fixed_effects(fit_baseline),
+    c("exporter", "importer")
+  )
 ```
 
 Still following box #1, we need to compute the variables of bilateral trade costs and multilateral resistances:
@@ -85,7 +88,7 @@ To complete this stage of the estimation, we need to create a column with the es
 
 ```{r ch2_app1_baseline_5}
 ch2_application1 <- ch2_application1 %>% 
-  mutate(tradehat_bln = fit_baseline$fitted.values) %>% 
+  mutate(tradehat_bln = predict(fit_baseline, ch2_application1, "response")) %>% 
   group_by(exporter) %>% 
   mutate(xi_bln = sum(tradehat_bln * (exporter != importer))) %>% 
   ungroup()
@@ -174,7 +177,7 @@ Box #2 also shows how to compute the conditional general equilibrium effects of 
 
 ```{r ch2_app1_counterfactual_6}
 ch2_application1 <- ch2_application1 %>% 
-  mutate(tradehat_cfl = fit_counterfactual$fitted.values) %>% 
+  mutate(tradehat_cfl = predict(fit_counterfactual, ch2_application1, "response")) %>% 
   group_by(exporter) %>% 
   mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer))) %>% 
   ungroup()
@@ -239,8 +242,6 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-HASTA ACA OK
-
 And now we run the loop, which cannot be divided into smaller pieces because the step $N$ depends on the step $N-1$:
 ```{r ch2_app1_counterfactual_11}
 # set parameters
@@ -248,6 +249,7 @@ max_dif <- 1
 sd_dif <- 1
 change_price_i_old <- 0
 
+i <- 1
 while(sd_dif > 1e-5 | max_dif > 1e-5) {
   ch2_application1 <- ch2_application1 %>% 
     mutate(trade_1 = tradehat_0 * change_p_i_0 * change_p_j_0 / (change_omr_full_0 * change_imr_full_0))
@@ -267,7 +269,7 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
   
   # compute the conditional general equilibrium effects of trade
   ch2_application1 <- ch2_application1 %>% 
-    mutate(tradehat_1 = fit_counterfactual_2$fitted.values) %>% 
+    mutate(tradehat_1 = predict(fit_counterfactual_2, ch2_application1, "response")) %>% 
     group_by(exporter) %>% 
     mutate(y_cfl_1 = sum(tradehat_1)) %>% 
     ungroup() %>% 
@@ -325,6 +327,8 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
       e_r_cfl_0 = e_r_cfl_1
     ) %>% 
     select(-fe_exporter, -fe_importer)
+  
+  i <- i + 1
 }
 ```
 
@@ -462,3 +466,109 @@ ggplot(data = ch2_application1 %>% filter(exporter != "HKG")) +
     values = c("#3bade3", "#b6b8dd", "#232958")
   )
 ```
+
+## Impact of regional trade agreements
+
+### Initial data
+
+As in the previous application, we shall proceed by alternating both data transforming and regressions. Before doing what is shown in box #1 from page 112 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU", just as in the last section, but we shall keep panel dimension of the dataset in order to identify the effects of RTAs and to comprehensively capture the impact of all time-invariant trade costs with the use of pair fixed  effects:
+```{r ch2_app2_data_1}
+ch2_application2 <- yotov_data("ch2_application2") %>% 
+  filter(year %in% seq(1986, 2006, 4)) %>% 
+  mutate(
+    log_dist = log(dist),
+    intl = ifelse(exporter != importer, 1, 0),
+    exporter = ifelse(exporter == "DEU", "0-DEU", exporter),
+    importer = ifelse(importer == "DEU", "0-DEU", importer)
+  ) %>% 
+  
+  # Create Yit
+  group_by(exporter, year) %>% 
+  mutate(y = sum(trade)) %>% 
+  
+  # Create Eit
+  group_by(importer, year) %>% 
+  mutate(e = sum(trade)) %>% 
+  
+  # Create Er
+  group_by(year) %>% 
+  mutate(e_r = max(ifelse(importer == "0-DEU", e, NA), na.rm = T))
+```
+
+Because of the panel dimension, we proceed as we did in the previous chapter, by creating columns to combine exporter/importer and year (`exp_year` and `imp_year`) for the fixed effects, and a pairing variable `pair_id_2`:
+```{r ch2_app2_data_2}
+ch2_application2 <- ch2_application2 %>% 
+  mutate(
+    exp_year = paste0(exporter, year),
+    imp_year = paste0(importer, year),
+    pair_id_2 = ifelse(exporter == importer, "0-intra", pair_id)
+  )
+```
+
+In addition, we need to create the variable `sum_trade` to filter the cases where the sum by `pair_id` is zero:
+```{r ch2_app2_data_3}
+ch2_application2 <- ch2_application2 %>% 
+  group_by(pair_id) %>% 
+  mutate(sum_trade = sum(trade)) %>% 
+  ungroup()
+```
+
+### Step 1: Solve the baseline gravity model
+
+#### Stage 1: Obtain the estimates of pair fixed effects and the effects of RTAs
+
+With the steps done before, it is straightforward to obtain the PPML regression shown in box #1 from page 112 in @yotov2016advanced:
+```{r ch2_app2_baseline_1}
+fit_baseline_2 <- glm(
+  trade ~ 0 + rta + exp_year + imp_year + pair_id_2,
+  family = quasipoisson(link = "log"),
+  data = filter(ch2_application2, sum_trade > 0)
+)
+```
+
+With the estimated model, we can construct the variables for export (`exp_year`), import (`imp_year`) and pair (`pair_id_2`) fixed effects:
+```{r ch2_app2_baseline_2}
+ch2_application2 <- ch2_application2 %>%
+  left_join(
+    yotov_fixed_effects(fit_baseline_2),
+    by = c("exp_year", "imp_year", "pair_id_2")
+  )
+```
+
+## Stage 2: Regress the estimates of pair fixed effects on gravity variables and country fixed effects
+
+Box #1 from page 113 in @yotov2016advanced can be divided in smaller chunks.
+
+We start by filtering to keep the observation from 1994, and then we compute the trade costs (`tij_bar` and `tijn_bln`) from the `fe_pair_id_2` fixed effects and the estimated RTA coefficient:
+```{r ch2_app2_costs_1}
+ch2_application2 <- ch2_application2 %>% 
+  mutate(
+    tij_bar = exp(fe_pair_id_2),
+    tij_bln = exp(fe_pair_id_2 + fit_baseline_2$coefficients["rta"] * rta)
+  )
+```
+
+Now we need to create a table for the year 1994 which will be used to predict the trade costs for the observations with zero trade flows. The reason to create a sub-table, instead of filtering observations in the regression function, is that is eases posterior work to predict the costs. 
+
+To start the cost estimation we start with: 
+```{r ch2_app2_costs_2}
+ch2_application2_1994 <- ch2_application2 %>% 
+  filter(year == 1994, exporter != importer)
+```
+
+Now, unlike the book, which duplicates `tij_bar` by creating `tij`, we can fit a regression to estimate the costs:
+```{r ch2_app2_costs_3}
+fit_costs <- glm(
+  tij_bar ~ 0 + log_dist + cntg + lang + clny + exporter + importer,
+  family = quasipoisson(link = "log"),
+  data = ch2_application2_1994
+)
+```
+
+With the regression we add the fitted values to the sub-table:
+```{r ch2_app2_costs_4}
+ch2_application2_1994 <- ch2_application2_1994 %>% 
+  mutate(tij_no_rta = predict(fit_costs, ch2_application2_1994, "response"))
+```
+
+With the fixed effects from above, we can compute both outward (`omr_bln`) and inward (`imr_bln`) multilateral resistance variables:

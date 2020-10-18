@@ -2,7 +2,7 @@
 % Please edit documentation in R/chapter2.R
 \name{yotov_fixed_effects}
 \alias{yotov_fixed_effects}
-\title{GLM Regression With Robust Clustered Standard Errors}
+\title{Extract fixed effects from regression object}
 \usage{
 yotov_fixed_effects(fit)
 }
@@ -10,6 +10,5 @@ yotov_fixed_effects(fit)
 \item{fit}{A regression object}
 }
 \description{
-Computes clustered standard errors, tests on coefficients with
-clustered standard errors and delta method for percent change in log
+Complete description
 }
