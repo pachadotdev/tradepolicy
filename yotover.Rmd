@@ -1143,7 +1143,7 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-## Stage 2: Regress the estimates of pair fixed effects on gravity variables and country fixed effects
+#### Stage 2: Regress the estimates of pair fixed effects on gravity variables and country fixed effects
 
 Box #1 from page 113 in @yotov2016advanced can be divided in smaller chunks.
 
@@ -1176,10 +1176,51 @@ fit_costs <- glm(
 With the regression we add the fitted values to the sub-table:
 ```{r ch2_app2_costs_4}
 ch2_application2_1994 <- ch2_application2_1994 %>% 
-  mutate(tij_no_rta = predict(fit_costs, ch2_application2_1994, "response"))
+  mutate(tij_no_rta = predict(fit_costs, ch2_application2_1994, "response")) %>% 
+  select(exporter, importer, tij_no_rta)
 ```
 
-With the fixed effects from above, we can compute both outward (`omr_bln`) and inward (`imr_bln`) multilateral resistance variables:
+The final step is to keep the observations for the year 1994 in the original table and replace the missing costs with the predicted values:
+```{r ch2_app2_costs_5}
+ch2_application2 <- ch2_application2 %>% 
+  filter(year == 1994) %>% 
+  left_join(ch2_application2_1994, by = c("exporter", "importer")) %>% 
+  mutate(
+    tij_bar = ifelse(is.na(tij_bar), tij_no_rta, tij_bar),
+    tij_bln = ifelse(is.na(tij_bln), tij_bar * exp(fit_baseline_2$coefficients["rta"] * rta), tij_bln)
+  ) %>% 
+  select(-tij_no_rta) %>% 
+  mutate(log_tij_bln = log(tij_bln))
+```
+
+Box #2 from page 113 in @yotov2016advanced is more straightforward. 
+
+The first part to complete Box #2 consists in solving the constrained baseline gravity model:
+```{r ch2_app2_constrained_1}
+fit_constrained <- glm(
+  trade ~ 0 + exporter + importer + offset(log_tij_bln),
+  family = quasipoisson(link = "log"),
+  data = ch2_application2
+)
+```
+
+With the fitted model we can add the prediction:
+```{r ch2_app2_constrained_2}
+ch2_application2 <- ch2_application2 %>% 
+  mutate(tradehat_bln = predict(fit_constrained, ch2_application2, "response"))
+```
+
+The book specifies that all other baseline indexes of interest can be obtained by applying the exact same procedure as described in the previous application. Here we'll obtain those explicitly.
+
+To construct the other baseline indexes we start by adding the fixed effects from the constrained model to the data:
+```{r ch2_app2_additional_1}
+ch2_application2 <- ch2_application2 %>% 
+  left_join(yotov_fixed_effects(fit_constrained), by = c("exporter","importer"))
+```
+
+
+
+
 
 <!--chapter:end:02-general-equilibrium.rmd-->
 

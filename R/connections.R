@@ -48,7 +48,7 @@ yotov_db <- function(dbdir = yotov_path()) {
     }
   }
 
-  try(dir.create(dbdir, FALSE))
+  try(dir.create(dbdir, showWarnings = FALSE, recursive = TRUE))
 
   tryCatch({
     db <- DBI::dbConnect(
