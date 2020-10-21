@@ -24,3 +24,4 @@ inst/*.pdf
 inst/*.md
 inst/*.log
 inst/apa.csl
+^codemeta\.json$

@@ -29,15 +29,15 @@ journal: JOSS
 
 # Summary
 
-The tools created by the open source community have greatly eased the burden of documenting work in econometrics [@koenker2009reproducible]. Following this statement, and the replication case studies shown in @koenker2009reproducible, we decided to reproduce the results from @yotov2016advanced by using the R programming language. 
+The tools created by the open source community have greatly eased the burden of documenting work in econometrics according to @koenker2009reproducible. We decided to try to reproduce the results from @yotov2016advanced by using the R programming language to see if we could reproduce its results as it was done with other studies in the aforementioned article.
 
-We could fully replicate the results because the authors provided both the data and documented Stata code, leaving space for contributions such as this in particular, and providing their results in a way that contributes to an effective communication of research. This works aims at makin the reproduction of the original results more accesible throughout the distribution of both open source software and open formats data. Previous work in the R community, such as @wolwer2018gravity2, @wolwer2018gravity and @porto2020using have already started easing estimation methods for gravity models in R.
+`yotover` is an R package designed to organize our replication work, which support analysis of the datasets accompanying the book An Advanced Guide to Trade Policy Analysis [@yotov2016advanced]. We followed the work of @ross2019citesdb in ecology, and we were able to perform a full replication of the results, in part because the authors provided linked analytical data and documented executable Stata code, leaving space for contributions such as this in particular. How @yotov2016advanced provided their results contributes to an effective communication of research, and in the reproducibility spectrum their work is closer to the full replication gold standard described in @peng2011reproducible than to publication only.
 
-`yotover` is an R package designed to support analysis of the datasets accompanying the book An Advanced Guide to Trade Policy Analysis [@yotov2016advanced]. To facilitate further analysis of the original datasets, the `yotover` package creates a local, on-disk embedded database with the corresponding data. This avoids the need for users to pre-process the data or load the multi-gigabyte dataset into memory. The DuckDB back-end [@duckdb] allows high-performance querying and is accessible via a `DBI`- and `dplyr`-compatible interface familiar to most R users [@DBI; @dplyr]. 
+To facilitate further analysis of the original datasets, the `yotover` package creates a local, on-disk embedded database with the corresponding data. This avoids the need for users to pre-process the data, load the multi-gigabyte dataset into memory, and it respects CRAN packages policies regarding datasets. The DuckDB back-end [@duckdb] allows high-performance querying and is accessible via a `DBI`- and `dplyr`-compatible interface familiar to most R users [@DBI; @dplyr].
+
+This works aims at making the reproduction of the original results more accessible throughout the distribution of both open source software and open formats data. Previous work in the R community, such as @wolwer2018gravity2, @wolwer2018gravity and @porto2020using have already started easing estimation methods for gravity models in R.
 
 For users of the RStudio integrated development environment [@rstudio], the package also provides an interactive pane for exploring the database and previewing data, considering that this software in particular aims at economists mostly, who are often accustomed to Excel and Stata instead of R, Python and other tools such as SQL.
-
-PONER ALGO DE PRUEBAS FORMALES Y VALIDACIÓN!!!!!
 
 # Acknowledgements
 

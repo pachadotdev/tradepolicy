@@ -15,7 +15,10 @@ Authors@R: c(
                role = c("dtc", "cph", "fnd")
         )
     )
-Description: What the package does (one paragraph).
+Description: On-disk embedded database with SQL versions of the original 
+    datasets from the book An Advanced Guide to Trade Policy Analysis by Yotov, 
+    et. al (2016)and functions to report regressions with clustered robust
+    standard errors.
 License: CC BY 4.0
 Encoding: UTF-8
 LazyData: true
@@ -24,6 +27,7 @@ RoxygenNote: 7.1.1.9000
 Imports:
     magrittr,
     tibble,
+    ggplot2,
     dplyr,
     tidyr,
     purrr,
@@ -39,10 +43,16 @@ Imports:
     R.utils,
     rappdirs,
     httr,
+    scales,
+    munsell,
+    pander,
+    gtable,
+    colorspace,
     rstudioapi
 Suggests:
     devtools,
     usethis,
-    testthat
+    testthat,
+    covr
 Depends: 
     R (>= 3.5)

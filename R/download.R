@@ -53,22 +53,32 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
 
   for (x in seq_along(finp)) {
     tout <- gsub(".*/", "", gsub("\\.tsv", "", finp[x]))
+
     message(sprintf("Creating %s ...", tout))
+
     d <- utils::read.delim(finp[x],
                     sep = "\t",
                     stringsAsFactors = FALSE)
+
     DBI::dbWriteTable(
       yotov_db(),
       tout,
       d,
       overwrite = TRUE
     )
+
     rm(d, tout)
+
+    yotov_db_disconnect()
   }
 
   file.remove(finp)
 
+  invisible(DBI::dbListTables(yotov_db()))
+  yotov_db_disconnect()
+
   update_yotov_pane()
+  yotov_pane()
   invisible(yotov_status)
 }
 

@@ -18,13 +18,11 @@ function lets the user interact with the database directly via SQL.
 }
 \examples{
 if (yotov_status()) {
- library(DBI)
+ DBI::dbListTables(yotov_db())
 
- dbListTables(yotov_db())
+ ch1_application1 <- DBI::dbReadTable(yotov_db(), "ch1_application1")
 
- ch1_application1 <- dbReadTable(yotov_db(), "ch1_application1")
-
- dbGetQuery(
+ DBI::dbGetQuery(
   yotov_db(),
   'SELECT * FROM ch1_application1'
  )

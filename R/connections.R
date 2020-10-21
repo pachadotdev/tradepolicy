@@ -29,13 +29,11 @@ yotov_check_status <- function() {
 #'
 #' @examples
 #' if (yotov_status()) {
-#'  library(DBI)
+#'  DBI::dbListTables(yotov_db())
 #'
-#'  dbListTables(yotov_db())
+#'  ch1_application1 <- DBI::dbReadTable(yotov_db(), "ch1_application1")
 #'
-#'  ch1_application1 <- dbReadTable(yotov_db(), "ch1_application1")
-#'
-#'  dbGetQuery(
+#'  DBI::dbGetQuery(
 #'   yotov_db(),
 #'   'SELECT * FROM ch1_application1'
 #'  )
@@ -87,14 +85,14 @@ yotov_db <- function(dbdir = yotov_path()) {
 #'
 #' @examples
 #' if (yotov_status()) {
-#'   # See the number of yotov shipment records per year
-#'   yotov_data("ch1_application1") %>%
-#'     filter(exporter == "ARG")
+#'   yotov_data("ch1_application1")
 #' }
 #' @importFrom dplyr tbl
 yotov_data <- function(table) {
   yotov_check_status()
-  dplyr::as_tibble(DBI::dbReadTable(yotov_db(), table))
+  df <- dplyr::as_tibble(DBI::dbReadTable(yotov_db(), table))
+  yotov_db_disconnect()
+  return(df)
 }
 
 
@@ -151,23 +149,23 @@ yotov_status <- function(verbose = TRUE) {
 #' @export
 yotov_db_tables <- function() {
   sort(c('ch1_application1', 'ch1_application2',
-    'ch1_application3', 'ch1_exercise1', 'ch1_exercise2', 'ch2_application1',
-    'ch2_application2', 'ch2_exercise1', 'ch2_exercise2',
-    'ch2_removing_specific_border_results_full_cons_part_a',
-    'ch2_removing_specific_border_results_full_cons_part_bc',
-    'ch2_removing_specific_border_results_full_cons_part_d',
-    'ch2_removing_specific_border_results_full_prod_part_a',
-    'ch2_removing_specific_border_results_full_prod_part_bc',
-    'ch2_removing_specific_border_results_full_prod_part_d',
-    'ch2_removing_specific_border_results_fullge_part_a',
-    'ch2_removing_specific_border_results_fullge_part_bc',
-    'ch2_removing_specific_border_results_fullge_part_d',
-    'ch2_removing_specific_border', 'ch2_rt_as_effects_full_cons',
-    'ch2_rt_as_effects_full_prod', 'ch2_rt_as_effects',
-    'ch2_rta_impacts_results_full_cons', 'ch2_rta_impacts_results_full_prod',
-    'ch2_rta_impacts_results_fullge', 'ch2_rta_impacts',
-    'ch2_trade_without_border_full_cons', 'ch2_trade_without_border_full_prod',
-    'ch2_trade_without_border_fullge', 'ch2_trade_without_border'))
+         'ch1_application3', 'ch1_exercise1', 'ch1_exercise2', 'ch2_application1',
+         'ch2_application2', 'ch2_exercise1', 'ch2_exercise2',
+         'ch2_removing_specific_border_results_full_cons_part_a',
+         'ch2_removing_specific_border_results_full_cons_part_bc',
+         'ch2_removing_specific_border_results_full_cons_part_d',
+         'ch2_removing_specific_border_results_full_prod_part_a',
+         'ch2_removing_specific_border_results_full_prod_part_bc',
+         'ch2_removing_specific_border_results_full_prod_part_d',
+         'ch2_removing_specific_border_results_fullge_part_a',
+         'ch2_removing_specific_border_results_fullge_part_bc',
+         'ch2_removing_specific_border_results_fullge_part_d',
+         'ch2_removing_specific_border', 'ch2_rt_as_effects_full_cons',
+         'ch2_rt_as_effects_full_prod', 'ch2_rt_as_effects',
+         'ch2_rta_impacts_results_full_cons', 'ch2_rta_impacts_results_full_prod',
+         'ch2_rta_impacts_results_fullge', 'ch2_rta_impacts',
+         'ch2_trade_without_border_full_cons', 'ch2_trade_without_border_full_prod',
+         'ch2_trade_without_border_fullge', 'ch2_trade_without_border'))
 }
 
 yotover_cache <- new.env()

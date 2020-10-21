@@ -47,17 +47,17 @@ yotov_fixed_effects <- function(fit) {
     exp_coef <- fit$coefficients[grepl("^exp_", names(fit$coefficients))]
     exp_coef <- tibble::enframe(exp_coef) %>%
       dplyr::mutate(name = gsub("exp_year", "", name)) %>%
-      rename(exp_year = name, fe_exp_year = value)
+      dplyr::rename(exp_year = name, fe_exp_year = value)
 
     imp_coef <- fit$coefficients[grepl("^imp_", names(fit$coefficients))]
     imp_coef <- tibble::enframe(imp_coef) %>%
       dplyr::mutate(name = gsub("imp_year", "", name)) %>%
-      rename(imp_year = name, fe_imp_year = value)
+      dplyr::rename(imp_year = name, fe_imp_year = value)
 
     pair_coef <- fit$coefficients[grepl("^pair_id_2", names(fit$coefficients))]
     pair_coef <- tibble::enframe(pair_coef) %>%
       dplyr::mutate(name = gsub("pair_id_2", "", name)) %>%
-      rename(pair_id_2 = name, fe_pair_id_2 = value)
+      dplyr::rename(pair_id_2 = name, fe_pair_id_2 = value)
 
     d <- fit$data[, c("exp_year", "imp_year", "pair_id_2")]
 
@@ -71,12 +71,12 @@ yotov_fixed_effects <- function(fit) {
     exp_coef <- fit$coefficients[grepl("^exporter", names(fit$coefficients))]
     exp_coef <- tibble::enframe(exp_coef) %>%
       dplyr::mutate(name = gsub("exporter", "", name)) %>%
-      rename(exporter = name, fe_exporter = value)
+      dplyr::rename(exporter = name, fe_exporter = value)
 
     imp_coef <- fit$coefficients[grepl("^importer", names(fit$coefficients))]
     imp_coef <- tibble::enframe(imp_coef) %>%
       dplyr::mutate(name = gsub("importer", "", name)) %>%
-      rename(importer = name, fe_importer = value)
+      dplyr::rename(importer = name, fe_importer = value)
 
     d <- fit$data[, c("exporter", "importer")]
 

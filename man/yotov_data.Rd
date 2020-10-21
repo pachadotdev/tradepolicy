@@ -18,8 +18,6 @@ exercises from the book.
 }
 \examples{
 if (yotov_status()) {
-  # See the number of yotov shipment records per year
-  yotov_data("ch1_application1") \%>\%
-    filter(exporter == "ARG")
+  yotov_data("ch1_application1")
 }
 }
