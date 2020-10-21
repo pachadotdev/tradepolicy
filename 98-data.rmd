@@ -36,7 +36,7 @@ library(stringr)
 library(janitor)
 library(purrr)
 
-try(dir.create("data-tsv"))
+try(dir.create("data-tsv", showWarnings = F))
 
 dta_files <- list.files("00-application-files",
                         pattern = "dta",

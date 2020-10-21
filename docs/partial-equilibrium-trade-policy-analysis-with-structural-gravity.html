@@ -24,7 +24,7 @@
 <meta name="author" content="Mauricio “Pachá” Vargas Sepúlveda" />
 
 
-<meta name="date" content="2020-10-19" />
+<meta name="date" content="2020-10-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -178,6 +178,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#impact-of-regional-trade-agreements"><i class="fa fa-check"></i><b>3.2</b> Impact of regional trade agreements</a><ul>
 <li class="chapter" data-level="3.2.1" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#initial-data-1"><i class="fa fa-check"></i><b>3.2.1</b> Initial data</a></li>
 <li class="chapter" data-level="3.2.2" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-1-solve-the-baseline-gravity-model"><i class="fa fa-check"></i><b>3.2.2</b> Step 1: Solve the baseline gravity model</a></li>
+<li class="chapter" data-level="3.2.3" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-ii-define-a-counterfactual-scenario-1"><i class="fa fa-check"></i><b>3.2.3</b> Step II: Define a counterfactual scenario</a></li>
+<li class="chapter" data-level="3.2.4" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-iii-solve-the-counterfactual-model-1"><i class="fa fa-check"></i><b>3.2.4</b> Step III: Solve the counterfactual model</a></li>
+<li class="chapter" data-level="3.2.5" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-iv-collect-construct-and-report-indexes-of-interest-1"><i class="fa fa-check"></i><b>3.2.5</b> Step IV: Collect, construct, and report indexes of interest</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>4</b> Appendix: Importing the original datasets</a><ul>
@@ -223,13 +226,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Provided that the datasets use 3 GB on disk, we opted to use a local SQL database (<a href="https://duckdb.org">DuckDB</a>) instead of spreadsheets or even native R files. If you are not familiar with SQL, do not worry because we provide the function <code>yotov_data()</code>, so that <code>yotov_data("ch1_application1")</code> goes to the database and returns the data for this exercise.</p>
 <p>Step 1 is straightforward:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb3-1"></a><span class="kw">library</span>(yotover)</span></code></pre></div>
-<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────── yotover 0.0.0.9000 ──</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────────── yotover 0.0.0.9000 ──</code></pre>
 <pre><code>## ✓ dplyr        1.0.2       ✓ broom        0.7.1  
 ## ✓ tidyr        1.1.2       ✓ msm          1.6.8  
 ## ✓ multiwayvcov 1.2.3       ✓ duckdb       0.2.1.2
 ## ✓ sandwich     3.0.0       ✓ ggplot2      3.3.2  
 ## ✓ lmtest       0.9.38</code></pre>
-<pre><code>## ── ✓ Local Yotov database is OK. ────────────────────────────────────────────────────────────────────────</code></pre>
+<pre><code>## ── ✓ Local Yotov database is OK. ────────────────────────────────────────────────────────────────────────────────────</code></pre>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb7-1"></a>ch1_application1_<span class="dv">2</span> &lt;-<span class="st">  </span><span class="kw">yotov_data</span>(<span class="st">&quot;ch1_application1&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb7-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb7-2"></a><span class="st">  </span><span class="kw">filter</span>(year <span class="op">%in%</span><span class="st"> </span><span class="kw">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>))</span></code></pre></div>
 <p>For step 2, this can be divided in parts, starting with the log transformation of <code>trade</code> and <code>dist</code>:</p>
