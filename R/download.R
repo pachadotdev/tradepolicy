@@ -60,7 +60,7 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
                     sep = "\t",
                     stringsAsFactors = FALSE)
 
-    DBI::dbWriteTable(
+    dbWriteTable(
       yotov_db(),
       tout,
       d,
@@ -74,7 +74,7 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
 
   file.remove(finp)
 
-  invisible(DBI::dbListTables(yotov_db()))
+  invisible(dbListTables(yotov_db()))
   yotov_db_disconnect()
 
   update_yotov_pane()

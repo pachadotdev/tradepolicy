@@ -146,6 +146,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "dbplyr",
+      "name": "dbplyr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=dbplyr"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "dplyr",
       "name": "dplyr",
       "provider": {
@@ -407,5 +419,7 @@
   "readme": "https://github.com/pachamaltese/yotover/blob/main/README.md",
   "fileSize": "0KB",
   "contIntegration": "https://codecov.io/github/pachamaltese/yotover?branch=master",
-  "developmentStatus": ["https://www.repostatus.org/#active", "https://www.tidyverse.org/lifecycle/#stable"]
+  "developmentStatus": ["https://www.repostatus.org/#active", "https://www.tidyverse.org/lifecycle/#stable"],
+  "issueTracker": "https://github.com/pachamaltese/yotover/issues/",
+  "relatedLink": "https://pacha.dev/yotover/"
 }
