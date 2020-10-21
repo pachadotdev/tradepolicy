@@ -1,0 +1,46 @@
+---
+title: 'yotover: An R package to support analysis and reproduce results from An Advanced
+  Guide to Trade Policy Analysis'
+tags:
+- R
+- international trade
+- econometrics
+- reproducible research
+authors:
+- name: Alexey Kravchenko
+  orcid: 0000-0002-2136-0000
+  affiliation: 1
+- name: Mauricio Vargas Sepúlveda
+  orcid: 0000-0003-1017-7574
+  affiliation: 2
+affiliations:
+- name: United Nations Economic and Social Commission for Asia and the Pacific
+  index: 1
+- name: Pontifical Catholic University of Chile
+  index: 2
+citation_author: Vargas et. al.
+date: 30 October 2020
+year: 2020
+bibliography: paper.bib
+output: rticles::joss_article
+csl: apa.csl
+journal: JOSS
+---
+
+# Summary
+
+The tools created by the open source community have greatly eased the burden of documenting work in econometrics [@koenker2009reproducible]. Following this statement, and the replication case studies shown in @koenker2009reproducible, we decided to reproduce the results from @yotov2016advanced by using the R programming language. 
+
+We could fully replicate the results because the authors provided both the data and documented Stata code, leaving space for contributions such as this in particular, and providing their results in a way that contributes to an effective communication of research. This works aims at makin the reproduction of the original results more accesible throughout the distribution of both open source software and open formats data. Previous work in the R community, such as @wolwer2018gravity2, @wolwer2018gravity and @porto2020using have already started easing estimation methods for gravity models in R.
+
+`yotover` is an R package designed to support analysis of the datasets accompanying the book An Advanced Guide to Trade Policy Analysis [@yotov2016advanced]. To facilitate further analysis of the original datasets, the `yotover` package creates a local, on-disk embedded database with the corresponding data. This avoids the need for users to pre-process the data or load the multi-gigabyte dataset into memory. The DuckDB back-end [@duckdb] allows high-performance querying and is accessible via a `DBI`- and `dplyr`-compatible interface familiar to most R users [@DBI; @dplyr]. 
+
+For users of the RStudio integrated development environment [@rstudio], the package also provides an interactive pane for exploring the database and previewing data, considering that this software in particular aims at economists mostly, who are often accustomed to Excel and Stata instead of R, Python and other tools such as SQL.
+
+PONER ALGO DE PRUEBAS FORMALES Y VALIDACIÓN!!!!!
+
+# Acknowledgements
+
+The authors were funded by the support of the United Nations Economic and Social Commission for Asia and the Pacific.
+
+# References
