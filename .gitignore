@@ -10,3 +10,4 @@ inst/paper.md
 inst/paper.bib
 all-models-and-data.RData
 inst/*.log
+inst/*.pdf
