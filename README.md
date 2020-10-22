@@ -14,3 +14,9 @@ Instead of providing large datasets in RDS or CSV format, this provides function
 For the analysis, this provides functions to compute robust clustered standard errors in generalized linear models.
 
 See https://pacha.dev/yotover for a fully detailed replication of Yotov's results.
+
+At the moment, this package can be installed from GitHub:
+```
+# install.packages("remotes")
+remotes::install_github("pachamaltese/yotover")
+```
