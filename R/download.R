@@ -123,7 +123,7 @@ get_gh_release_file <- function(repo, tag_name = NULL, destdir = tempdir(),
 
 #' Remove the local Yotov database
 #'
-#' Deletes all tables from the local database
+#' Deletes all tables from the local database.
 #'
 #' @return NULL
 #' @export

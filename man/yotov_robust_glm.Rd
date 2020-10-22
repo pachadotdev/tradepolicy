@@ -12,6 +12,7 @@ yotov_robust_glm(formula, data)
 \item{data}{A tibble or data.frame}
 }
 \description{
-Computes clustered standard errors, tests on coefficients with
-clustered standard errors and delta method for percent change in log
+Fits a regression with robust clustered standard errors. This uses a quasi-poisson
+family and returns the estimated coefficients after computing a clustered
+variance-covariance matrix.
 }

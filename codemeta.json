@@ -8,7 +8,7 @@
   "description": "On-disk embedded database with SQL versions of the original \n    datasets from the book An Advanced Guide to Trade Policy Analysis by Yotov, \n    et. al (2016)and functions to report regressions with clustered robust\n    standard errors.",
   "name": "yotover: An Advanced Guide to Trade Policy Analysis",
   "license": "https://spdx.org/licenses/CC-BY-4.0",
-  "version": "0.0.0.9000",
+  "version": "0.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",

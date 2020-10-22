@@ -1,7 +1,8 @@
 #' GLM Regression With Robust Clustered Standard Errors
 #'
-#' Computes clustered standard errors, tests on coefficients with
-#' clustered standard errors and delta method for percent change in log
+#' Fits a regression with robust clustered standard errors. This uses a quasi-poisson
+#' family and returns the estimated coefficients after computing a clustered
+#' variance-covariance matrix.
 #'
 #' @param formula A formula for the model
 #' @param data A tibble or data.frame
@@ -34,7 +35,9 @@ yotov_robust_glm <- function(formula, data) {
 
 #' Extract fixed effects from regression object
 #'
-#' Complete description
+#' Takes an lm/glm object and extracts the fixed effects estimated coefficients.
+#' This function was created to be used with `left_join()` and `predict()` as it
+#' pastes the effects and allows to create a column with the predicted output.
 #'
 #' @importFrom dplyr %>%
 #' @param fit A regression object

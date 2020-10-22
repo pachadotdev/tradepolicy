@@ -1,7 +1,7 @@
 #' Traditional Gravity Estimates Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
-#' clustered standard errors and RESET test
+#' clustered standard errors and RESET test.
 #'
 #' @param formula A formula for the model
 #' @param method Regression method (lm or glm)
@@ -83,7 +83,7 @@ yotov_model_summary <- function(formula, method, data) {
 #' The "Distance Puzzle" Resolved Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
-#' clustered standard errors and delta method for percent change in log
+#' clustered standard errors and delta method for percent change in log.
 #'
 #' @param formula A formula for the model
 #' @param method Regression method (lm or glm)
@@ -165,7 +165,7 @@ yotov_model_summary2 <- function(formula, method, data) {
 #' Regional Trade Agreements Effects Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
-#' clustered standard errors and delta method for percent change in log
+#' clustered standard errors and delta method for percent change in log.
 #'
 #' @param formula A formula for the model
 #' @param method Regression method (lm or glm)

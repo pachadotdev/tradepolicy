@@ -10,5 +10,7 @@ yotov_fixed_effects(fit)
 \item{fit}{A regression object}
 }
 \description{
-Complete description
+Takes an lm/glm object and extracts the fixed effects estimated coefficients.
+This function was created to be used with \code{left_join()} and \code{predict()} as it
+pastes the effects and allows to create a column with the predicted output.
 }

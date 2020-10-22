@@ -15,5 +15,5 @@ yotov_model_summary3(formula, method, data)
 }
 \description{
 Computes clustered standard errors, tests on coefficients with
-clustered standard errors and delta method for percent change in log
+clustered standard errors and delta method for percent change in log.
 }

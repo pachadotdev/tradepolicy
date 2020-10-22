@@ -122,6 +122,9 @@ yotov_db_disconnect_ <- function(environment = yotover_cache) {
 
 #' Get the status of the current local Yotov database
 #'
+#' Get the status of the current local Yotov database. It displays informative message
+#' about how to create the local database if it can't be found or it is corrupt.
+#'
 #' @param verbose Whether to print a status message
 #'
 #' @return TRUE if the database exists, FALSE if it is not detected. (invisible)

@@ -13,7 +13,8 @@ yotov_status(verbose = TRUE)
 TRUE if the database exists, FALSE if it is not detected. (invisible)
 }
 \description{
-Get the status of the current local Yotov database
+Get the status of the current local Yotov database. It displays informative message
+about how to create the local database if it can't be found or it is corrupt.
 }
 \examples{
 yotov_status()

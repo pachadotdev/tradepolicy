@@ -15,5 +15,5 @@ yotov_model_summary(formula, method, data)
 }
 \description{
 Computes clustered standard errors, tests on coefficients with
-clustered standard errors and RESET test
+clustered standard errors and RESET test.
 }

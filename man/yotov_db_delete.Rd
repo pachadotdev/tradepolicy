@@ -7,7 +7,7 @@
 yotov_db_delete()
 }
 \description{
-Deletes all tables from the local database
+Deletes all tables from the local database.
 }
 \examples{
 \donttest{
