@@ -33,11 +33,15 @@ The tools created by the open source community have greatly eased the burden of 
 
 `yotover` is an R package designed to organize our replication work, which support analysis of the datasets accompanying the book An Advanced Guide to Trade Policy Analysis [@yotov2016advanced]. We followed the work of @ross2019citesdb in ecology, and we were able to perform a full replication of the results, in part because the authors provided linked analytical data and documented executable Stata code, leaving space for contributions such as this in particular. How @yotov2016advanced provided their results contributes to an effective communication of research, and in the reproducibility spectrum their work is closer to the full replication gold standard described in @peng2011reproducible than to publication only.
 
-To facilitate further analysis of the original datasets, the `yotover` package creates a local, on-disk embedded database with the corresponding data. This avoids the need for users to pre-process the data, load the multi-gigabyte dataset into memory, and it respects CRAN packages policies regarding datasets. The DuckDB back-end [@duckdb] allows high-performance querying and is accessible via a `DBI`- and `dplyr`-compatible interface familiar to most R users [@DBI; @dplyr].
+To facilitate further analysis of the original datasets, the `yotover` package creates a local, embedded database with the corresponding data. This avoids the need for users to pre-process the data, preventing the user from converting the original files in the propietary 'dta' format and/or organizing plain text files. The DuckDB back-end [@duckdb] allows high-performance querying and is accessible via a `DBI`- and `dplyr`-compatible interface familiar to most R users [@DBI; @dplyr], and our approach respects CRAN packages policies regarding datasets.
 
 This works aims at making the reproduction of the original results more accessible throughout the distribution of both open source software and open formats data. Previous work in the R community, such as @wolwer2018gravity2, @wolwer2018gravity and @porto2020using have already started easing estimation methods for gravity models in R.
 
-For users of the RStudio integrated development environment [@rstudio], the package also provides an interactive pane for exploring the database and previewing data, considering that this software in particular aims at economists mostly, who are often accustomed to Excel and Stata instead of R, Python and other tools such as SQL.
+# Future work
+
+Regardless of how innovative this replication may look, we aimed at using common R packages to ease future work and present carpentry software which can be adapted so that others can create derivative works of this to reproduce different studies. With respect to code correctness, we used @testthat in order to check all the formal aspects, such as database connection and disconnection, besides the expected function's output.
+
+There is future work for `yotover` and R in general. A problem that we faced is working with clustered standard robust errors, which is not easy to do in R, and also performance can be a problem. Fitting generalized linear models with fixed effects can be computationally intensive, and existing packages that already solve performance issues, such as @speedglm which can reduce the computation to the half in out tests compared to base R, do not work with packages for multi-way standard error clustering such as @multiwayvcov.
 
 # Acknowledgements
 
