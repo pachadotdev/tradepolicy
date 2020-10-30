@@ -26,3 +26,4 @@ inst/*.log
 inst/apa.csl
 ^codemeta\.json$
 all-models-and-data.RData
+README.md

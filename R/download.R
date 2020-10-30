@@ -20,7 +20,6 @@ globalVariables(c("term"))
 #' @export
 #' @importFrom DBI dbRemoveTable dbExistsTable dbCreateTable dbExecute
 #'   dbWriteTable dbListTables
-#' @importFrom R.utils gunzip
 #'
 #' @examples
 #' \donttest{
@@ -30,13 +29,13 @@ globalVariables(c("term"))
 #' }
 yotov_db_download <- function(tag = NULL, destdir = tempdir(),
                               cleanup = TRUE, verbose = interactive()) {
-  if (verbose) message("Downloading data...\n")
+  if (verbose) msg("Downloading data...\n")
   zfile <- get_gh_release_file("pachamaltese/yotover",
                                tag_name = tag,
                                destdir = destdir, verbose = verbose
   )
   ver <- attr(zfile, "ver")
-  if (verbose) message("Decompressing and building local database...\n")
+  if (verbose) msg("\nDecompressing and building local database...\n")
   temp_tsv <- tempfile(fileext = ".tsv")
   destdir <- paste0(destdir, "/yotov-trade-db")
   destdir <- gsub("\\\\", "/", destdir)
@@ -54,7 +53,7 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
   for (x in seq_along(finp)) {
     tout <- gsub(".*/", "", gsub("\\.tsv", "", finp[x]))
 
-    message(sprintf("Creating %s ...", tout))
+    msg(sprintf("Creating %s ...", tout))
 
     d <- utils::read.delim(finp[x],
                     sep = "\t",

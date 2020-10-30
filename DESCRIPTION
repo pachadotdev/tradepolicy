@@ -16,9 +16,8 @@ Authors@R: c(
         )
     )
 Description: On-disk embedded database with SQL versions of the original 
-    datasets from the book An Advanced Guide to Trade Policy Analysis by Yotov, 
-    et. al (2016)and functions to report regressions with clustered robust
-    standard errors.
+    datasets from Yotov, et al (2016, ISBN: 978-92-870-4367-2) and functions to 
+    report regressions with clustered robust standard errors.
 URL: https://pacha.dev/yotover/
 BugReports: https://github.com/pachamaltese/yotover/issues/
 License: CC BY 4.0
@@ -43,7 +42,6 @@ Imports:
     msm,
     DBI,
     duckdb,
-    R.utils,
     rappdirs,
     httr,
     scales,

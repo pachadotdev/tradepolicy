@@ -1,6 +1,5 @@
 core <- c(
-  "dplyr", "tidyr", "multiwayvcov", "sandwich", "lmtest", "broom",
-  "msm", "duckdb", "ggplot2"
+  "dplyr", "tidyr", "multiwayvcov", "sandwich", "lmtest", "broom", "msm", "ggplot2"
 )
 
 core_unloaded <- function() {
