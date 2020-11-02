@@ -59,11 +59,22 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
                     sep = "\t",
                     stringsAsFactors = FALSE)
 
-    dbWriteTable(
+    if (any("year" %in% colnames(d))) {
+      l <- list("year", "exporter", "importer")
+    } else {
+      l <- list("exporter", "importer")
+    }
+
+    if (any("country" %in% colnames(d))) {
+      l <- list("country")
+    }
+
+    dplyr::copy_to(
       yotov_db(),
-      tout,
       d,
-      overwrite = TRUE
+      tout,
+      indexes = l,
+      temporary = FALSE
     )
 
     rm(d, tout)

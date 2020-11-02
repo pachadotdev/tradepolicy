@@ -22,11 +22,3 @@ text_col <- function(x) {
 
   if (isTRUE(theme$dark)) crayon::white(x) else crayon::black(x)
 }
-
-
-style_grey <- function(level, ...) {
-  crayon::style(
-    paste0(...),
-    crayon::make_style(grDevices::grey(level), grey = TRUE)
-  )
-}

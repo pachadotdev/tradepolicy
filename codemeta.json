@@ -5,10 +5,10 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "yotover",
-  "description": "On-disk embedded database with SQL versions of the original \n    datasets from the book An Advanced Guide to Trade Policy Analysis by Yotov, \n    et. al (2016)and functions to report regressions with clustered robust\n    standard errors.",
+  "description": "On-disk embedded database with SQL versions of the original \n    datasets from Yotov, et al (2016, ISBN: 978-92-870-4367-2) and functions to \n    report regressions with clustered robust standard errors.",
   "name": "yotover: An Advanced Guide to Trade Policy Analysis",
   "license": "https://spdx.org/licenses/CC-BY-4.0",
-  "version": "0.1",
+  "version": "0.2",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -299,18 +299,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=duckdb"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "R.utils",
-      "name": "R.utils",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=R.utils"
     },
     {
       "@type": "SoftwareApplication",

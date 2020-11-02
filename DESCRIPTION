@@ -1,6 +1,6 @@
 Package: yotover
 Title: An Advanced Guide to Trade Policy Analysis
-Version: 0.1
+Version: 0.2
 Authors@R: c( 
         person(given = "Mauricio",
                family = "Vargas",
@@ -24,7 +24,7 @@ License: CC BY 4.0
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1.9000
+RoxygenNote: 7.1.1
 Imports:
     magrittr,
     tibble,
