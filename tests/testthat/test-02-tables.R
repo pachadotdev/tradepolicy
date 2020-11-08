@@ -35,14 +35,14 @@ test_that("Functions from Ch.1 work as expected, part 1", {
 
   summary1 <- yotov_model_summary(
     formula = "log_trade ~ log_dist + cntg + lang + clny",
-    method = "lm",
-    data = d_test
+    data = d_test,
+    method = "lm"
   )
 
   summary2 <- yotov_model_summary(
     formula = "trade ~ log_dist + cntg + lang + clny",
-    method = "glm",
-    data = d_test
+    data = d_test,
+    method = "glm"
   )
 
   expect_is(summary1, "list")
@@ -80,15 +80,15 @@ test_that("Functions from Ch.1 work as expected, part 2", {
   summary3 <- yotov_model_summary2(
     formula = "log_trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
-    method = "lm",
-    data = d_test
+    data = d_test,
+    method = "lm"
   )
 
   summary4 <- yotov_model_summary2(
     formula = "trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
-    method = "glm",
-    data = d_test
+    data = d_test,
+    method = "glm"
   )
 
   expect_is(summary3, "list")
@@ -125,15 +125,15 @@ test_that("Functions from Ch.1 work as expected, part 3", {
   summary5 <- yotov_model_summary3(
     formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
-    method = "lm",
-    data = d_test
+    data = d_test,
+    method = "glm"
   )
 
   summary6 <- yotov_model_summary3(
     formula = "trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
-    method = "glm",
-    data = d_test
+    data = d_test,
+    method = "glm"
   )
 
   expect_is(summary5, "list")

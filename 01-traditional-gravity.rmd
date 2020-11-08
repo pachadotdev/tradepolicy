@@ -131,7 +131,7 @@ summary(fit_ols)
 ```
 
 Now the model is almost ready! Now we only need to stick to the methodology from
-@yotov2016advanced and cluster the standard errors by country pair (see the note in page 42, it is extremely important). This is not straightforward and requieres additional work.
+@yotov2016advanced and cluster the standard errors by country pair (see the note in page 42, it is extremely important). This is not straightforward and requires additional work.
 
 The `yotover` package provides a nice function to do this and more. Please read
 the documentation of the package and look the `yotov_model_summary()` function, it 
@@ -150,8 +150,8 @@ Finally, here is the model as reported in the book:
 ```{r ch1_app1_ols_2}
 yotov_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e",
-  method = "lm",
-  data = filter(ch1_application1_2, trade > 0)
+  data = filter(ch1_application1_2, trade > 0),
+  method = "lm"
 )
 ```
 
@@ -183,8 +183,8 @@ Fitting the regression is straightforward, it's just about adding more regressor
 yotov_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
     log_remoteness_exp + log_remoteness_imp",
-  method = "lm",
-  data = filter(ch1_application1_2, trade > 0)
+  data = filter(ch1_application1_2, trade > 0),
+  method = "lm"
 )
 ```
 
@@ -208,8 +208,8 @@ Now we can easily generate a list as we did with the previous models:
 ```{r ch1_app1_fe_1}
 yotov_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
-  method = "lm",
-  data = filter(ch1_application1_2, trade > 0)
+  data = filter(ch1_application1_2, trade > 0),
+  method = "lm"
 )
 ```
 
@@ -246,8 +246,8 @@ We can obtain a detailed list as in the previous examples:
 ```{r ch1_app1_ppml_2}
 yotov_model_summary(
   formula = "trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
-  method = "glm",
-  data = ch1_application1_2
+  data = ch1_application1_2,
+  method = "glm"
 )
 ```
 
@@ -321,8 +321,8 @@ yotov_model_summary2(
   formula = "log_trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
-  method = "lm",
-  data = filter(ch1_application2_2, importer != exporter, trade > 0)
+  data = filter(ch1_application2_2, importer != exporter, trade > 0),
+  method = "lm"
 )
 ```
 
@@ -337,8 +337,8 @@ yotov_model_summary2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + 
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 + 
     cntg + lang + clny + exp_year + imp_year",
-  method = "glm",
-  data = filter(ch1_application2_2, importer != exporter)
+  data = filter(ch1_application2_2, importer != exporter),
+  method = "lm"
 )
 ```
 
@@ -351,8 +351,8 @@ yotov_model_summary2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + 
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + log_dist_intra",
-  method = "glm",
-  data = ch1_application2_2
+  data = ch1_application2_2,
+  method = "glm"
 )
 ```
 
@@ -365,8 +365,8 @@ yotov_model_summary2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + 
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + log_dist_intra + smctry",
-  method = "glm",
-  data = ch1_application2_2
+  data = ch1_application2_2,
+  method = "glm"
 )
 ```
 
@@ -379,8 +379,8 @@ yotov_model_summary2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + 
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + intra_pair",
-  method = "glm",
-  data = ch1_application2_2
+  data = ch1_application2_2,
+  method = "glm"
 )
 ```
 
@@ -437,8 +437,8 @@ With the data from above, the model specification is straightforward:
 yotov_model_summary3(
   formula = "log_trade ~ 0 + log_dist + cntg + lang + clny + 
     rta + exp_year + imp_year",
-  method = "lm",
-  data = filter(ch1_application3_2, trade > 0, importer != exporter)
+  data = filter(ch1_application3_2, trade > 0, importer != exporter),
+  method = "lm"
 )
 ```
 
@@ -450,8 +450,8 @@ The model specification is very similar to OLS and we only need to change the fu
 yotov_model_summary3(
   formula = "trade ~ 0 + log_dist + cntg + lang + clny + 
     rta + exp_year + imp_year",
-  method = "glm",
-  data = filter(ch1_application3_2, importer != exporter)
+  data = filter(ch1_application3_2, importer != exporter),
+  method = "glm"
 )
 ```
 
@@ -463,8 +463,8 @@ The model specification is quite the same as PPML and we only need to add the va
 yotov_model_summary3(
   formula = "trade ~ 0 + log_dist + cntg + lang + clny + 
     rta + exp_year + imp_year + intl_brdr",
-  method = "glm",
-  data = ch1_application3_2
+  data = ch1_application3_2,
+  method = "glm"
 )
 ```
 
@@ -475,8 +475,8 @@ The model specification consists in including the `rta` variable and the fixed e
 ```{r ch1_app3_endg_1}
 yotov_model_summary3(
   formula = "trade ~ 0 + rta + exp_year + imp_year + pair_id_2",
-  method = "glm",
-  data = filter(ch1_application3_2, sum_trade > 0)
+  data = filter(ch1_application3_2, sum_trade > 0),
+  method = "glm"
 )
 ```
 
@@ -487,8 +487,8 @@ We need to modify the previous model in order to include the variable `rta_lead4
 ```{r ch1_app3_lead_1}
 yotov_model_summary3(
   formula = "trade ~ 0 + rta + rta_lead4 + exp_year + imp_year + pair_id_2",
-  method = "glm",
-  data = filter(ch1_application3_2, sum_trade > 0)
+  data = filter(ch1_application3_2, sum_trade > 0),
+  method = "glm"
 )
 ```
 
@@ -500,8 +500,8 @@ Instead of future-lagged `rta` variable, as in the previous model, we modify the
 yotov_model_summary3(
   formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
     exp_year + imp_year + pair_id_2",
-  method = "glm",
-  data = filter(ch1_application3_2, sum_trade > 0)
+  data = filter(ch1_application3_2, sum_trade > 0),
+  method = "glm"
 )
 ```
 
@@ -515,7 +515,7 @@ yotov_model_summary3(
     intl_border_1986 + intl_border_1990 + intl_border_1994 +
     intl_border_1998 + intl_border_2002 +
     exp_year + imp_year + pair_id_2",
-  method = "glm",
-  data = filter(ch1_application3_2, sum_trade > 0)
+  data = filter(ch1_application3_2, sum_trade > 0),
+  method = "glm"
 )
 ```

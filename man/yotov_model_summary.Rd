@@ -4,14 +4,14 @@
 \alias{yotov_model_summary}
 \title{Traditional Gravity Estimates Reporting Style}
 \usage{
-yotov_model_summary(formula, method, data)
+yotov_model_summary(formula, data, method)
 }
 \arguments{
 \item{formula}{A formula for the model}
 
-\item{method}{Regression method (lm or glm)}
-
 \item{data}{A tibble or data.frame}
+
+\item{method}{Regression method (lm or glm)}
 }
 \description{
 Computes clustered standard errors, tests on coefficients with

@@ -24,7 +24,7 @@
 <meta name="author" content="Mauricio “Pachá” Vargas Sepúlveda" />
 
 
-<meta name="date" content="2020-11-01" />
+<meta name="date" content="2020-11-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,6 +51,8 @@
 
 
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
@@ -948,8 +950,8 @@ We need to duplicate some columns under new names for the loop operations, becau
 <span id="cb106-5"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-5"></a>    <span class="dt">rgdp_full =</span> y_full <span class="op">/</span><span class="st"> </span>(imr_full<span class="op">^</span>(<span class="dv">1</span> <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>sigma))),</span>
 <span id="cb106-6"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-6"></a>    <span class="dt">change_rgdp_full =</span> (rgdp_bln <span class="op">/</span><span class="st"> </span>rgdp_full <span class="op">-</span><span class="st"> </span><span class="dv">1</span>) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></span>
 <span id="cb106-7"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-7"></a>  ) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb106-8"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-8"></a><span class="st">  </span><span class="kw">select</span>(exporter, change_xi_cfl, change_xi_full, change_rgdp_full,</span>
-<span id="cb106-9"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-9"></a>         change_imr_full, change_omr_full, change_p_i_full)</span>
+<span id="cb106-8"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-8"></a><span class="st">  </span><span class="kw">select</span>(exporter, change_xi_cfl, change_xi_full, </span>
+<span id="cb106-9"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-9"></a>         change_rgdp_full, change_imr_full, change_omr_full, change_p_i_full)</span>
 <span id="cb106-10"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-10"></a></span>
 <span id="cb106-11"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-11"></a>indexes_final <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb106-12"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb106-12"></a><span class="st">  </span><span class="kw">mutate_if</span>(is.numeric, <span class="cf">function</span>(x) <span class="kw">round</span>(x, <span class="dv">2</span>))</span></code></pre></div>

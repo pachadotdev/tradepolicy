@@ -4,11 +4,11 @@
 #' clustered standard errors and RESET test.
 #'
 #' @param formula A formula for the model
-#' @param method Regression method (lm or glm)
 #' @param data A tibble or data.frame
+#' @param method Regression method (lm or glm)
 #' @export
 
-yotov_model_summary <- function(formula, method, data) {
+yotov_model_summary <- function(formula, data, method) {
   stopifnot(any(method %in% c("lm", "glm")))
 
   pair <- "pair_id" # linking variable
@@ -86,11 +86,11 @@ yotov_model_summary <- function(formula, method, data) {
 #' clustered standard errors and delta method for percent change in log.
 #'
 #' @param formula A formula for the model
-#' @param method Regression method (lm or glm)
 #' @param data A tibble or data.frame
+#' @param method Regression method (lm or glm)
 #' @export
 
-yotov_model_summary2 <- function(formula, method, data) {
+yotov_model_summary2 <- function(formula, data, method) {
   stopifnot(any(method %in% c("lm", "glm")))
 
   pair <- "pair_id" # linking variable
@@ -168,11 +168,11 @@ yotov_model_summary2 <- function(formula, method, data) {
 #' clustered standard errors and delta method for percent change in log.
 #'
 #' @param formula A formula for the model
-#' @param method Regression method (lm or glm)
 #' @param data A tibble or data.frame
+#' @param method Regression method (lm or glm)
 #' @export
 
-yotov_model_summary3 <- function(formula, method, data) {
+yotov_model_summary3 <- function(formula, data, method) {
   stopifnot(any(method %in% c("lm", "glm")))
 
   pair <- "pair_id" # linking variable

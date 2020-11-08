@@ -24,7 +24,7 @@
 <meta name="author" content="Mauricio “Pachá” Vargas Sepúlveda" />
 
 
-<meta name="date" content="2020-11-01" />
+<meta name="date" content="2020-11-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,6 +51,8 @@
 
 
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
@@ -339,7 +341,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## Multiple R-squared:  0.7585, Adjusted R-squared:  0.7585 
 ## F-statistic: 1.345e+04 on 6 and 25682 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Now the model is almost ready! Now we only need to stick to the methodology from
-<span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> and cluster the standard errors by country pair (see the note in page 42, it is extremely important). This is not straightforward and requieres additional work.</p>
+<span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> and cluster the standard errors by country pair (see the note in page 42, it is extremely important). This is not straightforward and requires additional work.</p>
 <p>The <code>yotover</code> package provides a nice function to do this and more. Please read
 the documentation of the package and look the <code>yotov_model_summary()</code> function, it
 summarises the model in the exact way as reported in the book by providing:</p>
@@ -354,8 +356,8 @@ summarises the model in the exact way as reported in the book by providing:</p>
 <p>Finally, here is the model as reported in the book:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-1"></a><span class="kw">yotov_model_summary</span>(</span>
 <span id="cb15-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;log_trade ~ log_dist + cntg + lang + clny + log_y + log_e&quot;</span>,</span>
-<span id="cb15-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-3"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>,</span>
-<span id="cb15-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-4"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application1_<span class="dv">2</span>, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb15-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-3"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application1_<span class="dv">2</span>, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>),</span>
+<span id="cb15-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-4"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span></span>
 <span id="cb15-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-5"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 7 x 5
@@ -405,8 +407,8 @@ summarises the model in the exact way as reported in the book by providing:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-1"></a><span class="kw">yotov_model_summary</span>(</span>
 <span id="cb17-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +</span></span>
 <span id="cb17-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-3"></a><span class="st">    log_remoteness_exp + log_remoteness_imp&quot;</span>,</span>
-<span id="cb17-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-4"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>,</span>
-<span id="cb17-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-5"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application1_<span class="dv">2</span>, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb17-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-4"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application1_<span class="dv">2</span>, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>),</span>
+<span id="cb17-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-5"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span></span>
 <span id="cb17-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-6"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 9 x 5
@@ -452,8 +454,8 @@ account for exporter-time and importer-time fixed effects respectively. See page
 <p>Now we can easily generate a list as we did with the previous models:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-1"></a><span class="kw">yotov_model_summary</span>(</span>
 <span id="cb19-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;log_trade ~ log_dist + cntg + lang + clny + exp_year + imp_year&quot;</span>,</span>
-<span id="cb19-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-3"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>,</span>
-<span id="cb19-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-4"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application1_<span class="dv">2</span>, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb19-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-3"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application1_<span class="dv">2</span>, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>),</span>
+<span id="cb19-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-4"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span></span>
 <span id="cb19-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-5"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 5 x 5
@@ -501,8 +503,8 @@ X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + 
 <p>We can obtain a detailed list as in the previous examples:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-1"></a><span class="kw">yotov_model_summary</span>(</span>
 <span id="cb22-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ log_dist + cntg + lang + clny + exp_year + imp_year&quot;</span>,</span>
-<span id="cb22-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-3"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb22-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-4"></a>  <span class="dt">data =</span> ch1_application1_<span class="dv">2</span></span>
+<span id="cb22-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-3"></a>  <span class="dt">data =</span> ch1_application1_<span class="dv">2</span>,</span>
+<span id="cb22-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-4"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb22-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-5"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 5 x 5
@@ -583,8 +585,8 @@ The difference with respect to the last section is that now we need to separate 
 <span id="cb26-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;log_trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +</span></span>
 <span id="cb26-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-3"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg +</span></span>
 <span id="cb26-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-4"></a><span class="st">    lang + clny + exp_year + imp_year&quot;</span>,</span>
-<span id="cb26-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-5"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>,</span>
-<span id="cb26-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-6"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application2_<span class="dv">2</span>, importer <span class="op">!=</span><span class="st"> </span>exporter, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb26-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-5"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application2_<span class="dv">2</span>, importer <span class="op">!=</span><span class="st"> </span>exporter, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>),</span>
+<span id="cb26-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-6"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span></span>
 <span id="cb26-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-7"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 9 x 5
@@ -626,34 +628,34 @@ The difference with respect to the last section is that now we need to separate 
 <span id="cb28-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist_1986 + log_dist_1990 + </span></span>
 <span id="cb28-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-3"></a><span class="st">    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 + </span></span>
 <span id="cb28-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-4"></a><span class="st">    cntg + lang + clny + exp_year + imp_year&quot;</span>,</span>
-<span id="cb28-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-5"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb28-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-6"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application2_<span class="dv">2</span>, importer <span class="op">!=</span><span class="st"> </span>exporter)</span>
+<span id="cb28-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-5"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application2_<span class="dv">2</span>, importer <span class="op">!=</span><span class="st"> </span>exporter),</span>
+<span id="cb28-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-6"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span></span>
 <span id="cb28-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-7"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 9 x 5
-##   term          estimate std.error statistic   p.value
-##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-## 1 log_dist_1986   -0.859    0.0376    -22.9  1.44e-115
-## 2 log_dist_1990   -0.834    0.0382    -21.8  1.97e-105
-## 3 log_dist_1994   -0.835    0.0356    -23.4  1.75e-121
-## 4 log_dist_1998   -0.847    0.0359    -23.6  4.50e-123
-## 5 log_dist_2002   -0.848    0.0321    -26.4  1.08e-153
-## 6 log_dist_2006   -0.836    0.0317    -26.3  5.88e-153
-## 7 cntg             0.437    0.0844      5.18 2.23e-  7
-## 8 lang             0.248    0.0777      3.19 1.45e-  3
-## 9 clny            -0.222    0.118      -1.88 5.97e-  2
+##   term          estimate std.error statistic  p.value
+##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 log_dist_1986    245.       205.     1.19  2.34e- 1
+## 2 log_dist_1990   -167.       168.    -0.994 3.20e- 1
+## 3 log_dist_1994   -423.       139.    -3.03  2.41e- 3
+## 4 log_dist_1998   -757.       140.    -5.41  6.50e- 8
+## 5 log_dist_2002  -1018.       182.    -5.58  2.41e- 8
+## 6 log_dist_2006  -2221.       333.    -6.67  2.55e-11
+## 7 cntg            6949.      2425.     2.87  4.17e- 3
+## 8 lang             -57.4      304.    -0.189 8.50e- 1
+## 9 clny            -744.       696.    -1.07  2.85e- 1
 ## 
 ## $nobs
 ## [1] 28152
 ## 
 ## $pct_chg_log_dist
-## [1] -2.750345
+## [1] -1008.222
 ## 
 ## $pcld_std_err
-## [1] 3.049186
+## [1] 747.5644
 ## 
 ## $pcld_std_err_pval
-## [1] 0.3670606
+## [1] 0.1774412
 ## 
 ## $intr
 ## [1] FALSE
@@ -668,8 +670,8 @@ The difference with respect to the last section is that now we need to separate 
 <span id="cb30-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist_1986 + log_dist_1990 + </span></span>
 <span id="cb30-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-3"></a><span class="st">    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +</span></span>
 <span id="cb30-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-4"></a><span class="st">    cntg + lang + clny + exp_year + imp_year + log_dist_intra&quot;</span>,</span>
-<span id="cb30-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-5"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb30-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-6"></a>  <span class="dt">data =</span> ch1_application2_<span class="dv">2</span></span>
+<span id="cb30-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-5"></a>  <span class="dt">data =</span> ch1_application2_<span class="dv">2</span>,</span>
+<span id="cb30-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-6"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb30-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-7"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 10 x 5
@@ -711,8 +713,8 @@ The difference with respect to the last section is that now we need to separate 
 <span id="cb32-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist_1986 + log_dist_1990 + </span></span>
 <span id="cb32-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-3"></a><span class="st">    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +</span></span>
 <span id="cb32-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-4"></a><span class="st">    cntg + lang + clny + exp_year + imp_year + log_dist_intra + smctry&quot;</span>,</span>
-<span id="cb32-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-5"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb32-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-6"></a>  <span class="dt">data =</span> ch1_application2_<span class="dv">2</span></span>
+<span id="cb32-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-5"></a>  <span class="dt">data =</span> ch1_application2_<span class="dv">2</span>,</span>
+<span id="cb32-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-6"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb32-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-7"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 11 x 5
@@ -755,8 +757,8 @@ The difference with respect to the last section is that now we need to separate 
 <span id="cb34-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist_1986 + log_dist_1990 + </span></span>
 <span id="cb34-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-3"></a><span class="st">    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +</span></span>
 <span id="cb34-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-4"></a><span class="st">    cntg + lang + clny + exp_year + imp_year + intra_pair&quot;</span>,</span>
-<span id="cb34-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-5"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb34-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-6"></a>  <span class="dt">data =</span> ch1_application2_<span class="dv">2</span></span>
+<span id="cb34-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-5"></a>  <span class="dt">data =</span> ch1_application2_<span class="dv">2</span>,</span>
+<span id="cb34-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-6"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb34-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-7"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 9 x 5
@@ -831,8 +833,8 @@ We need to create additional variables, in comparison to the previous examples, 
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-1"></a><span class="kw">yotov_model_summary3</span>(</span>
 <span id="cb38-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;log_trade ~ 0 + log_dist + cntg + lang + clny + </span></span>
 <span id="cb38-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-3"></a><span class="st">    rta + exp_year + imp_year&quot;</span>,</span>
-<span id="cb38-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-4"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>,</span>
-<span id="cb38-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-5"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>, importer <span class="op">!=</span><span class="st"> </span>exporter)</span>
+<span id="cb38-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-4"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>, importer <span class="op">!=</span><span class="st"> </span>exporter),</span>
+<span id="cb38-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-5"></a>  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span></span>
 <span id="cb38-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-6"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 5 x 5
@@ -865,8 +867,8 @@ We need to create additional variables, in comparison to the previous examples, 
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-1"></a><span class="kw">yotov_model_summary3</span>(</span>
 <span id="cb40-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist + cntg + lang + clny + </span></span>
 <span id="cb40-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-3"></a><span class="st">    rta + exp_year + imp_year&quot;</span>,</span>
-<span id="cb40-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-4"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb40-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-5"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, importer <span class="op">!=</span><span class="st"> </span>exporter)</span>
+<span id="cb40-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-4"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, importer <span class="op">!=</span><span class="st"> </span>exporter),</span>
+<span id="cb40-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-5"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb40-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-6"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 5 x 5
@@ -899,8 +901,8 @@ We need to create additional variables, in comparison to the previous examples, 
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-1"></a><span class="kw">yotov_model_summary3</span>(</span>
 <span id="cb42-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist + cntg + lang + clny + </span></span>
 <span id="cb42-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-3"></a><span class="st">    rta + exp_year + imp_year + intl_brdr&quot;</span>,</span>
-<span id="cb42-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-4"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb42-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-5"></a>  <span class="dt">data =</span> ch1_application3_<span class="dv">2</span></span>
+<span id="cb42-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-4"></a>  <span class="dt">data =</span> ch1_application3_<span class="dv">2</span>,</span>
+<span id="cb42-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-5"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb42-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-6"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 5 x 5
@@ -932,8 +934,8 @@ We need to create additional variables, in comparison to the previous examples, 
 <p>The model specification consists in including the <code>rta</code> variable and the fixed effects <code>exp_year</code>, <code>imp_year</code> and <code>pair_id_2</code> to account for domestic trade:</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-1"></a><span class="kw">yotov_model_summary3</span>(</span>
 <span id="cb44-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + rta + exp_year + imp_year + pair_id_2&quot;</span>,</span>
-<span id="cb44-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-3"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb44-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-4"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, sum_trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb44-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-3"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, sum_trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>),</span>
+<span id="cb44-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-4"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb44-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-5"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 1 x 5
@@ -961,8 +963,8 @@ We need to create additional variables, in comparison to the previous examples, 
 <p>We need to modify the previous model in order to include the variable <code>rta_lead4</code> and to consider where <code>sum_trade</code> is greater than zero:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-1"></a><span class="kw">yotov_model_summary3</span>(</span>
 <span id="cb46-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + rta + rta_lead4 + exp_year + imp_year + pair_id_2&quot;</span>,</span>
-<span id="cb46-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-3"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb46-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-4"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, sum_trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb46-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-3"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, sum_trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>),</span>
+<span id="cb46-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-4"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb46-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-5"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 2 x 5
@@ -992,8 +994,8 @@ We need to create additional variables, in comparison to the previous examples, 
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-1"></a><span class="kw">yotov_model_summary3</span>(</span>
 <span id="cb48-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-2"></a>  <span class="dt">formula =</span> <span class="st">&quot;trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +</span></span>
 <span id="cb48-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-3"></a><span class="st">    exp_year + imp_year + pair_id_2&quot;</span>,</span>
-<span id="cb48-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-4"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb48-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-5"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, sum_trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb48-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-4"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, sum_trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>),</span>
+<span id="cb48-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-5"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb48-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-6"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 4 x 5
@@ -1027,8 +1029,8 @@ We need to create additional variables, in comparison to the previous examples, 
 <span id="cb50-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb50-3"></a><span class="st">    intl_border_1986 + intl_border_1990 + intl_border_1994 +</span></span>
 <span id="cb50-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb50-4"></a><span class="st">    intl_border_1998 + intl_border_2002 +</span></span>
 <span id="cb50-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb50-5"></a><span class="st">    exp_year + imp_year + pair_id_2&quot;</span>,</span>
-<span id="cb50-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb50-6"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span>,</span>
-<span id="cb50-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb50-7"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, sum_trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb50-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb50-6"></a>  <span class="dt">data =</span> <span class="kw">filter</span>(ch1_application3_<span class="dv">2</span>, sum_trade <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>),</span>
+<span id="cb50-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb50-7"></a>  <span class="dt">method =</span> <span class="st">&quot;glm&quot;</span></span>
 <span id="cb50-8"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb50-8"></a>)</span></code></pre></div>
 <pre><code>## $tidy_coefficients
 ## # A tibble: 9 x 5

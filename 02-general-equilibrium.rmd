@@ -904,8 +904,8 @@ indexes_final <- exporter_indexes %>%
     rgdp_full = y_full / (imr_full^(1 / (1 - sigma))),
     change_rgdp_full = (rgdp_bln / rgdp_full - 1) * 100
   ) %>% 
-  select(exporter, change_xi_cfl, change_xi_full, change_rgdp_full,
-         change_imr_full, change_omr_full, change_p_i_full)
+  select(exporter, change_xi_cfl, change_xi_full, 
+         change_rgdp_full, change_imr_full, change_omr_full, change_p_i_full)
 
 indexes_final %>% 
   mutate_if(is.numeric, function(x) round(x, 2))
