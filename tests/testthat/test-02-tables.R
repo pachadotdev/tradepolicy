@@ -126,7 +126,7 @@ test_that("Functions from Ch.1 work as expected, part 3", {
     formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
     data = d_test,
-    method = "glm"
+    method = "lm"
   )
 
   summary6 <- yotov_model_summary3(
