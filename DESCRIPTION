@@ -44,16 +44,13 @@ Imports:
     duckdb,
     rappdirs,
     httr,
-    scales,
-    munsell,
-    pander,
-    gtable,
-    colorspace,
     rstudioapi
 Suggests:
     devtools,
     usethis,
     testthat,
-    covr
+    covr,
+    bookdown,
+    pander
 Depends: 
     R (>= 3.5)

@@ -1,5 +1,5 @@
 olddir <- Sys.getenv("YOTOV_DB_DIR")
-Sys.setenv(YOTOV_DB_DIR = normalizePath(file.path(getwd(), "localdb"),
+Sys.setenv(YOTOV_DB_DIR = normalizePath(file.path(getwd(), "yotover"),
                                         mustWork = FALSE
 ))
 
