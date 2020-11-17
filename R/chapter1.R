@@ -20,7 +20,7 @@ yotov_model_summary <- function(formula, data, method) {
   }
   if (method == "glm") {
     fit <- stats::glm(stats::as.formula(formula), family = stats::quasipoisson(link = "log"),
-               data = data)
+                      data = data)
   }
 
   is_ppml <- any(class(fit) %in% "glm")
@@ -49,8 +49,8 @@ yotov_model_summary <- function(formula, data, method) {
     data$predict2 <- (stats::predict(fit))^2 # Get fitted values of the linear index, not of trade
     form_reset <- stats::update(fit$formula, ~ predict2 + .)
     fit_reset <- stats::glm(form_reset,
-                     family = stats::quasipoisson(link = "log"),
-                     data = data)
+                            family = stats::quasipoisson(link = "log"),
+                            data = data)
     vcov_cluster_reset <- multiwayvcov::cluster.vcov(
       fit_reset,
       cluster = data[, pair],
@@ -60,9 +60,8 @@ yotov_model_summary <- function(formula, data, method) {
     res <- res[2,4]
 
     # r2: http://personal.lse.ac.uk/tenreyro/r2.do
-    data$fitted <- fit$fitted.values
     actual <- as.numeric(data$trade)
-    predicted <- as.numeric(data$fitted)
+    predicted <- as.numeric(fit$fitted.values)
     r2 <- (stats::cor(actual, predicted, method = "kendall"))^2 # kendall mimics stata
   } else {
     res <- lmtest::resettest(fit, power = 2)$p.value
@@ -105,7 +104,7 @@ yotov_model_summary2 <- function(formula, data, method) {
   }
   if (method == "glm") {
     fit <- stats::glm(stats::as.formula(formula), family = stats::quasipoisson(link = "log"),
-               data = data)
+                      data = data)
   }
 
   contains_intr <- any(grepl(paste0("^", intr, "|^", csfe), names(fit$coefficients)))
@@ -188,7 +187,7 @@ yotov_model_summary3 <- function(formula, data, method) {
   }
   if (method == "glm") {
     fit <- stats::glm(stats::as.formula(formula), family = stats::quasipoisson(link = "log"),
-               data = data)
+                      data = data)
   }
 
   contains_intr <- any(grepl(paste0("^", intr, "|^", brdr, "|^", pair2),
@@ -218,8 +217,8 @@ yotov_model_summary3 <- function(formula, data, method) {
     coef_test <- broom::tidy(fit) %>%
       dplyr::filter(
         !grepl(paste0("^", etfe, "|^", itfe, "|^", brdr, "|^", pair2),
-        term
-      ))
+               term
+        ))
   }
 
   beta_rta <- fit$coefficients[grepl("^rta", names(fit$coefficients))]

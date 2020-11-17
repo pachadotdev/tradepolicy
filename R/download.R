@@ -42,11 +42,8 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
   try(dir.create(destdir))
   utils::unzip(zfile, overwrite = TRUE, exdir = destdir)
 
-  for (tab in dbListTables(yotov_db())) {
-    dbRemoveTable(yotov_db(), tab)
-  }
-
   yotov_db_disconnect()
+  try(unlink(yotov_path(), recursive = TRUE))
 
   finp <- list.files(destdir, full.names = TRUE)
 
@@ -116,8 +113,8 @@ get_gh_release_file <- function(repo, tag_name = NULL, destdir = tempdir(),
     message("This is pre-release/sample data! It has not been cleaned or validated.")
   }
 
-  download_url <- release_obj[[1]]$assets[[1]]$url
-  filename <- basename(release_obj[[1]]$assets[[1]]$browser_download_url)
+  download_url <- release_obj[[1]]$assets[[2]]$url
+  filename <- basename(release_obj[[1]]$assets[[2]]$browser_download_url)
   out_path <- normalizePath(file.path(destdir, filename), mustWork = FALSE)
   response <- GET(
     download_url,
@@ -130,25 +127,3 @@ get_gh_release_file <- function(repo, tag_name = NULL, destdir = tempdir(),
   attr(out_path, "ver") <- release_obj[[1]]$tag_name
   return(out_path)
 }
-
-#' Remove the local Yotov database
-#'
-#' Deletes all tables from the local database.
-#'
-#' @return NULL
-#' @export
-#' @importFrom DBI dbListTables dbRemoveTable
-#'
-#' @examples
-#' \donttest{
-#' \dontrun{
-#' yotov_db_delete()
-#' }
-#' }
-yotov_db_delete <- function() {
-  for (t in yotov_db_tables()) {
-    dbRemoveTable(yotov_db(), t)
-  }
-  update_yotov_pane()
-}
-

@@ -111,7 +111,6 @@ yotov_db_disconnect_ <- function(environment = yotover_cache) {
   db <- mget("yotov_db", envir = yotover_cache, ifnotfound = NA)[[1]]
   if (inherits(db, "DBIConnection")) {
     DBI::dbDisconnect(db, shutdown = TRUE)
-    duckdb::duckdb_shutdown(duckdb::duckdb())
   }
   observer <- getOption("connectionObserver")
   if (!is.null(observer)) {

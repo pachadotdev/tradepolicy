@@ -29,5 +29,5 @@ test_that("Tables fail when database is deleted", {
   }
 })
 
-unlink(Sys.getenv("YOTOV_DB_DIR"), recursive = TRUE)
+try(unlink(Sys.getenv("YOTOV_DB_DIR"), recursive = TRUE))
 Sys.setenv(YOTOV_DB_DIR = olddir)

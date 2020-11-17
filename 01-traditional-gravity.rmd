@@ -84,7 +84,7 @@ ch1_application1_2 <- ch1_application1_2 %>%
   )
 ```
 
-To create the variables for the OLS with Fixed Effects Model, we followed box #1 in page 44 from @yotov2016advanced:
+To create the variables for the OLS with Fixed Effects Model, we followed box #1 in page 44 from @yotov2016advanced. We combine both exporter and importer variables with the year in order to create the fixed effects variables:
 
 ```{r ch1_app1_data_5}
 ch1_application1_2 <- ch1_application1_2 %>%
@@ -175,9 +175,7 @@ $$
 
 See page 43 in @yotov2016advanced for a full detail of each variable.
 
-We can start from the dataset for the OLS model, and add the additional variables to it. Our ch1_approach follows box #1 in page 43 from @yotov2016advanced:
-
-Fitting the regression is straightforward, it's just about adding more regressors to what we did in the last section, and we can create a list with a summary for the model:
+Our approach follows box #1 in page 43 from @yotov2016advanced. Fitting the regression is straightforward, it's just about adding more regressors to what we did in the last section, and we can create a list with a summary for the model:
 
 ```{r ch1_app1_ols_remoteness_1}
 yotov_model_summary(
@@ -200,8 +198,6 @@ $$
 
 Where the added terms, with respect to the OLS model, are $\pi_{i,t}$ and $\chi_{i,t}$ that
 account for exporter-time and importer-time fixed effects respectively. See page 44 in @yotov2016advanced for a full detail of each variable.
-
-We can start from the dataset for the OLS model, and add the additional variables to it. In this case we take the OLS dataset and combine both exporter and importer variables with the year in order to create the fixed effects variables.
 
 Now we can easily generate a list as we did with the previous models:
 
