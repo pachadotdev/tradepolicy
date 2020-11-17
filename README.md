@@ -6,6 +6,7 @@
 [![GH-actions Linux](https://github.com/pachamaltese/yotover/workflows/check-linux/badge.svg)](https://github.com/pachamaltese/yotover/actions)
 [![CRAN status](https://www.r-pkg.org/badges/version/yotover)](https://cran.r-project.org/package=yotover)
 [![codecov](https://codecov.io/gh/pachamaltese/yotover/branch/main/graph/badge.svg?token=9UOFPQHTF2)](https://codecov.io/gh/pachamaltese/yotover)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4277741.svg)](https://doi.org/10.5281/zenodo.4277741)
 
 This R package, documented in a very similar way to the book [R4DS](), provides functions to replicate the origina Stata results from the book [An Advanced Guide to Trade Policy Analysis](https://vi.unctad.org/tpa/web/Advanced%20Guide%20to%20TPA/readme.pdf). 
 
