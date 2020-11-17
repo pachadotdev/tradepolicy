@@ -32,3 +32,25 @@ install.packages("yotover")
 # install.packages("remotes")
 remotes::install_github("pachamaltese/yotover")
 ```
+
+## Cite this work
+
+If you use `yotover` in academic works or other publication, please cite as follows:
+
+```
+Mauricio Vargas (2020). yotover: An Advanced Guide to Trade Policy Analysis. R
+  package version 0.2. https://pacha.dev/yotover/
+```
+
+BibTeX entry:
+
+```
+@Manual{,
+  title = {yotover: An Advanced Guide to Trade Policy Analysis},
+  author = {Mauricio Vargas},
+  year = {2020},
+  note = {R package version 0.2},
+  url = {https://pacha.dev/yotover/},
+  doi = {10.5281/zenodo.4277741}
+}
+```
