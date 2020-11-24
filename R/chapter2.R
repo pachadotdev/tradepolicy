@@ -14,7 +14,7 @@ yotov_robust_glm <- function(formula, data) {
   fit <- stats::glm(stats::as.formula(formula), family = stats::quasipoisson(link = "log"),
                     data = data)
 
-  vcov_cluster <- multiwayvcov::cluster.vcov(
+  vcov_cluster <- sandwich::vcovCL(
     fit,
     cluster = data[, pair],
     df_correction = TRUE

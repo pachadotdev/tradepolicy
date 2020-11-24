@@ -28,7 +28,7 @@ yotov_model_summary <- function(formula, data, method) {
   contains_etfe <- any(grepl(paste0("^", etfe), names(fit$coefficients)))
   contains_itfe <- any(grepl(paste0("^", itfe), names(fit$coefficients)))
 
-  vcov_cluster <- multiwayvcov::cluster.vcov(
+  vcov_cluster <- sandwich::vcovCL(
     fit,
     cluster = data[, pair],
     df_correction = TRUE
@@ -51,7 +51,7 @@ yotov_model_summary <- function(formula, data, method) {
     fit_reset <- stats::glm(form_reset,
                             family = stats::quasipoisson(link = "log"),
                             data = data)
-    vcov_cluster_reset <- multiwayvcov::cluster.vcov(
+    vcov_cluster_reset <- sandwich::vcovCL(
       fit_reset,
       cluster = data[, pair],
       df_correction = FALSE
@@ -110,7 +110,7 @@ yotov_model_summary2 <- function(formula, data, method) {
   contains_intr <- any(grepl(paste0("^", intr, "|^", csfe), names(fit$coefficients)))
   contains_csfe <- any(grepl(paste0("^", csfe), names(fit$coefficients)))
 
-  vcov_cluster <- multiwayvcov::cluster.vcov(
+  vcov_cluster <- sandwich::vcovCL(
     fit,
     cluster = data[, pair],
     df_correction = TRUE
@@ -193,7 +193,7 @@ yotov_model_summary3 <- function(formula, data, method) {
   contains_intr <- any(grepl(paste0("^", intr, "|^", brdr, "|^", pair2),
                              names(fit$coefficients)))
 
-  vcov_cluster <- multiwayvcov::cluster.vcov(
+  vcov_cluster <- sandwich::vcovCL(
     fit,
     cluster = data[, pair],
     df_correction = TRUE

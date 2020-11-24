@@ -1,6 +1,6 @@
 Package: yotover
 Title: An Advanced Guide to Trade Policy Analysis
-Version: 0.2
+Version: 0.3
 Date: 2020-11-17
 Authors@R: c( 
         person(given = "Mauricio",
@@ -36,7 +36,6 @@ Imports:
     purrr,
     cli,
     crayon,
-    multiwayvcov,
     lmtest,
     broom,
     Matrix,
