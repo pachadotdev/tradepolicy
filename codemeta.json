@@ -8,13 +8,13 @@
   "description": "On-disk embedded database with SQL versions of the original \n    datasets from Yotov, et al (2016, ISBN: 978-92-870-4367-2) and functions to \n    report regressions with clustered robust standard errors.",
   "name": "yotover: An Advanced Guide to Trade Policy Analysis",
   "license": "https://spdx.org/licenses/CC-BY-4.0",
-  "version": "0.2",
+  "version": "0.3.2",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 3.6.3 (2020-02-29)",
+  "runtimePlatform": "R version 4.0.3 (2020-10-10)",
   "author": [
     {
       "@type": "Person",
@@ -72,18 +72,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "usethis",
-      "name": "usethis",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=usethis"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "testthat",
       "name": "testthat",
       "provider": {
@@ -105,30 +93,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=covr"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "bookdown",
-      "name": "bookdown",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=bookdown"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "pander",
-      "name": "pander",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=pander"
     }
   ],
   "softwareRequirements": [
@@ -242,15 +206,15 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "multiwayvcov",
-      "name": "multiwayvcov",
+      "identifier": "sandwich",
+      "name": "sandwich",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=multiwayvcov"
+      "sameAs": "https://CRAN.R-project.org/package=sandwich"
     },
     {
       "@type": "SoftwareApplication",
@@ -323,6 +287,11 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=duckdb"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "utils",
+      "name": "utils"
     },
     {
       "@type": "SoftwareApplication",

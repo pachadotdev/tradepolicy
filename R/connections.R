@@ -1,6 +1,7 @@
 #' @importFrom rappdirs user_data_dir
+#' @importFrom utils packageVersion
 yotov_path <- function() {
-  duckdb_version <- packageVersion('duckdb')
+  duckdb_version <- utils::packageVersion('duckdb')
   sys_yotover_path <- Sys.getenv("yotover_DB_DIR")
   sys_yotover_path <- gsub("\\\\", "/", sys_yotover_path)
   if (sys_yotover_path == "") {
