@@ -48,10 +48,7 @@ Imports:
     rstudioapi
 Suggests:
     devtools,
-    usethis,
     testthat,
-    covr,
-    bookdown,
-    pander
+    covr
 Depends: 
     R (>= 3.5)
