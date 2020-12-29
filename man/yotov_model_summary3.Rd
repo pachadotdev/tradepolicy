@@ -4,16 +4,42 @@
 \alias{yotov_model_summary3}
 \title{Regional Trade Agreements Effects Reporting Style}
 \usage{
-yotov_model_summary3(formula, data, method)
+yotov_model_summary3(
+  formula,
+  data,
+  method = "lm",
+  pair = "pair_id",
+  pair2 = "pair_id_2",
+  etfe = "exp_year",
+  itfe = "imp_year",
+  dist = "log_dist",
+  intr = "log_dist_intra",
+  brdr = "intl_brdr"
+)
 }
 \arguments{
 \item{formula}{A formula for the model}
 
 \item{data}{A tibble or data.frame}
 
-\item{method}{Regression method (lm or glm)}
+\item{method}{Regression method, which can be "lm" (default) or "glm"}
+
+\item{pair}{Inter-national fixed effects column (defaults to "pair_id")}
+
+\item{pair2}{Intra-national fixed effects column (defaults to "pair_id_2")}
+
+\item{etfe}{Exporter time fixed effects column (defaults to "exp_year")}
+
+\item{itfe}{Importer time fixed effects column (defaults to "imp_year")}
+
+\item{dist}{Distance column (defaults to "log_dist")}
+
+\item{intr}{Intra-national distance column (defaults to "log_dist_intra")}
+
+\item{brdr}{Inter-national borders column (defaults to "intl_brdr")}
 }
 \description{
 Computes clustered standard errors, tests on coefficients with
-clustered standard errors and delta method for percent change in log.
+clustered standard errors and returns total RTAs effect with its associated
+standard error.
 }

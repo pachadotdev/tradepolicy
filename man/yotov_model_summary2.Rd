@@ -4,7 +4,17 @@
 \alias{yotov_model_summary2}
 \title{The "Distance Puzzle" Resolved Reporting Style}
 \usage{
-yotov_model_summary2(formula, data, method)
+yotov_model_summary2(
+  formula,
+  data,
+  method = "lm",
+  pair = "pair_id",
+  etfe = "exp_year",
+  itfe = "imp_year",
+  dist = "log_dist",
+  intr = "log_dist_intra",
+  csfe = "intra_pair"
+)
 }
 \arguments{
 \item{formula}{A formula for the model}
@@ -12,8 +22,21 @@ yotov_model_summary2(formula, data, method)
 \item{data}{A tibble or data.frame}
 
 \item{method}{Regression method (lm or glm)}
+
+\item{pair}{Inter-national fixed effects column (defaults to "pair_id")}
+
+\item{etfe}{Exporter time fixed effects column (defaults to "exp_year")}
+
+\item{itfe}{Importer time fixed effects column (defaults to "imp_year")}
+
+\item{dist}{Distance column (defaults to "log_dist")}
+
+\item{intr}{Intra-national distance column (defaults to "log_dist_intra")}
+
+\item{csfe}{Country-specific fixed effects (defaults to "intra_pair")}
 }
 \description{
 Computes clustered standard errors, tests on coefficients with
-clustered standard errors and delta method for percent change in log.
+clustered standard errors and uses the delta method to obtain changes in
+time-based distance estimated coefficients.
 }

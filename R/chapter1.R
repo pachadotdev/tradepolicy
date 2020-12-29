@@ -1,19 +1,19 @@
 #' Traditional Gravity Estimates Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
-#' clustered standard errors and RESET test.
+#' clustered standard errors and obtains RESET test p-value.
 #'
 #' @param formula A formula for the model
 #' @param data A tibble or data.frame
-#' @param method Regression method (lm or glm)
+#' @param method Regression method, which can be "lm" (default) or "glm"
+#' @param pair Inter-national fixed effects column (defaults to "pair_id")
+#' @param etfe Exporter time fixed effects column (defaults to "exp_year")
+#' @param itfe Importer time fixed effects column (defaults to "imp_year")
 #' @export
 
-yotov_model_summary <- function(formula, data, method) {
+yotov_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
+                                etfe = "exp_year", itfe = "imp_year") {
   stopifnot(any(method %in% c("lm", "glm")))
-
-  pair <- "pair_id" # linking variable
-  etfe <- "exp_year" # exporter time fixed effects column
-  itfe <- "imp_year" # importer time fixed effects column
 
   if (method == "lm") {
     fit <- stats::lm(stats::as.formula(formula), data = data)
@@ -82,22 +82,25 @@ yotov_model_summary <- function(formula, data, method) {
 #' The "Distance Puzzle" Resolved Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
-#' clustered standard errors and delta method for percent change in log.
+#' clustered standard errors and uses the delta method to obtain changes in
+#' time-based distance estimated coefficients.
 #'
 #' @param formula A formula for the model
 #' @param data A tibble or data.frame
 #' @param method Regression method (lm or glm)
+#' @param pair Inter-national fixed effects column (defaults to "pair_id")
+#' @param etfe Exporter time fixed effects column (defaults to "exp_year")
+#' @param itfe Importer time fixed effects column (defaults to "imp_year")
+#' @param dist Distance column (defaults to "log_dist")
+#' @param intr Intra-national distance column (defaults to "log_dist_intra")
+#' @param csfe Country-specific fixed effects (defaults to "intra_pair")
 #' @export
 
-yotov_model_summary2 <- function(formula, data, method) {
+yotov_model_summary2 <- function(formula, data, method = "lm",
+                                 pair = "pair_id", etfe = "exp_year",
+                                 itfe = "imp_year", dist = "log_dist",
+                                 intr = "log_dist_intra", csfe = "intra_pair") {
   stopifnot(any(method %in% c("lm", "glm")))
-
-  pair <- "pair_id" # linking variable
-  etfe <- "exp_year" # exporter time fixed effects
-  itfe <- "imp_year" # importer time fixed effects
-  dist <- "log_dist" # pattern of the distance terms fixed effects
-  intr <- "log_dist_intra" # intra-national distance
-  csfe <- "intra_pair" # intra-national fixed effects
 
   if (method == "lm") {
     fit <- stats::lm(stats::as.formula(formula), data = data)
@@ -164,23 +167,27 @@ yotov_model_summary2 <- function(formula, data, method) {
 #' Regional Trade Agreements Effects Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
-#' clustered standard errors and delta method for percent change in log.
+#' clustered standard errors and returns total RTAs effect with its associated
+#' standard error.
 #'
 #' @param formula A formula for the model
 #' @param data A tibble or data.frame
-#' @param method Regression method (lm or glm)
+#' @param method Regression method, which can be "lm" (default) or "glm"
+#' @param pair Inter-national fixed effects column (defaults to "pair_id")
+#' @param pair2 Intra-national fixed effects column (defaults to "pair_id_2")
+#' @param etfe Exporter time fixed effects column (defaults to "exp_year")
+#' @param itfe Importer time fixed effects column (defaults to "imp_year")
+#' @param dist Distance column (defaults to "log_dist")
+#' @param intr Intra-national distance column (defaults to "log_dist_intra")
+#' @param brdr Inter-national borders column (defaults to "intl_brdr")
 #' @export
 
-yotov_model_summary3 <- function(formula, data, method) {
+yotov_model_summary3 <- function(formula, data, method = "lm",
+                                 pair = "pair_id", pair2 = "pair_id_2",
+                                 etfe = "exp_year", itfe = "imp_year",
+                                 dist = "log_dist", intr = "log_dist_intra",
+                                 brdr = "intl_brdr") {
   stopifnot(any(method %in% c("lm", "glm")))
-
-  pair <- "pair_id" # linking variable
-  pair2 <- "pair_id_2" # linking variable for intra-national effects
-  etfe <- "exp_year" # exporter time fixed effects
-  itfe <- "imp_year" # importer time fixed effects
-  dist <- "log_dist" # distance terms fixed effects
-  intr <- "log_dist_intra" # intra-national distance
-  brdr <- "intl_brdr" # international border
 
   if (method == "lm") {
     fit <- stats::lm(stats::as.formula(formula), data = data)

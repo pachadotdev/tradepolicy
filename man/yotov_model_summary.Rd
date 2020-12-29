@@ -4,16 +4,29 @@
 \alias{yotov_model_summary}
 \title{Traditional Gravity Estimates Reporting Style}
 \usage{
-yotov_model_summary(formula, data, method)
+yotov_model_summary(
+  formula,
+  data,
+  method = "lm",
+  pair = "pair_id",
+  etfe = "exp_year",
+  itfe = "imp_year"
+)
 }
 \arguments{
 \item{formula}{A formula for the model}
 
 \item{data}{A tibble or data.frame}
 
-\item{method}{Regression method (lm or glm)}
+\item{method}{Regression method, which can be "lm" (default) or "glm"}
+
+\item{pair}{Inter-national fixed effects column (defaults to "pair_id")}
+
+\item{etfe}{Exporter time fixed effects column (defaults to "exp_year")}
+
+\item{itfe}{Importer time fixed effects column (defaults to "imp_year")}
 }
 \description{
 Computes clustered standard errors, tests on coefficients with
-clustered standard errors and RESET test.
+clustered standard errors and obtains RESET test p-value.
 }
