@@ -1,7 +1,6 @@
 Package: yotover
 Title: An Advanced Guide to Trade Policy Analysis
-Version: 0.3.2
-Date: 2020-11-17
+Version: 0.3.3
 Authors@R: c( 
         person(given = "Mauricio",
                family = "Vargas",
