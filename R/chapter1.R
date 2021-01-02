@@ -30,8 +30,7 @@ yotov_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
 
   vcov_cluster <- sandwich::vcovCL(
     fit,
-    cluster = data[, pair],
-    df_correction = TRUE
+    cluster = data[, pair]
   )
 
   coef_test <- lmtest::coeftest(
@@ -53,8 +52,7 @@ yotov_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
                             data = data)
     vcov_cluster_reset <- sandwich::vcovCL(
       fit_reset,
-      cluster = data[, pair],
-      df_correction = FALSE
+      cluster = data[, pair]
     )
     res <- lmtest::coeftest(fit_reset, vcov_cluster_reset)
     res <- res[2,4]
@@ -115,8 +113,7 @@ yotov_model_summary2 <- function(formula, data, method = "lm",
 
   vcov_cluster <- sandwich::vcovCL(
     fit,
-    cluster = data[, pair],
-    df_correction = TRUE
+    cluster = data[, pair]
   )
 
   coef_test <- lmtest::coeftest(
@@ -202,8 +199,7 @@ yotov_model_summary3 <- function(formula, data, method = "lm",
 
   vcov_cluster <- sandwich::vcovCL(
     fit,
-    cluster = data[, pair],
-    df_correction = TRUE
+    cluster = data[, pair]
   )
 
   vcov_cluster_reduced <- vcov_cluster[

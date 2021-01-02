@@ -503,7 +503,7 @@ yotov_model_summary3(
 
 ### Addressing globalization effects
 
-Just as an addition to the previous model, we include the variables `intl_border_T` variables in addition to `rta_lagN`:
+Just as an addition to the previous model, we include the `intl_border_T` variables in addition to `rta_lagN`:
 
 ```{r ch1_app3_glbzn_1}
 yotov_model_summary3(

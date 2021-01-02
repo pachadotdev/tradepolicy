@@ -40,8 +40,7 @@ yotov_clustered_summary <- function(model, cluster) {
   # K = number of parameters in the model
   vcov_cluster <- sandwich::vcovCL(
     model,
-    cluster = d[, cluster],
-    df_correction = TRUE
+    cluster = d[, cluster]
   )
 
   # Pseudo-R2 for PPML models ----

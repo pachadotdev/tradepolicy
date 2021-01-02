@@ -51,10 +51,10 @@ fit_baseline_app1 <- glm(
 )
 ```
 
-For now, we will concentrate on the fitted values and shall ignore the clustered standard errors in the next paragraphs, but still we can show the robust estimation by using the `yotov_robust_glm()` function:
+For now, we will concentrate on the fitted values and shall ignore the clustered standard errors in the next paragraphs, but still we can show the robust estimation by using the `yotov_clustered_glm()` function:
 
 ```{r ch2_app1_baseline_2}
-yotov_robust_glm(fit_baseline_app1$formula, ch2_application1)
+yotov_clustered_glm(fit_baseline_app1$formula, ch2_application1)
 ```
 
 With the estimated model, we can proceed as in box #1 from page 105 in @yotov2016advanced in order to construct the variables for export and import fixed effects:

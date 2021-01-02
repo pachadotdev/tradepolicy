@@ -24,7 +24,7 @@
 <meta name="author" content="Mauricio “Pachá” Vargas Sepúlveda" />
 
 
-<meta name="date" content="2020-11-08" />
+<meta name="date" content="2021-01-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -50,15 +50,12 @@
 
 
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -67,16 +64,14 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -85,9 +80,9 @@ pre.numberSource code > span > a:first-child::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {   }
+  {  }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+a.sourceLine::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -219,81 +214,81 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><strong>R version 3.6.3 (2020-02-29)</strong></p>
 <p><strong>Platform:</strong> x86_64-pc-linux-gnu (64-bit)</p>
 <p><strong>locale:</strong>
-<em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=es_CL.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=es_CL.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=es_CL.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=es_CL.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
+<em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=en_US.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=en_US.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=en_US.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=en_US.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
 <p><strong>attached base packages:</strong>
 <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
 <p><strong>other attached packages:</strong>
-<em>ggplot2(v.3.3.2)</em>, <em>duckdb(v.0.2.1-2)</em>, <em>DBI(v.1.1.0)</em>, <em>msm(v.1.6.8)</em>, <em>broom(v.0.7.1)</em>, <em>lmtest(v.0.9-38)</em>, <em>zoo(v.1.8-8)</em>, <em>sandwich(v.3.0-0)</em>, <em>multiwayvcov(v.1.2.3)</em>, <em>tidyr(v.1.1.2)</em>, <em>dplyr(v.1.0.2)</em> and <em>yotover(v.0.0.0.9000)</em></p>
+<em>ggplot2(v.3.3.3)</em>, <em>msm(v.1.6.8)</em>, <em>broom(v.0.7.3)</em>, <em>lmtest(v.0.9-38)</em>, <em>zoo(v.1.8-8)</em>, <em>sandwich(v.3.0-0)</em>, <em>tidyr(v.1.1.2)</em>, <em>dplyr(v.1.0.2)</em> and <em>yotover(v.0.3.3)</em></p>
 <p><strong>loaded via a namespace (and not attached):</strong>
-<em>tidyselect(v.1.1.0)</em>, <em>xfun(v.0.18)</em>, <em>pander(v.0.6.3)</em>, <em>purrr(v.0.3.4)</em>, <em>splines(v.3.6.3)</em>, <em>lattice(v.0.20-41)</em>, <em>colorspace(v.1.4-1)</em>, <em>vctrs(v.0.3.4)</em>, <em>generics(v.0.0.2)</em>, <em>expm(v.0.999-5)</em>, <em>htmltools(v.0.5.0)</em>, <em>yaml(v.2.2.1)</em>, <em>utf8(v.1.1.4)</em>, <em>survival(v.3.1-12)</em>, <em>rlang(v.0.4.8)</em>, <em>R.oo(v.1.24.0)</em>, <em>pillar(v.1.4.6)</em>, <em>withr(v.2.3.0)</em>, <em>glue(v.1.4.2)</em>, <em>R.utils(v.2.10.1)</em>, <em>rappdirs(v.0.3.1)</em>, <em>lifecycle(v.0.2.0)</em>, <em>stringr(v.1.4.0)</em>, <em>munsell(v.0.5.0)</em>, <em>gtable(v.0.3.0)</em>, <em>R.methodsS3(v.1.8.1)</em>, <em>mvtnorm(v.1.1-1)</em>, <em>codetools(v.0.2-16)</em>, <em>evaluate(v.0.14)</em>, <em>labeling(v.0.3)</em>, <em>knitr(v.1.30)</em>, <em>parallel(v.3.6.3)</em>, <em>fansi(v.0.4.1)</em>, <em>Rcpp(v.1.0.5)</em>, <em>backports(v.1.1.10)</em>, <em>scales(v.1.1.1)</em>, <em>farver(v.2.0.3)</em>, <em>digest(v.0.6.26)</em>, <em>stringi(v.1.5.3)</em>, <em>bookdown(v.0.21)</em>, <em>grid(v.3.6.3)</em>, <em>cli(v.2.1.0)</em>, <em>tools(v.3.6.3)</em>, <em>magrittr(v.1.5)</em>, <em>tibble(v.3.0.4)</em>, <em>crayon(v.1.3.4)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>ellipsis(v.0.3.1)</em>, <em>Matrix(v.1.2-18)</em>, <em>assertthat(v.0.2.1)</em>, <em>rmarkdown(v.2.4)</em>, <em>httr(v.1.4.2)</em>, <em>rstudioapi(v.0.11)</em>, <em>R6(v.2.4.1)</em>, <em>boot(v.1.3-25)</em> and <em>compiler(v.3.6.3)</em></p>
+<em>tidyselect(v.1.1.0)</em>, <em>xfun(v.0.19)</em>, <em>pander(v.0.6.3)</em>, <em>purrr(v.0.3.4)</em>, <em>splines(v.3.6.3)</em>, <em>lattice(v.0.20-41)</em>, <em>colorspace(v.2.0-0)</em>, <em>vctrs(v.0.3.6)</em>, <em>generics(v.0.1.0)</em>, <em>expm(v.0.999-5)</em>, <em>htmltools(v.0.5.0)</em>, <em>yaml(v.2.2.1)</em>, <em>utf8(v.1.1.4)</em>, <em>survival(v.3.2-7)</em>, <em>rlang(v.0.4.10)</em>, <em>pillar(v.1.4.7)</em>, <em>glue(v.1.4.2)</em>, <em>withr(v.2.3.0)</em>, <em>DBI(v.1.1.0)</em>, <em>rappdirs(v.0.3.1)</em>, <em>lifecycle(v.0.2.0)</em>, <em>stringr(v.1.4.0)</em>, <em>munsell(v.0.5.0)</em>, <em>gtable(v.0.3.0)</em>, <em>mvtnorm(v.1.1-1)</em>, <em>codetools(v.0.2-18)</em>, <em>evaluate(v.0.14)</em>, <em>labeling(v.0.4.2)</em>, <em>knitr(v.1.30)</em>, <em>fansi(v.0.4.1)</em>, <em>Rcpp(v.1.0.5)</em>, <em>backports(v.1.2.1)</em>, <em>scales(v.1.1.1)</em>, <em>farver(v.2.0.3)</em>, <em>digest(v.0.6.27)</em>, <em>stringi(v.1.5.3)</em>, <em>bookdown(v.0.21)</em>, <em>duckdb(v.0.2.3)</em>, <em>grid(v.3.6.3)</em>, <em>cli(v.2.2.0)</em>, <em>tools(v.3.6.3)</em>, <em>magrittr(v.2.0.1)</em>, <em>tibble(v.3.0.4)</em>, <em>crayon(v.1.3.4)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>ellipsis(v.0.3.1)</em>, <em>Matrix(v.1.3-0)</em>, <em>assertthat(v.0.2.1)</em>, <em>rmarkdown(v.2.6)</em>, <em>httr(v.1.4.2)</em>, <em>rstudioapi(v.0.13)</em>, <em>R6(v.2.5.0)</em> and <em>compiler(v.3.6.3)</em></p>
 </div>
 <div id="downloading-the-original-datasets" class="section level2">
 <h2><span class="header-section-number">4.2</span> Downloading the original datasets</h2>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="data.html#cb108-1"></a>appfiles_url &lt;-<span class="st"> &quot;https://vi.unctad.org/tpa/web/zips/vol2/Advanced%20Guide%20to%20TPA.zip&quot;</span></span>
-<span id="cb108-2"><a href="data.html#cb108-2"></a>appfiles_zip &lt;-<span class="st"> &quot;00-application-files.zip&quot;</span></span>
-<span id="cb108-3"><a href="data.html#cb108-3"></a>appfiles_dir &lt;-<span class="st"> &quot;00-application-files&quot;</span></span>
-<span id="cb108-4"><a href="data.html#cb108-4"></a></span>
-<span id="cb108-5"><a href="data.html#cb108-5"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw">file.exists</span>(appfiles_zip)) {</span>
-<span id="cb108-6"><a href="data.html#cb108-6"></a>  <span class="kw">download.file</span>(appfiles_url, appfiles_zip)</span>
-<span id="cb108-7"><a href="data.html#cb108-7"></a>}</span>
-<span id="cb108-8"><a href="data.html#cb108-8"></a></span>
-<span id="cb108-9"><a href="data.html#cb108-9"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw">dir.exists</span>(appfiles_dir)) {</span>
-<span id="cb108-10"><a href="data.html#cb108-10"></a>  <span class="kw">unzip</span>(appfiles_zip)</span>
-<span id="cb108-11"><a href="data.html#cb108-11"></a>  <span class="kw">file.rename</span>(<span class="st">&quot;Advanced Guide to TPA&quot;</span>, appfiles_dir)</span>
-<span id="cb108-12"><a href="data.html#cb108-12"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb108-1" data-line-number="1">appfiles_url &lt;-<span class="st"> &quot;https://vi.unctad.org/tpa/web/zips/vol2/Advanced%20Guide%20to%20TPA.zip&quot;</span></a>
+<a class="sourceLine" id="cb108-2" data-line-number="2">appfiles_zip &lt;-<span class="st"> &quot;00-application-files.zip&quot;</span></a>
+<a class="sourceLine" id="cb108-3" data-line-number="3">appfiles_dir &lt;-<span class="st"> &quot;00-application-files&quot;</span></a>
+<a class="sourceLine" id="cb108-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb108-5" data-line-number="5"><span class="cf">if</span> (<span class="op">!</span><span class="kw">file.exists</span>(appfiles_zip)) {</a>
+<a class="sourceLine" id="cb108-6" data-line-number="6">  <span class="kw">download.file</span>(appfiles_url, appfiles_zip)</a>
+<a class="sourceLine" id="cb108-7" data-line-number="7">}</a>
+<a class="sourceLine" id="cb108-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb108-9" data-line-number="9"><span class="cf">if</span> (<span class="op">!</span><span class="kw">dir.exists</span>(appfiles_dir)) {</a>
+<a class="sourceLine" id="cb108-10" data-line-number="10">  <span class="kw">unzip</span>(appfiles_zip)</a>
+<a class="sourceLine" id="cb108-11" data-line-number="11">  <span class="kw">file.rename</span>(<span class="st">&quot;Advanced Guide to TPA&quot;</span>, appfiles_dir)</a>
+<a class="sourceLine" id="cb108-12" data-line-number="12">}</a></code></pre></div>
 </div>
 <div id="converting-the-original-datasets" class="section level2">
 <h2><span class="header-section-number">4.3</span> Converting the original datasets</h2>
 <p>This code chunk can be a bit obscure. It is only shown to make all of my steps transparent.</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="data.html#cb109-1"></a><span class="co"># these packages are only used to import the data</span></span>
-<span id="cb109-2"><a href="data.html#cb109-2"></a><span class="kw">library</span>(haven)</span>
-<span id="cb109-3"><a href="data.html#cb109-3"></a><span class="kw">library</span>(stringr)</span>
-<span id="cb109-4"><a href="data.html#cb109-4"></a><span class="kw">library</span>(janitor)</span>
-<span id="cb109-5"><a href="data.html#cb109-5"></a><span class="kw">library</span>(purrr)</span>
-<span id="cb109-6"><a href="data.html#cb109-6"></a></span>
-<span id="cb109-7"><a href="data.html#cb109-7"></a><span class="kw">try</span>(<span class="kw">dir.create</span>(<span class="st">&quot;data-tsv&quot;</span>, <span class="dt">showWarnings =</span> F))</span>
-<span id="cb109-8"><a href="data.html#cb109-8"></a></span>
-<span id="cb109-9"><a href="data.html#cb109-9"></a>dta_files &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span class="st">&quot;00-application-files&quot;</span>,</span>
-<span id="cb109-10"><a href="data.html#cb109-10"></a>                        <span class="dt">pattern =</span> <span class="st">&quot;dta&quot;</span>,</span>
-<span id="cb109-11"><a href="data.html#cb109-11"></a>                        <span class="dt">full.names =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb109-12"><a href="data.html#cb109-12"></a>                        <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb109-13"><a href="data.html#cb109-13"></a></span>
-<span id="cb109-14"><a href="data.html#cb109-14"></a>read_and_clean &lt;-<span class="st"> </span><span class="cf">function</span>(finp) {</span>
-<span id="cb109-15"><a href="data.html#cb109-15"></a>  <span class="kw">message</span>(finp)</span>
-<span id="cb109-16"><a href="data.html#cb109-16"></a>  </span>
-<span id="cb109-17"><a href="data.html#cb109-17"></a>  fout &lt;-<span class="st"> </span>finp <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb109-18"><a href="data.html#cb109-18"></a><span class="st">    </span><span class="kw">str_replace</span>(appfiles_dir, <span class="st">&quot;&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb109-19"><a href="data.html#cb109-19"></a><span class="st">    </span><span class="kw">str_replace</span>(<span class="st">&quot;Chapter&quot;</span>, <span class="st">&quot;ch&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb109-20"><a href="data.html#cb109-20"></a><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot;Chapter[0-9]|</span><span class="ch">\\</span><span class="st">.dta&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
-<span id="cb109-21"><a href="data.html#cb109-21"></a>  </span>
-<span id="cb109-22"><a href="data.html#cb109-22"></a>  fout &lt;-<span class="st"> </span>fout <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb109-23"><a href="data.html#cb109-23"></a><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot;(/)&quot;</span>, <span class="st">&quot;_&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb109-24"><a href="data.html#cb109-24"></a><span class="st">    </span><span class="kw">make_clean_names</span>()</span>
-<span id="cb109-25"><a href="data.html#cb109-25"></a>  </span>
-<span id="cb109-26"><a href="data.html#cb109-26"></a>  long_names &lt;-<span class="st"> </span><span class="kw">c</span>(</span>
-<span id="cb109-27"><a href="data.html#cb109-27"></a>    <span class="st">&quot;datasets_&quot;</span>,</span>
-<span id="cb109-28"><a href="data.html#cb109-28"></a>    <span class="st">&quot;applications_&quot;</span>,</span>
-<span id="cb109-29"><a href="data.html#cb109-29"></a>    <span class="st">&quot;exercises_&quot;</span>,</span>
-<span id="cb109-30"><a href="data.html#cb109-30"></a>    <span class="st">&quot;1_trade_without_border_results_1&quot;</span>,</span>
-<span id="cb109-31"><a href="data.html#cb109-31"></a>    <span class="st">&quot;2_rt_as_effects_results_2_&quot;</span></span>
-<span id="cb109-32"><a href="data.html#cb109-32"></a>  )</span>
-<span id="cb109-33"><a href="data.html#cb109-33"></a>  </span>
-<span id="cb109-34"><a href="data.html#cb109-34"></a>  fout &lt;-<span class="st"> </span>fout <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb109-35"><a href="data.html#cb109-35"></a><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="kw">paste</span>(long_names, <span class="dt">collapse =</span> <span class="st">&quot;|&quot;</span>), <span class="st">&quot;&quot;</span>)</span>
-<span id="cb109-36"><a href="data.html#cb109-36"></a>  </span>
-<span id="cb109-37"><a href="data.html#cb109-37"></a>  fout &lt;-<span class="st"> </span><span class="kw">str_replace</span>(fout, <span class="st">&quot;_([0-9])_|__&quot;</span>, <span class="st">&quot;_&quot;</span>)</span>
-<span id="cb109-38"><a href="data.html#cb109-38"></a></span>
-<span id="cb109-39"><a href="data.html#cb109-39"></a>  fout2 &lt;-<span class="st"> </span><span class="kw">sprintf</span>(<span class="st">&quot;data-tsv/%s.tsv&quot;</span>, fout)</span>
-<span id="cb109-40"><a href="data.html#cb109-40"></a>  </span>
-<span id="cb109-41"><a href="data.html#cb109-41"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="kw">file.exists</span>(fout2)) {</span>
-<span id="cb109-42"><a href="data.html#cb109-42"></a>    d &lt;-<span class="st"> </span><span class="kw">read_dta</span>(finp) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb109-43"><a href="data.html#cb109-43"></a><span class="st">      </span><span class="kw">clean_names</span>()</span>
-<span id="cb109-44"><a href="data.html#cb109-44"></a>    </span>
-<span id="cb109-45"><a href="data.html#cb109-45"></a>    data.table<span class="op">::</span><span class="kw">fwrite</span>(d, fout2, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</span>
-<span id="cb109-46"><a href="data.html#cb109-46"></a>  }</span>
-<span id="cb109-47"><a href="data.html#cb109-47"></a>}</span>
-<span id="cb109-48"><a href="data.html#cb109-48"></a></span>
-<span id="cb109-49"><a href="data.html#cb109-49"></a><span class="kw">map</span>(dta_files, read_and_clean)</span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb109-1" data-line-number="1"><span class="co"># these packages are only used to import the data</span></a>
+<a class="sourceLine" id="cb109-2" data-line-number="2"><span class="kw">library</span>(haven)</a>
+<a class="sourceLine" id="cb109-3" data-line-number="3"><span class="kw">library</span>(stringr)</a>
+<a class="sourceLine" id="cb109-4" data-line-number="4"><span class="kw">library</span>(janitor)</a>
+<a class="sourceLine" id="cb109-5" data-line-number="5"><span class="kw">library</span>(purrr)</a>
+<a class="sourceLine" id="cb109-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb109-7" data-line-number="7"><span class="kw">try</span>(<span class="kw">dir.create</span>(<span class="st">&quot;data-tsv&quot;</span>, <span class="dt">showWarnings =</span> F))</a>
+<a class="sourceLine" id="cb109-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb109-9" data-line-number="9">dta_files &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span class="st">&quot;00-application-files&quot;</span>,</a>
+<a class="sourceLine" id="cb109-10" data-line-number="10">                        <span class="dt">pattern =</span> <span class="st">&quot;dta&quot;</span>,</a>
+<a class="sourceLine" id="cb109-11" data-line-number="11">                        <span class="dt">full.names =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb109-12" data-line-number="12">                        <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb109-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb109-14" data-line-number="14">read_and_clean &lt;-<span class="st"> </span><span class="cf">function</span>(finp) {</a>
+<a class="sourceLine" id="cb109-15" data-line-number="15">  <span class="kw">message</span>(finp)</a>
+<a class="sourceLine" id="cb109-16" data-line-number="16">  </a>
+<a class="sourceLine" id="cb109-17" data-line-number="17">  fout &lt;-<span class="st"> </span>finp <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb109-18" data-line-number="18"><span class="st">    </span><span class="kw">str_replace</span>(appfiles_dir, <span class="st">&quot;&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb109-19" data-line-number="19"><span class="st">    </span><span class="kw">str_replace</span>(<span class="st">&quot;Chapter&quot;</span>, <span class="st">&quot;ch&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb109-20" data-line-number="20"><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot;Chapter[0-9]|</span><span class="ch">\\</span><span class="st">.dta&quot;</span>, <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb109-21" data-line-number="21">  </a>
+<a class="sourceLine" id="cb109-22" data-line-number="22">  fout &lt;-<span class="st"> </span>fout <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb109-23" data-line-number="23"><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot;(/)&quot;</span>, <span class="st">&quot;_&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb109-24" data-line-number="24"><span class="st">    </span><span class="kw">make_clean_names</span>()</a>
+<a class="sourceLine" id="cb109-25" data-line-number="25">  </a>
+<a class="sourceLine" id="cb109-26" data-line-number="26">  long_names &lt;-<span class="st"> </span><span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb109-27" data-line-number="27">    <span class="st">&quot;datasets_&quot;</span>,</a>
+<a class="sourceLine" id="cb109-28" data-line-number="28">    <span class="st">&quot;applications_&quot;</span>,</a>
+<a class="sourceLine" id="cb109-29" data-line-number="29">    <span class="st">&quot;exercises_&quot;</span>,</a>
+<a class="sourceLine" id="cb109-30" data-line-number="30">    <span class="st">&quot;1_trade_without_border_results_1&quot;</span>,</a>
+<a class="sourceLine" id="cb109-31" data-line-number="31">    <span class="st">&quot;2_rt_as_effects_results_2_&quot;</span></a>
+<a class="sourceLine" id="cb109-32" data-line-number="32">  )</a>
+<a class="sourceLine" id="cb109-33" data-line-number="33">  </a>
+<a class="sourceLine" id="cb109-34" data-line-number="34">  fout &lt;-<span class="st"> </span>fout <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb109-35" data-line-number="35"><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="kw">paste</span>(long_names, <span class="dt">collapse =</span> <span class="st">&quot;|&quot;</span>), <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb109-36" data-line-number="36">  </a>
+<a class="sourceLine" id="cb109-37" data-line-number="37">  fout &lt;-<span class="st"> </span><span class="kw">str_replace</span>(fout, <span class="st">&quot;_([0-9])_|__&quot;</span>, <span class="st">&quot;_&quot;</span>)</a>
+<a class="sourceLine" id="cb109-38" data-line-number="38"></a>
+<a class="sourceLine" id="cb109-39" data-line-number="39">  fout2 &lt;-<span class="st"> </span><span class="kw">sprintf</span>(<span class="st">&quot;data-tsv/%s.tsv&quot;</span>, fout)</a>
+<a class="sourceLine" id="cb109-40" data-line-number="40">  </a>
+<a class="sourceLine" id="cb109-41" data-line-number="41">  <span class="cf">if</span> (<span class="op">!</span><span class="kw">file.exists</span>(fout2)) {</a>
+<a class="sourceLine" id="cb109-42" data-line-number="42">    d &lt;-<span class="st"> </span><span class="kw">read_dta</span>(finp) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb109-43" data-line-number="43"><span class="st">      </span><span class="kw">clean_names</span>()</a>
+<a class="sourceLine" id="cb109-44" data-line-number="44">    </a>
+<a class="sourceLine" id="cb109-45" data-line-number="45">    data.table<span class="op">::</span><span class="kw">fwrite</span>(d, fout2, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</a>
+<a class="sourceLine" id="cb109-46" data-line-number="46">  }</a>
+<a class="sourceLine" id="cb109-47" data-line-number="47">}</a>
+<a class="sourceLine" id="cb109-48" data-line-number="48"></a>
+<a class="sourceLine" id="cb109-49" data-line-number="49"><span class="kw">map</span>(dta_files, read_and_clean)</a></code></pre></div>
 
 </div>
 </div>
