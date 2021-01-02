@@ -164,7 +164,7 @@ test_that("Functions from Ch.1 work as expected, part 3", {
     data = d_test
   )
 
-  robust_test <- yotov_robust_glm(fit_test$formula, d_test)
+  robust_test <- yotov_clustered_glm(fit_test$formula, d_test)
   fe_test <- yotov_fixed_effects(fit_test)
 
   expect_is(robust_test, "coeftest")
