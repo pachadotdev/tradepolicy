@@ -1,12 +1,12 @@
-#' @importFrom rappdirs user_data_dir
-#' @importFrom utils packageVersion
 yotov_path <- function() {
-  duckdb_version <- utils::packageVersion('duckdb')
-  sys_yotover_path <- Sys.getenv("yotover_DB_DIR")
+  duckdb_version <- utils::packageVersion("duckdb")
+  sys_yotover_path <- Sys.getenv("YOTOV_DB_DIR")
   sys_yotover_path <- gsub("\\\\", "/", sys_yotover_path)
   if (sys_yotover_path == "") {
-    return(gsub("\\\\", "/", paste0(rappdirs::user_data_dir(),
-                                    "/yotover/duckdb-", duckdb_version)))
+    return(gsub("\\\\", "/", paste0(
+      tools::R_user_dir("yotover"),
+      "/duckdb-", duckdb_version
+    )))
   } else {
     return(gsub("\\\\", "/", paste0(sys_yotover_path, "/duckdb-", duckdb_version)))
   }
@@ -32,14 +32,14 @@ yotov_check_status <- function() {
 #'
 #' @examples
 #' if (yotov_status()) {
-#'  DBI::dbListTables(yotov_db())
+#'   DBI::dbListTables(yotov_db())
 #'
-#'  ch1_application1 <- DBI::dbReadTable(yotov_db(), "ch1_application1")
+#'   ch1_application1 <- DBI::dbReadTable(yotov_db(), "ch1_application1")
 #'
-#'  DBI::dbGetQuery(
-#'   yotov_db(),
-#'   'SELECT * FROM ch1_application1'
-#'  )
+#'   DBI::dbGetQuery(
+#'     yotov_db(),
+#'     "SELECT * FROM ch1_application1"
+#'   )
 #' }
 yotov_db <- function(dbdir = yotov_path()) {
   db <- mget("yotov_db", envir = yotover_cache, ifnotfound = NA)[[1]]
@@ -51,25 +51,26 @@ yotov_db <- function(dbdir = yotov_path()) {
 
   try(dir.create(dbdir, showWarnings = FALSE, recursive = TRUE))
 
-  tryCatch({
-    db <- DBI::dbConnect(
-      duckdb::duckdb(),
-      paste0(dbdir, "/yotov_db.duckdb")
-    )
-  },
-  error = function(e) {
-    if (grepl("(Database lock|bad rolemask)", e)) {
-      stop(paste(
-        "Local yotov database is locked by another R session.\n",
-        "Try closing or running yotov_db_disconnect() in that session."
-      ),
-      call. = FALSE
+  tryCatch(
+    {
+      db <- DBI::dbConnect(
+        duckdb::duckdb(),
+        paste0(dbdir, "/yotov_db.duckdb")
       )
-    } else {
-      stop(e)
-    }
-  },
-  finally = NULL
+    },
+    error = function(e) {
+      if (grepl("(Database lock|bad rolemask)", e)) {
+        stop(paste(
+          "Local yotov database is locked by another R session.\n",
+          "Try closing or running yotov_db_disconnect() in that session."
+        ),
+        call. = FALSE
+        )
+      } else {
+        stop(e)
+      }
+    },
+    finally = NULL
   )
 
   assign("yotov_db", db, envir = yotover_cache)
@@ -140,37 +141,42 @@ yotov_status <- function(verbose = TRUE) {
   existing_tables <- sort(DBI::dbListTables(yotov_db()))
 
   if (isTRUE(all.equal(expected_tables, existing_tables))) {
-    status_msg <- paste(crayon::green(cli::symbol$tick), "Local Yotov database is OK.")
+    status_msg <- paste(crayon::green(cli::symbol$tick, "Local Yotov database is OK."))
     out <- TRUE
   } else {
-    status_msg <- paste(crayon::red(cli::symbol$cross), "Local Yotov database empty or corrupt. Download with yotov_db_download()")
+    status_msg <- paste(crayon::red(cli::symbol$cross, "Local Yotov database empty or corrupt. Download with yotov_db_download()"))
     out <- FALSE
   }
-  if (verbose) msg(cli::rule(status_msg))
+  if (verbose) {
+    msg(cli::rule("Database status"))
+    msg(status_msg)
+  }
   invisible(out)
 }
 
 #' Yotov available tables
 #' @export
 yotov_db_tables <- function() {
-  sort(c('ch1_application1', 'ch1_application2',
-         'ch1_application3', 'ch1_exercise1', 'ch1_exercise2', 'ch2_application1',
-         'ch2_application2', 'ch2_exercise1', 'ch2_exercise2',
-         'ch2_removing_specific_border_results_full_cons_part_a',
-         'ch2_removing_specific_border_results_full_cons_part_bc',
-         'ch2_removing_specific_border_results_full_cons_part_d',
-         'ch2_removing_specific_border_results_full_prod_part_a',
-         'ch2_removing_specific_border_results_full_prod_part_bc',
-         'ch2_removing_specific_border_results_full_prod_part_d',
-         'ch2_removing_specific_border_results_fullge_part_a',
-         'ch2_removing_specific_border_results_fullge_part_bc',
-         'ch2_removing_specific_border_results_fullge_part_d',
-         'ch2_removing_specific_border', 'ch2_rt_as_effects_full_cons',
-         'ch2_rt_as_effects_full_prod', 'ch2_rt_as_effects',
-         'ch2_rta_impacts_results_full_cons', 'ch2_rta_impacts_results_full_prod',
-         'ch2_rta_impacts_results_fullge', 'ch2_rta_impacts',
-         'ch2_trade_without_border_full_cons', 'ch2_trade_without_border_full_prod',
-         'ch2_trade_without_border_fullge', 'ch2_trade_without_border'))
+  sort(c(
+    "ch1_application1", "ch1_application2",
+    "ch1_application3", "ch1_exercise1", "ch1_exercise2", "ch2_application1",
+    "ch2_application2", "ch2_exercise1", "ch2_exercise2",
+    "ch2_removing_specific_border_results_full_cons_part_a",
+    "ch2_removing_specific_border_results_full_cons_part_bc",
+    "ch2_removing_specific_border_results_full_cons_part_d",
+    "ch2_removing_specific_border_results_full_prod_part_a",
+    "ch2_removing_specific_border_results_full_prod_part_bc",
+    "ch2_removing_specific_border_results_full_prod_part_d",
+    "ch2_removing_specific_border_results_fullge_part_a",
+    "ch2_removing_specific_border_results_fullge_part_bc",
+    "ch2_removing_specific_border_results_fullge_part_d",
+    "ch2_removing_specific_border", "ch2_rt_as_effects_full_cons",
+    "ch2_rt_as_effects_full_prod", "ch2_rt_as_effects",
+    "ch2_rta_impacts_results_full_cons", "ch2_rta_impacts_results_full_prod",
+    "ch2_rta_impacts_results_fullge", "ch2_rta_impacts",
+    "ch2_trade_without_border_full_cons", "ch2_trade_without_border_full_prod",
+    "ch2_trade_without_border_fullge", "ch2_trade_without_border"
+  ))
 }
 
 yotover_cache <- new.env()

@@ -12,3 +12,5 @@ all-models-and-data.RData
 inst/*.log
 inst/*.pdf
 dev
+R/fast-glm.R
+R/predict-fast-glm.R

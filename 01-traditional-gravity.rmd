@@ -229,9 +229,13 @@ One option in R is to use the `glm()` function and a quasi-poisson family to avo
 ```{r ch1_app1_ppml_1, eval = FALSE}
 fit_ppml <- glm(trade ~ log_dist + cntg + lang + clny + exp_year + imp_year,
   family = quasipoisson(link = "log"),
-  data = ch1_application1_2
+  data = ch1_application1_2,
+  y = FALSE,
+  model = FALSE
 )
 ```
+
+In the previous model, a `glm` model object carries a copy of its training data by default. We used the settings `y = FALSE` and `model = FALSE` to turn this off, which decreases the size of the model without affecting the model’s predictions [@trimmingfat].
 
 If you decide to run this model and print the summary yourself, you'll notice that it doesn't report $R^2$ and that it shows a large list of fixed effects. The $R^2$ needs to be computed afterwards as a function of the correlation between the observed and predicted values. Please see @silva2006log for the details as well as for the RESET test for PPML (GLM) models.
 

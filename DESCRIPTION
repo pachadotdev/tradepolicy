@@ -1,6 +1,6 @@
 Package: yotover
 Title: An Advanced Guide to Trade Policy Analysis
-Version: 0.3.4
+Version: 0.3.5
 Authors@R: c( 
         person(given = "Mauricio",
                family = "Vargas",
@@ -44,6 +44,7 @@ Imports:
     duckdb,
     utils,
     rappdirs,
+    tools,
     httr,
     rstudioapi
 Suggests:
@@ -51,4 +52,4 @@ Suggests:
     testthat,
     covr
 Depends: 
-    R (>= 3.5)
+    R (>= 4.0)

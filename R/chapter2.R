@@ -11,8 +11,10 @@
 #' @export
 
 yotov_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exporter|^importer") {
-  fit <- stats::glm(stats::as.formula(formula), family = stats::quasipoisson(link = "log"),
-                    data = data)
+  fit <- stats::glm(stats::as.formula(formula),
+    family = stats::quasipoisson(link = "log"),
+    data = data
+  )
 
   vcov_cluster <- sandwich::vcovCL(
     fit,
@@ -89,7 +91,9 @@ yotov_fixed_effects <- function(fit) {
     )
   }
 
-  d <- dplyr::mutate_if(d, is.numeric, function(x) { ifelse(is.na(x), 0, x) })
+  d <- dplyr::mutate_if(d, is.numeric, function(x) {
+    ifelse(is.na(x), 0, x)
+  })
 
   return(d)
 }

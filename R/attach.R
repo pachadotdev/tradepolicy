@@ -25,8 +25,7 @@ yotover_attach <- function() {
 
   msg(
     cli::rule(
-      left = crayon::bold("Attaching packages"),
-      right = paste0("yotover ", package_version("yotover"))
+      left = "Attaching packages"
     ),
     startup = TRUE
   )

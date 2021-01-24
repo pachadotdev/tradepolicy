@@ -1,6 +1,6 @@
 sql_action <- function() {
   if (requireNamespace("rstudioapi", quietly = TRUE) &&
-      exists("documentNew", asNamespace("rstudioapi"))) {
+    exists("documentNew", asNamespace("rstudioapi"))) {
     contents <- paste(
       "-- !preview conn=yotover::yotov_db()",
       "",
@@ -51,16 +51,20 @@ yotov_pane <- function() {
         )
       },
       listColumns = function(table) {
-        res <- DBI::dbGetQuery(yotov_db(),
-                               paste("SELECT * FROM", table, "LIMIT 1"))
+        res <- DBI::dbGetQuery(
+          yotov_db(),
+          paste("SELECT * FROM", table, "LIMIT 1")
+        )
         data.frame(
           name = names(res), type = vapply(res, function(x) class(x)[1], character(1)),
           stringsAsFactors = FALSE
         )
       },
       previewObject = function(rowLimit, table) {
-        DBI::dbGetQuery(yotov_db(),
-                        paste("SELECT * FROM", table, "LIMIT", rowLimit))
+        DBI::dbGetQuery(
+          yotov_db(),
+          paste("SELECT * FROM", table, "LIMIT", rowLimit)
+        )
       },
       actions = list(
         Status = list(

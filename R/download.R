@@ -6,8 +6,8 @@ globalVariables(c("term"))
 #' database. The download is 31.4 MB, and the database uses 3 GB on disk.
 #' During import over 3.5 GB of disk space may be used temporarily.
 #'
-#' The database is stored by default under [rappdirs::user_data_dir()], or its
-#' location can be set with the environment variable `YOTOV_DB_DIR`.
+#' The database is stored by default under `tools::R_user_dir("yotover")`, or
+#' its location can be set with the environment variable `YOTOV_DB_DIR`.
 #'
 #' @param tag What release tag of data to download. Defaults to the most recent.
 #' Releases are expected to come twice per year. See all releases at

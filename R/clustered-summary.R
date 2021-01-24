@@ -72,7 +72,7 @@ yotov_clustered_summary <- function(model, cluster) {
     fs <- round(wald_test$statistic[2], 2)
     fp <- round(wald_test$p.value[2], 4)
     df1 <- length(model$coefficients) - 1 # df1 for F-statistic
-    df2 <- length(unique(d[,cluster])) - 1 #  df2 for F-statistic
+    df2 <- length(unique(d[, cluster])) - 1 #  df2 for F-statistic
 
     # Obtain Root MSE ----
     rss <- as.numeric(crossprod(model$residuals))
@@ -82,7 +82,7 @@ yotov_clustered_summary <- function(model, cluster) {
     summary_output <- list(
       n_obs = nrow(d),
       f_stat = fs,
-      f_df = c(df1,df2),
+      f_df = c(df1, df2),
       prob_f = fp,
       r_sq = r_squared,
       root_mse = rmse,

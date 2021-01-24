@@ -28,8 +28,8 @@ database. The download is 31.4 MB, and the database uses 3 GB on disk.
 During import over 3.5 GB of disk space may be used temporarily.
 }
 \details{
-The database is stored by default under \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}, or its
-location can be set with the environment variable \code{YOTOV_DB_DIR}.
+The database is stored by default under \code{tools::R_user_dir("yotover")}, or
+its location can be set with the environment variable \code{YOTOV_DB_DIR}.
 }
 \examples{
 \donttest{
