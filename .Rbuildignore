@@ -25,6 +25,8 @@ inst/*.md
 inst/*.log
 inst/apa.csl
 ^codemeta\.json$
-all-models-and-data.RData
 README.md
 ^cran-comments\.md$
+all-models-and-data.RData
+all-models-and-data
+

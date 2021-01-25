@@ -12,7 +12,7 @@ globalVariables(c("country", "exporter", "importer", "name", "type", "value"))
   msg(crayon::green(paste(cli::symbol$star,
                           "Use the command citation('yotover') to cite this package in publications.")))
   msg(crayon::green(paste(cli::symbol$star,
-                          "Visit https://buymeacoffee.com/pacha if you'd like to donate to contribute to improve this software.")))
+                          "Visit https://buymeacoffee.com/pacha if you'd like to donate to help improving this software.")))
   msg(crayon::green(paste(cli::symbol$warning,
                           "This package downloads a 30 MB compressed file and creates a 6 GB database.")))
   msg(crayon::green(paste(cli::symbol$warning,
