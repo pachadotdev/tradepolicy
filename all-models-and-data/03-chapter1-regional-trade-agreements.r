@@ -83,3 +83,5 @@ ch1_app3_glbzn <- yotov_model_summary3(
   data = filter(ch1_application3_2, sum_trade > 0),
   method = "glm"
 )
+
+save.image("all-models-and-data/03-chapter1-regional-trade-agreements.RData")

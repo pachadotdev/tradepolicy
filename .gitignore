@@ -8,7 +8,7 @@ data-tsv
 yotov-trade-db.zip
 inst/paper.md
 inst/paper.bib
-all-models-and-data.RData
+all-models-and-data/*.RData
 inst/*.log
 inst/*.pdf
 dev

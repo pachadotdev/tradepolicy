@@ -27,6 +27,4 @@ inst/apa.csl
 ^codemeta\.json$
 README.md
 ^cran-comments\.md$
-all-models-and-data.RData
 all-models-and-data
-
