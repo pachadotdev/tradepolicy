@@ -1,6 +1,6 @@
 library(yotover)
 
-# datos ----
+# Data ----
 
 ch2_application1 <- yotov_data("ch2_application1") %>%
   filter(year == 2006) %>%
@@ -297,3 +297,26 @@ ch2_application1 <- ch2_application1 %>%
   select(exporter, importer, y, change_xi_cfl, change_xi_full, rgdp,
          change_price_full, change_imr_full) %>%
   mutate(log_y = log(y))
+
+ch2_app1_figures_2 <- ggplot(data = ch2_application1 %>%
+         filter(exporter != "HKG")) +
+  geom_point(aes(x = log_y, y = change_xi_cfl, color = "1")) +
+  geom_point(aes(x = log_y, y = change_xi_full, color = "2")) +
+  labs(
+    x = "Log value of output",
+    y = "Percent change of exports",
+    title = "Figure 6: Effects of abolishing international borders on exports",
+    caption = "Source: Authors' calculations",
+    color = ""
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  scale_color_manual(
+    labels = c(
+      "Conditional general equilibrium",
+      "Full endowment general equilibrium"
+    ),
+    values = c("#b6b8dd","#232958")
+  )
+
+save.image("all-models-and-data/04-chapter2-trade-without-borders.RData")

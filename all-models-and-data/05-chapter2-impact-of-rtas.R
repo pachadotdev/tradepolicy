@@ -343,3 +343,6 @@ indexes_final <- exporter_indexes %>%
 
 indexes_final <- indexes_final %>%
   mutate_if(is.numeric, function(x) round(x, 2))
+
+save.image("all-models-and-data/05-chapter2-impact-of-rtas.RData")
+

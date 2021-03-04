@@ -111,3 +111,5 @@ ch1_app1_ppml <- yotov_model_summary(
   data = ch1_application1_2,
   method = "glm"
 )
+
+save.image("all-models-and-data/01-chapter1-traditional-gravity.RData")

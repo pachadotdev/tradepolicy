@@ -70,3 +70,5 @@ ch1_app2_fe <- yotov_model_summary2(
   data = ch1_application2_2,
   method = "glm"
 )
+
+save.image("all-models-and-data/02-chapter1-distance-puzzle.RData")
