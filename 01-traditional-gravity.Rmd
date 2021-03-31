@@ -286,9 +286,9 @@ ch1_application2_2 <- yotov_data("ch1_application2") %>%
     year = paste0("log_dist_", year),
     log_trade = log(trade),
     log_dist = log(dist),
+    smctry = ifelse(importer != exporter, 0, 1),
     
     # PPML specific variables
-    smctry = ifelse(importer != exporter, 0, 1),
     log_dist_intra = log_dist * smctry,
     intra_pair = ifelse(exporter == importer, exporter, "inter")
   ) %>% 
@@ -338,7 +338,7 @@ yotov_model_summary2(
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 + 
     cntg + lang + clny + exp_year + imp_year",
   data = filter(ch1_application2_2, importer != exporter),
-  method = "lm"
+  method = "glm"
 )
 ```
 
