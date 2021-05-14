@@ -15,7 +15,7 @@ tradepolicy_clustered_summary(model, cluster)
 \description{
 Returns a list for a a general \code{lm} or \code{glm} which returns number
 of observations, F-statistic (with degrees of freedom and p-value), R-squared
-(and pseudo R-squared for poisson-type generalized models), root MSE and clustered
+(and pseudo R-squared for Poisson-type generalized models), root MSE and clustered
 standard errors for estimated coefficients.
 }
 \examples{

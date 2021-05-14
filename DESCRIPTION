@@ -1,6 +1,6 @@
 Package: tradepolicy
-Title: Datasets and Functions to Fit the Models From 'An Advanced Guide to Trade Policy Analysis'
-Version: 0.4
+Title: Datasets and Functions to Fit the Models from 'An Advanced Guide To Trade Policy Analysis'
+Version: 0.4.0
 Authors@R: c( 
         person(given = "Mauricio",
                family = "Vargas",
@@ -27,11 +27,10 @@ Description: On-disk embedded database with SQL versions of the original
     datasets from An Advanced Guide to Trade Policy Analysis 
     (Year: 2016, ISBN: 978-92-870-4367-2) by Yotov, et al. and functions to 
     report regressions with clustered robust standard errors.
-URL: https://pacha.dev/tradepolicy/
+URL: https://r.tiid.org/R_structural_gravity/
 BugReports: https://github.com/pachamaltese/tradepolicy/issues/
 License: CC BY 4.0
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports:

@@ -20,13 +20,14 @@ tradepolicy_check_status <- function() {
 
 #' The local Yotov database
 #'
-#' Returns a connection to the local yotov database. This is a DBI-compliant
+#' Returns a connection to the local tradepolicy database. This is a DBI-compliant
 #' duckdb database connection. When using **dplyr**-based
 #' workflows, one typically accesses tables with [tradepolicy_data()], but this
 #' function lets the user interact with the database directly via SQL.
 #'
 #' @param dbdir The location of the database on disk. Defaults to
-#' `yotovdb` under [rappdirs::user_data_dir()], or the environment variable `TRADEPOLICY_DB_DIR`.
+#' `tradepolicy` under `tools::R_user_dir("tradepolicy")`, or the path specified
+#' in the environment variable `TRADEPOLICY_DB_DIR`.
 #'
 #' @export
 #'

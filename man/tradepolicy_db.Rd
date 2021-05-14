@@ -8,10 +8,11 @@ tradepolicy_db(dbdir = tradepolicy_path())
 }
 \arguments{
 \item{dbdir}{The location of the database on disk. Defaults to
-\code{yotovdb} under \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}, or the environment variable \code{TRADEPOLICY_DB_DIR}.}
+\code{tradepolicy} under \code{tools::R_user_dir("tradepolicy")}, or the path specified
+in the environment variable \code{TRADEPOLICY_DB_DIR}.}
 }
 \description{
-Returns a connection to the local yotov database. This is a DBI-compliant
+Returns a connection to the local tradepolicy database. This is a DBI-compliant
 duckdb database connection. When using \strong{dplyr}-based
 workflows, one typically accesses tables with \code{\link[=tradepolicy_data]{tradepolicy_data()}}, but this
 function lets the user interact with the database directly via SQL.

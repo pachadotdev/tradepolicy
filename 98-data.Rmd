@@ -10,7 +10,7 @@ pander::pander(sessionInfo())
 
 ## Downloading the original datasets
 
-```{r download}
+```{r download, message=FALSE, warning=FALSE, results='hide'}
 appfiles_url <- "https://vi.unctad.org/tpa/web/zips/vol2/Advanced%20Guide%20to%20TPA.zip"
 appfiles_zip <- "00-application-files.zip"
 appfiles_dir <- "00-application-files"
@@ -29,7 +29,7 @@ if (!dir.exists(appfiles_dir)) {
 
 This code chunk can be a bit obscure. It is only shown to make all of my steps transparent.
 
-```{r covert, results='hide', message=FALSE}
+```{r covert, message=FALSE, warning=FALSE, results='hide'}
 # these packages are only used to import the data
 library(haven)
 library(stringr)

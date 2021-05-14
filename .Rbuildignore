@@ -28,3 +28,4 @@ inst/apa.csl
 README.md
 ^cran-comments\.md$
 all-models-and-data
+^CRAN-RELEASE$
