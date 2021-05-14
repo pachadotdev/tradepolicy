@@ -9,12 +9,11 @@
 #' @examples
 #' \donttest{
 #' \dontrun{
-#' yotov_db_delete()
+#' tradepolicy_db_delete()
 #' }
 #' }
-yotov_db_delete <- function() {
-  yotov_db_disconnect()
-  try(unlink(yotov_path(), recursive = TRUE))
-  try(unlink(paste0(rappdirs::user_data_dir(), "/yotover"), recursive = TRUE))
-  update_yotov_pane()
+tradepolicy_db_delete <- function() {
+  suppressWarnings(tradepolicy_db_disconnect())
+  try(unlink(tradepolicy_path(), recursive = TRUE))
+  update_tradepolicy_pane()
 }

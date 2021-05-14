@@ -1,8 +1,8 @@
-library(yotover)
+library(tradepolicy)
 
 # Data ----
 
-ch2_application1 <- yotov_data("ch2_application1") %>%
+ch2_application1 <- tradepolicy_data("ch2_application1") %>%
   filter(year == 2006) %>%
   mutate(
     log_dist = log(dist),
@@ -31,11 +31,11 @@ fit_baseline_app1 <- glm(
   data = ch2_application1
 )
 
-ch2_app1_baseline_2 <- yotov_clustered_glm(fit_baseline_app1$formula, ch2_application1)
+ch2_app1_baseline_2 <- tradepolicy_clustered_glm(fit_baseline_app1$formula, ch2_application1)
 
 ch2_application1 <- ch2_application1 %>%
   left_join(
-    yotov_fixed_effects(fit_baseline_app1),
+    tradepolicy_fixed_effects(fit_baseline_app1),
     c("exporter", "importer")
   )
 
@@ -86,7 +86,7 @@ fit_counterfactual_app1 <- glm(
 
 ch2_application1 <- ch2_application1 %>%
   left_join(
-    yotov_fixed_effects(fit_counterfactual_app1),
+    tradepolicy_fixed_effects(fit_counterfactual_app1),
     by = c("exporter", "importer")
   ) %>%
   rename(
@@ -172,7 +172,7 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
 
   ch2_application1 <- ch2_application1 %>%
     left_join(
-      yotov_fixed_effects(fit_counterfactual_app1_2),
+      tradepolicy_fixed_effects(fit_counterfactual_app1_2),
       by = c("exporter", "importer")
     )
 

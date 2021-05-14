@@ -2,7 +2,7 @@ context("Clustered summary")
 
 test_that("Output has the expected contents for lm-objets", {
   model1 <- lm(mpg ~ wt, data = mtcars)
-  summary1 <- yotov_clustered_summary(model1, "cyl")
+  summary1 <- tradepolicy_clustered_summary(model1, "cyl")
   expect_is(summary1, "list")
   expect_is(summary1$f_stat, "numeric")
   expect_is(summary1$f_df, "numeric")
@@ -21,7 +21,7 @@ test_that("Output has the expected contents for lm-objets", {
 
 test_that("Output has the expected contents for glm-objets", {
   model2 <- glm(mpg ~ wt, data = mtcars, family = quasipoisson)
-  summary2 <- yotov_clustered_summary(model2, "cyl")
+  summary2 <- tradepolicy_clustered_summary(model2, "cyl")
   expect_is(summary2, "list")
   expect_is(summary2$pseudo_r_sq, "numeric")
   expect_is(summary2$coefficients, c("tbl_df", "tbl", "data.frame"))

@@ -1,5 +1,5 @@
---- 
-title: "Solutions Manual for An Advanced Guide to Trade Policy Analysis"
+---
+title: "Solutions Manual for An Advanced Guide to Trade Policy Analysis in R"
 author: Mauricio "Pachá" Vargas Sepúlveda
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 
 </br>
 
-Welcome to our online solutions manual for for An Advanced Guide to Trade Policy Analysis, AGTPA [@yotov2016advanced]. 
+Welcome to our online solutions manual for for An Advanced Guide to Trade Policy Analysis, AGTPA [@yotov2016advanced].
 
 This material is intended to provide a comprehensive explanation to reproduce the book's results in R. We don’t attempt to give a thorough discussion of the theory behind gravity models, the references cited through the chapters shall fill those details.
 
@@ -39,26 +39,25 @@ What we did here was to replicate all the results from the book, made with Stata
 
 ## Obtaining the datasets and functions
 
-`yotover` is an R package created specifically to distribute the datasets required to reproduce the results from AGTPA. It acts as a metapackage that calls other packages to use several functions that augment R capabilities.
+`tradepolicy` is an R package created specifically to distribute the datasets required to reproduce the results from AGTPA. It acts as a metapackage that calls other packages to use several functions that augment R capabilities.
 
 You can get all the functions and datasets if you run these lines from your R console:
 
 ```{r install_r_package, eval=FALSE}
 # stable version
-install.packages("yotover")
+install.packages("tradepolicy")
 
 # development version
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("pachamaltese/yotover")
+remotes::install_github("pachamaltese/tradepolicy")
 ```
 
 ## Getting the most out of this material
- 
+
 You can clone the GitHub repository to obtain the editable R Markdown files:
 
 ```
-git clone https://github.com/pachamaltese/yotover.git
+git clone https://github.com/pachamaltese/tradepolicy.git
 ```
 
 Please read @happygitwithr if you have questions about git or GitHub.
-

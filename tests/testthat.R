@@ -1,4 +1,4 @@
 library(testthat)
-library(yotover)
+library(tradepolicy)
 
-test_check("yotover")
+test_check("tradepolicy")

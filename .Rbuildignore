@@ -1,5 +1,5 @@
 .github
-^yotover\.Rproj$
+^tradepolicy\.Rproj$
 ^\.Rproj\.user$
 ^packrat/
 ^\.Rprofile$

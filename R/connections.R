@@ -1,20 +1,20 @@
-yotov_path <- function() {
+tradepolicy_path <- function() {
   duckdb_version <- utils::packageVersion("duckdb")
-  sys_yotover_path <- Sys.getenv("YOTOV_DB_DIR")
-  sys_yotover_path <- gsub("\\\\", "/", sys_yotover_path)
-  if (sys_yotover_path == "") {
+  sys_tradepolicy_path <- Sys.getenv("TRADEPOLICY_DB_DIR")
+  sys_tradepolicy_path <- gsub("\\\\", "/", sys_tradepolicy_path)
+  if (sys_tradepolicy_path == "") {
     return(gsub("\\\\", "/", paste0(
-      tools::R_user_dir("yotover"),
+      tools::R_user_dir("tradepolicy"),
       "/duckdb-", duckdb_version
     )))
   } else {
-    return(gsub("\\\\", "/", paste0(sys_yotover_path, "/duckdb-", duckdb_version)))
+    return(gsub("\\\\", "/", paste0(sys_tradepolicy_path, "/duckdb-", duckdb_version)))
   }
 }
 
-yotov_check_status <- function() {
-  if (!yotov_status(FALSE)) {
-    stop("Local yotov database empty or corrupt. Download with yotov_db_download()")
+tradepolicy_check_status <- function() {
+  if (!tradepolicy_status(FALSE)) {
+    stop("Local yotov database empty or corrupt. Download with tradepolicy_db_download()")
   }
 }
 
@@ -22,27 +22,27 @@ yotov_check_status <- function() {
 #'
 #' Returns a connection to the local yotov database. This is a DBI-compliant
 #' duckdb database connection. When using **dplyr**-based
-#' workflows, one typically accesses tables with [yotov_data()], but this
+#' workflows, one typically accesses tables with [tradepolicy_data()], but this
 #' function lets the user interact with the database directly via SQL.
 #'
 #' @param dbdir The location of the database on disk. Defaults to
-#' `yotovdb` under [rappdirs::user_data_dir()], or the environment variable `yotov_DB_DIR`.
+#' `yotovdb` under [rappdirs::user_data_dir()], or the environment variable `TRADEPOLICY_DB_DIR`.
 #'
 #' @export
 #'
 #' @examples
-#' if (yotov_status()) {
-#'   DBI::dbListTables(yotov_db())
+#' if (tradepolicy_status()) {
+#'   DBI::dbListTables(tradepolicy_db())
 #'
-#'   ch1_application1 <- DBI::dbReadTable(yotov_db(), "ch1_application1")
+#'   ch1_application1 <- DBI::dbReadTable(tradepolicy_db(), "ch1_application1")
 #'
 #'   DBI::dbGetQuery(
-#'     yotov_db(),
+#'     tradepolicy_db(),
 #'     "SELECT * FROM ch1_application1"
 #'   )
 #' }
-yotov_db <- function(dbdir = yotov_path()) {
-  db <- mget("yotov_db", envir = yotover_cache, ifnotfound = NA)[[1]]
+tradepolicy_db <- function(dbdir = tradepolicy_path()) {
+  db <- mget("tradepolicy_db", envir = tradepolicy_cache, ifnotfound = NA)[[1]]
   if (inherits(db, "DBIConnection")) {
     if (DBI::dbIsValid(db)) {
       return(db)
@@ -55,14 +55,14 @@ yotov_db <- function(dbdir = yotov_path()) {
     {
       db <- DBI::dbConnect(
         duckdb::duckdb(),
-        paste0(dbdir, "/yotov_db.duckdb")
+        paste0(dbdir, "/tradepolicy_db.duckdb")
       )
     },
     error = function(e) {
       if (grepl("(Database lock|bad rolemask)", e)) {
         stop(paste(
           "Local yotov database is locked by another R session.\n",
-          "Try closing or running yotov_db_disconnect() in that session."
+          "Try closing or running tradepolicy_db_disconnect() in that session."
         ),
         call. = FALSE
         )
@@ -73,7 +73,7 @@ yotov_db <- function(dbdir = yotov_path()) {
     finally = NULL
   )
 
-  assign("yotov_db", db, envir = yotover_cache)
+  assign("tradepolicy_db", db, envir = tradepolicy_cache)
   db
 }
 
@@ -88,14 +88,14 @@ yotov_db <- function(dbdir = yotov_path()) {
 #' @export
 #'
 #' @examples
-#' if (yotov_status()) {
-#'   yotov_data("ch1_application1")
+#' if (tradepolicy_status()) {
+#'   tradepolicy_data("ch1_application1")
 #' }
 #' @importFrom dplyr tbl
-yotov_data <- function(table) {
-  yotov_check_status()
-  df <- dplyr::as_tibble(DBI::dbReadTable(yotov_db(), table))
-  yotov_db_disconnect()
+tradepolicy_data <- function(table) {
+  tradepolicy_check_status()
+  df <- dplyr::as_tibble(DBI::dbReadTable(tradepolicy_db(), table))
+  tradepolicy_db_disconnect()
   return(df)
 }
 
@@ -105,14 +105,14 @@ yotov_data <- function(table) {
 #' A utility function for disconnecting from the database.
 #'
 #' @examples
-#' yotov_db_disconnect()
+#' tradepolicy_db_disconnect()
 #' @export
 #'
-yotov_db_disconnect <- function() {
-  yotov_db_disconnect_()
+tradepolicy_db_disconnect <- function() {
+  tradepolicy_db_disconnect_()
 }
-yotov_db_disconnect_ <- function(environment = yotover_cache) {
-  db <- mget("yotov_db", envir = yotover_cache, ifnotfound = NA)[[1]]
+tradepolicy_db_disconnect_ <- function(environment = tradepolicy_cache) {
+  db <- mget("tradepolicy_db", envir = tradepolicy_cache, ifnotfound = NA)[[1]]
   if (inherits(db, "DBIConnection")) {
     DBI::dbDisconnect(db, shutdown = TRUE)
   }
@@ -135,16 +135,16 @@ yotov_db_disconnect_ <- function(environment = yotover_cache) {
 #' @importFrom DBI dbExistsTable
 #' @importFrom tools toTitleCase
 #' @examples
-#' yotov_status()
-yotov_status <- function(verbose = TRUE) {
-  expected_tables <- sort(yotov_db_tables())
-  existing_tables <- sort(DBI::dbListTables(yotov_db()))
+#' tradepolicy_status()
+tradepolicy_status <- function(verbose = TRUE) {
+  expected_tables <- sort(tradepolicy_db_tables())
+  existing_tables <- sort(DBI::dbListTables(tradepolicy_db()))
 
   if (isTRUE(all.equal(expected_tables, existing_tables))) {
     status_msg <- paste(crayon::green(cli::symbol$tick, "Local Yotov database is OK."))
     out <- TRUE
   } else {
-    status_msg <- paste(crayon::red(cli::symbol$cross, "Local Yotov database empty or corrupt. Download with yotov_db_download()"))
+    status_msg <- paste(crayon::red(cli::symbol$cross, "Local Yotov database empty or corrupt. Download with tradepolicy_db_download()"))
     out <- FALSE
   }
   if (verbose) {
@@ -156,7 +156,7 @@ yotov_status <- function(verbose = TRUE) {
 
 #' Yotov available tables
 #' @export
-yotov_db_tables <- function() {
+tradepolicy_db_tables <- function() {
   sort(c(
     "ch1_application1", "ch1_application2",
     "ch1_application3", "ch1_exercise1", "ch1_exercise2", "ch2_application1",
@@ -179,5 +179,5 @@ yotov_db_tables <- function() {
   ))
 }
 
-yotover_cache <- new.env()
-reg.finalizer(yotover_cache, yotov_db_disconnect_, onexit = TRUE)
+tradepolicy_cache <- new.env()
+reg.finalizer(tradepolicy_cache, tradepolicy_db_disconnect_, onexit = TRUE)

@@ -6,12 +6,12 @@ globalVariables(c("term"))
 #' database. The download is 31.4 MB, and the database uses 3 GB on disk.
 #' During import over 3.5 GB of disk space may be used temporarily.
 #'
-#' The database is stored by default under `tools::R_user_dir("yotover")`, or
-#' its location can be set with the environment variable `YOTOV_DB_DIR`.
+#' The database is stored by default under `tools::R_user_dir("tradepolicy")`, or
+#' its location can be set with the environment variable `TRADEPOLICY_DB_DIR`.
 #'
 #' @param tag What release tag of data to download. Defaults to the most recent.
 #' Releases are expected to come twice per year. See all releases at
-#' <https://github.com/pachamaltese/yotover/releases>.
+#' <https://github.com/pachamaltese/tradepolicy/releases>.
 #' @param destdir Where to download the compressed file.
 #' @param cleanup Whether to delete the compressed file after loading into the database.
 #' @param verbose Whether to display messages and download progress
@@ -24,13 +24,13 @@ globalVariables(c("term"))
 #' @examples
 #' \donttest{
 #' \dontrun{
-#' yotov_db_download()
+#' tradepolicy_db_download()
 #' }
 #' }
-yotov_db_download <- function(tag = NULL, destdir = tempdir(),
+tradepolicy_db_download <- function(tag = NULL, destdir = tempdir(),
                               cleanup = TRUE, verbose = interactive()) {
   if (verbose) msg("Downloading data...\n")
-  zfile <- get_gh_release_file("pachamaltese/yotover",
+  zfile <- get_gh_release_file("pachamaltese/tradepolicy",
                                tag_name = tag,
                                destdir = destdir, verbose = verbose
   )
@@ -42,8 +42,8 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
   try(dir.create(destdir))
   utils::unzip(zfile, overwrite = TRUE, exdir = destdir)
 
-  yotov_db_disconnect()
-  try(unlink(yotov_path(), recursive = TRUE))
+  tradepolicy_db_disconnect()
+  try(unlink(tradepolicy_path(), recursive = TRUE))
 
   finp <- list.files(destdir, full.names = TRUE)
 
@@ -67,7 +67,7 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
     }
 
     dplyr::copy_to(
-      yotov_db(),
+      tradepolicy_db(),
       d,
       tout,
       indexes = l,
@@ -76,17 +76,17 @@ yotov_db_download <- function(tag = NULL, destdir = tempdir(),
 
     rm(d, tout)
 
-    yotov_db_disconnect()
+    tradepolicy_db_disconnect()
   }
 
   file.remove(finp)
 
-  invisible(dbListTables(yotov_db()))
-  yotov_db_disconnect()
+  invisible(dbListTables(tradepolicy_db()))
+  tradepolicy_db_disconnect()
 
-  update_yotov_pane()
-  yotov_pane()
-  invisible(yotov_status)
+  update_tradepolicy_pane()
+  tradepolicy_pane()
+  invisible(tradepolicy_status)
 }
 
 

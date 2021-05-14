@@ -1,25 +1,34 @@
-Package: yotover
-Title: An Advanced Guide to Trade Policy Analysis
-Version: 0.3.5
+Package: tradepolicy
+Title: Datasets and Functions to Fit the Models From 'An Advanced Guide to Trade Policy Analysis'
+Version: 0.4
 Authors@R: c( 
         person(given = "Mauricio",
                family = "Vargas",
                role = c("aut", "cre"),
-               email = "mvargas@dcc.uchile.cl",
+               email = "mavargas11@uc.cl",
                comment = c(ORCID = "0000-0003-1017-7574")),
         person(given = "Alexey",
                family = "Kravchenko",
                role = c("ths"),
                email = "kravchenkoa@un.org"),
+        person(given = "Constanza",
+               family = "Prado",
+               role = c("ths"),
+               email = "mcprado@uc.cl"),
+        person(given = "Yoto",
+               family = "Yotov",
+               role = c("ths"),
+               email = "yvy23@drexel.edu"),
         person(family = "The United Nations",
                role = c("dtc", "cph", "fnd")
         )
     )
-Description: On-disk embedded database with SQL versions of the original 
-    datasets from Yotov, et al (2016, ISBN: 978-92-870-4367-2) and functions to 
+Description: On-disk embedded database with SQL versions of the original
+    datasets from An Advanced Guide to Trade Policy Analysis 
+    (Year: 2016, ISBN: 978-92-870-4367-2) by Yotov, et al. and functions to 
     report regressions with clustered robust standard errors.
-URL: https://pacha.dev/yotover/
-BugReports: https://github.com/pachamaltese/yotover/issues/
+URL: https://pacha.dev/tradepolicy/
+BugReports: https://github.com/pachamaltese/tradepolicy/issues/
 License: CC BY 4.0
 Encoding: UTF-8
 LazyData: true
@@ -51,5 +60,5 @@ Suggests:
     devtools,
     testthat,
     covr
-Depends: 
+Depends:
     R (>= 4.0)

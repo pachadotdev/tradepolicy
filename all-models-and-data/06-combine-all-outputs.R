@@ -1,5 +1,3 @@
-library(yotover)
-
 load("all-models-and-data/01-chapter1-traditional-gravity.RData")
 load("all-models-and-data/02-chapter1-distance-puzzle.RData")
 load("all-models-and-data/03-chapter1-regional-trade-agreements.RData")

@@ -1,8 +1,8 @@
-library(yotover)
+library(tradepolicy)
 
 # data ----
 
-ch1_application3_2 <- yotov_data("ch1_application3") %>%
+ch1_application3_2 <- tradepolicy_data("ch1_application3") %>%
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
     exp_year = paste0(exporter, year),
@@ -23,7 +23,7 @@ ch1_application3_2 <- ch1_application3_2 %>%
 
 # ols ----
 
-ch1_app3_ols <- yotov_model_summary3(
+ch1_app3_ols <- tradepolicy_model_summary3(
   formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
   data = filter(ch1_application3_2, trade > 0, importer != exporter),
@@ -32,7 +32,7 @@ ch1_app3_ols <- yotov_model_summary3(
 
 # ppml ----
 
-ch1_app3_ppml <- yotov_model_summary3(
+ch1_app3_ppml <- tradepolicy_model_summary3(
   formula = "trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
   data = filter(ch1_application3_2, importer != exporter),
@@ -41,7 +41,7 @@ ch1_app3_ppml <- yotov_model_summary3(
 
 # trade diversion ----
 
-ch1_app3_intra <- yotov_model_summary3(
+ch1_app3_intra <- tradepolicy_model_summary3(
   formula = "trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year + intl_brdr",
   data = ch1_application3_2,
@@ -50,7 +50,7 @@ ch1_app3_intra <- yotov_model_summary3(
 
 # endogeneity ----
 
-ch1_app3_endg <- yotov_model_summary3(
+ch1_app3_endg <- tradepolicy_model_summary3(
   formula = "trade ~ 0 + rta + exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3_2, sum_trade > 0),
   method = "glm"
@@ -58,7 +58,7 @@ ch1_app3_endg <- yotov_model_summary3(
 
 # reverse causality ----
 
-ch1_app3_lead <- yotov_model_summary3(
+ch1_app3_lead <- tradepolicy_model_summary3(
   formula = "trade ~ 0 + rta + rta_lead4 + exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3_2, sum_trade > 0),
   method = "glm"
@@ -66,7 +66,7 @@ ch1_app3_lead <- yotov_model_summary3(
 
 # non-linear/phasing effects ----
 
-ch1_app3_phsng <- yotov_model_summary3(
+ch1_app3_phsng <- tradepolicy_model_summary3(
   formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
     exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3_2, sum_trade > 0),
@@ -75,7 +75,7 @@ ch1_app3_phsng <- yotov_model_summary3(
 
 # globalization ----
 
-ch1_app3_glbzn <- yotov_model_summary3(
+ch1_app3_glbzn <- tradepolicy_model_summary3(
   formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
     intl_border_1986 + intl_border_1990 + intl_border_1994 +
     intl_border_1998 + intl_border_2002 +

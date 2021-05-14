@@ -12,13 +12,13 @@
 #' # THESE REGRESSIONS ARE JUST FOR TESTING!!!
 #'
 #' model1 <- lm(mpg ~ wt, data = mtcars)
-#' yotov_clustered_summary(model1, "cyl")
+#' tradepolicy_clustered_summary(model1, "cyl")
 #'
 #' model2 <- glm(mpg ~ wt, data = mtcars, family = quasipoisson)
-#' yotov_clustered_summary(model2, "cyl")
+#' tradepolicy_clustered_summary(model2, "cyl")
 #' @export
 
-yotov_clustered_summary <- function(model, cluster) {
+tradepolicy_clustered_summary <- function(model, cluster) {
   # Check ----
   stopifnot(any(class(model) %in% c("lm", "glm")))
   if (any(class(model) == "glm") & !any(grepl("poisson", model$call))) {

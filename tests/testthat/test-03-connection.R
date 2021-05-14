@@ -1,5 +1,5 @@
-olddir <- Sys.getenv("YOTOV_DB_DIR")
-Sys.setenv(YOTOV_DB_DIR = normalizePath(file.path(getwd(), "yotover"),
+olddir <- Sys.getenv("TRADEPOLICY_DB_DIR")
+Sys.setenv(TRADEPOLICY_DB_DIR = normalizePath(file.path(getwd(), "tradepolicy"),
                                         mustWork = FALSE
 ))
 
@@ -7,27 +7,27 @@ context("Connection")
 
 test_that("Disconnetion works", {
   skip_on_cran()
-  skip_if_not(yotov_status())
+  skip_if_not(tradepolicy_status())
 
-  expect_silent(yotov_db_disconnect())
+  expect_silent(tradepolicy_db_disconnect())
 })
 
 test_that("Database is deleted", {
   skip_on_cran()
-  skip_if_not(yotov_status())
+  skip_if_not(tradepolicy_status())
 
-  expect_error(yotov_db_delete(), NA)
-  expect_equal(DBI::dbListTables(yotov_db()), character(0))
-  expect_false(yotov_status())
+  expect_error(tradepolicy_db_delete(), NA)
+  expect_equal(DBI::dbListTables(tradepolicy_db()), character(0))
+  expect_false(tradepolicy_status())
 })
 
 test_that("Tables fail when database is deleted", {
   skip_on_cran()
 
-  for (t in yotov_db_tables()) {
-    expect_error(yotov_data(t))
+  for (t in tradepolicy_db_tables()) {
+    expect_error(tradepolicy_data(t))
   }
 })
 
-try(unlink(Sys.getenv("YOTOV_DB_DIR"), recursive = TRUE))
-Sys.setenv(YOTOV_DB_DIR = olddir)
+try(unlink(Sys.getenv("TRADEPOLICY_DB_DIR"), recursive = TRUE))
+Sys.setenv(TRADEPOLICY_DB_DIR = olddir)

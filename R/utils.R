@@ -1,6 +1,6 @@
 msg <- function(..., startup = FALSE) {
   if (startup) {
-    if (!isTRUE(getOption("yotover.quiet"))) {
+    if (!isTRUE(getOption("tradepolicy.quiet"))) {
       packageStartupMessage(text_col(...))
     }
   } else {

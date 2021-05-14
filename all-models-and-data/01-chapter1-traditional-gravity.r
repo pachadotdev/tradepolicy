@@ -1,8 +1,8 @@
-library(yotover)
+library(tradepolicy)
 
 # data ----
 
-ch1_application1_2 <-  yotov_data("ch1_application1") %>%
+ch1_application1_2 <-  tradepolicy_data("ch1_application1") %>%
   filter(year %in% seq(1986, 2006, 4))
 
 ch1_application1_2 <- ch1_application1_2 %>%
@@ -73,7 +73,7 @@ fit_ols <- lm(
 
 summary(fit_ols)
 
-ch1_app1_ols <- yotov_model_summary(
+ch1_app1_ols <- tradepolicy_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e",
   data = filter(ch1_application1_2, trade > 0),
   method = "lm"
@@ -81,7 +81,7 @@ ch1_app1_ols <- yotov_model_summary(
 
 # ols remoteness ----
 
-ch1_app1_ols_remoteness <- yotov_model_summary(
+ch1_app1_ols_remoteness <- tradepolicy_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
     log_remoteness_exp + log_remoteness_imp",
   data = filter(ch1_application1_2, trade > 0),
@@ -90,7 +90,7 @@ ch1_app1_ols_remoteness <- yotov_model_summary(
 
 # fe ----
 
-ch1_app1_fe <- yotov_model_summary(
+ch1_app1_fe <- tradepolicy_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
   data = filter(ch1_application1_2, trade > 0),
   method = "lm"
@@ -106,7 +106,7 @@ ch1_app1_fe <- yotov_model_summary(
 #   model = FALSE
 # )
 
-ch1_app1_ppml <- yotov_model_summary(
+ch1_app1_ppml <- tradepolicy_model_summary(
   formula = "trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
   data = ch1_application1_2,
   method = "glm"

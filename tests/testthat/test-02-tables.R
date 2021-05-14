@@ -1,5 +1,5 @@
-olddir <- Sys.getenv("YOTOV_DB_DIR")
-Sys.setenv(YOTOV_DB_DIR = normalizePath(file.path(getwd(), "yotover"),
+olddir <- Sys.getenv("TRADEPOLICY_DB_DIR")
+Sys.setenv(TRADEPOLICY_DB_DIR = normalizePath(file.path(getwd(), "tradepolicy"),
                                         mustWork = FALSE
 ))
 
@@ -7,18 +7,18 @@ context("Tables")
 
 test_that("Tables have expected types", {
   skip_on_cran()
-  skip_if_not(yotov_status())
-  expect_is(yotov_db(), "duckdb_connection")
-  for (t in yotov_db_tables()) {
-    expect_is(yotov_data(t), "tbl_df")
+  skip_if_not(tradepolicy_status())
+  expect_is(tradepolicy_db(), "duckdb_connection")
+  for (t in tradepolicy_db_tables()) {
+    expect_is(tradepolicy_data(t), "tbl_df")
   }
 })
 
 test_that("Functions from Ch.1 work as expected, part 1", {
   skip_on_cran()
-  skip_if_not(yotov_status())
+  skip_if_not(tradepolicy_status())
 
-  d_test <- tbl(yotov_db(), "ch1_application1") %>%
+  d_test <- tbl(tradepolicy_db(), "ch1_application1") %>%
     filter(
       exporter == "ARG",
       importer !=  "ARG",
@@ -33,13 +33,13 @@ test_that("Functions from Ch.1 work as expected, part 1", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary1 <- yotov_model_summary(
+  summary1 <- tradepolicy_model_summary(
     formula = "log_trade ~ log_dist + cntg + lang + clny",
     data = d_test,
     method = "lm"
   )
 
-  summary2 <- yotov_model_summary(
+  summary2 <- tradepolicy_model_summary(
     formula = "trade ~ log_dist + cntg + lang + clny",
     data = d_test,
     method = "glm"
@@ -52,9 +52,9 @@ test_that("Functions from Ch.1 work as expected, part 1", {
 
 test_that("Functions from Ch.1 work as expected, part 2", {
   skip_on_cran()
-  skip_if_not(yotov_status())
+  skip_if_not(tradepolicy_status())
 
-  d_test <- tbl(yotov_db(), "ch1_application2") %>%
+  d_test <- tbl(tradepolicy_db(), "ch1_application2") %>%
     filter(
       exporter == "ARG",
       importer != "ARG",
@@ -77,14 +77,14 @@ test_that("Functions from Ch.1 work as expected, part 2", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary3 <- yotov_model_summary2(
+  summary3 <- tradepolicy_model_summary2(
     formula = "log_trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
     data = d_test,
     method = "lm"
   )
 
-  summary4 <- yotov_model_summary2(
+  summary4 <- tradepolicy_model_summary2(
     formula = "trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
     data = d_test,
@@ -98,9 +98,9 @@ test_that("Functions from Ch.1 work as expected, part 2", {
 
 test_that("Functions from Ch.1 work as expected, part 3", {
   skip_on_cran()
-  skip_if_not(yotov_status())
+  skip_if_not(tradepolicy_status())
 
-  d_test <- tbl(yotov_db(), "ch1_application3") %>%
+  d_test <- tbl(tradepolicy_db(), "ch1_application3") %>%
     filter(
       exporter == "ARG",
       importer != "ARG",
@@ -122,14 +122,14 @@ test_that("Functions from Ch.1 work as expected, part 3", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary5 <- yotov_model_summary3(
+  summary5 <- tradepolicy_model_summary3(
     formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
     data = d_test,
     method = "lm"
   )
 
-  summary6 <- yotov_model_summary3(
+  summary6 <- tradepolicy_model_summary3(
     formula = "trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
     data = d_test,
@@ -142,9 +142,9 @@ test_that("Functions from Ch.1 work as expected, part 3", {
 
 test_that("Functions from Ch.1 work as expected, part 3", {
   skip_on_cran()
-  skip_if_not(yotov_status())
+  skip_if_not(tradepolicy_status())
 
-  d_test <- tbl(yotov_db(), "ch2_application1") %>%
+  d_test <- tbl(tradepolicy_db(), "ch2_application1") %>%
     filter(
       exporter %in% c("ARG", "CHL"),
       year == 2002,
@@ -164,11 +164,11 @@ test_that("Functions from Ch.1 work as expected, part 3", {
     data = d_test
   )
 
-  robust_test <- yotov_clustered_glm(fit_test$formula, d_test)
-  fe_test <- yotov_fixed_effects(fit_test)
+  robust_test <- tradepolicy_clustered_glm(fit_test$formula, d_test)
+  fe_test <- tradepolicy_fixed_effects(fit_test)
 
   expect_is(robust_test, "coeftest")
   expect_is(fe_test, "data.frame")
 })
 
-Sys.setenv(YOTOV_DB_DIR = olddir)
+Sys.setenv(TRADEPOLICY_DB_DIR = olddir)

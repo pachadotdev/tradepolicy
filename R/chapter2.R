@@ -10,7 +10,7 @@
 #' @param fe_pattern A pattern for the fixed effects variable, allows character or regex (defaults to "^exporter|^importer")
 #' @export
 
-yotov_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exporter|^importer") {
+tradepolicy_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exporter|^importer") {
   fit <- stats::glm(stats::as.formula(formula),
     family = stats::quasipoisson(link = "log"),
     data = data
@@ -44,7 +44,7 @@ yotov_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^
 #' @param fit A regression object
 #' @export
 
-yotov_fixed_effects <- function(fit) {
+tradepolicy_fixed_effects <- function(fit) {
   panel_coef <- any(grepl("^exp_year|^imp_year|^pair_id_2", names(fit$coefficients)))
 
   if (panel_coef) {

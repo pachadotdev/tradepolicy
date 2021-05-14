@@ -2,5 +2,5 @@
 
 This is the same as the Rmd files at the top of the project. The only difference
 is that the results that are not stored as object, were stored with the name of
-the chunk (e.g. yotov_model_summary(...) vs ch1_app1_ppml <-
-yotov_model_summary()).
+the chunk (e.g. tradepolicy_model_summary(...) vs ch1_app1_ppml <-
+tradepolicy_model_summary()).
