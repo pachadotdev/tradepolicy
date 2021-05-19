@@ -2,7 +2,7 @@
 % Please edit documentation in R/connections.R
 \name{tp_disconnect}
 \alias{tp_disconnect}
-\title{Disconnect from the Yotov database}
+\title{Disconnect from the AGTPA database}
 \usage{
 tp_disconnect()
 }

@@ -17,7 +17,7 @@ sql_action <- function() {
   }
 }
 
-#' Open Yotov database connection pane in RStudio
+#' Open AGTPA database connection pane in RStudio
 #'
 #' This function launches the RStudio "Connection" pane to interactively
 #' explore the database.
@@ -31,8 +31,8 @@ tp_pane <- function() {
   observer <- getOption("connectionObserver")
   if (!is.null(observer) && interactive()) {
     observer$connectionOpened(
-      type = "YotovDB",
-      host = "yotovdb",
+      type = "TradePolicyDB",
+      host = "tradepolicydb",
       displayName = "Datasets from 'An Advanced Guide to Trade Policy Analysis'",
       icon = system.file("img", "un-logo.png", package = "tradepolicy"),
       connectCode = "tradepolicy::tp_pane()",
@@ -84,6 +84,6 @@ tp_pane <- function() {
 update_tp_pane <- function() {
   observer <- getOption("connectionObserver")
   if (!is.null(observer)) {
-    observer$connectionUpdated("YotovDB", "yotovdb", "")
+    observer$connectionUpdated("TradePolicyDB", "tradepolicydb", "")
   }
 }

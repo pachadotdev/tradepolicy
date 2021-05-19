@@ -2,7 +2,7 @@
 % Please edit documentation in R/connections.R
 \name{tp_status}
 \alias{tp_status}
-\title{Get the status of the current local Yotov database}
+\title{Get the status of the current local AGTPA database}
 \usage{
 tp_status(verbose = TRUE)
 }
@@ -13,7 +13,7 @@ tp_status(verbose = TRUE)
 TRUE if the database exists, FALSE if it is not detected. (invisible)
 }
 \description{
-Get the status of the current local Yotov database. It displays informative message
+Get the status of the current local AGTPA database. It displays informative message
 about how to create the local database if it can't be found or it is corrupt.
 }
 \examples{

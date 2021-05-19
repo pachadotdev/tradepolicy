@@ -12,7 +12,7 @@ tp_path <- function() {
   }
 }
 
-#' The local Yotov database
+#' The local AGTPA database
 #'
 #' Returns a connection to the local tradepolicy database. This is a DBI-compliant
 #' duckdb database connection. When using **dplyr**-based
@@ -59,7 +59,7 @@ tp_database <- function(dir = tp_path()) {
   error = function(e) {
     if (grepl("Failed to open database", e)) {
       stop(paste(
-        "Local yotov database is locked by another R session.\n",
+        "Local AGTPA database is locked by another R session.\n",
         "Try closing or running tp_disconnect() in that session."
       ),
       call. = FALSE
@@ -76,7 +76,7 @@ tp_database <- function(dir = tp_path()) {
 }
 
 
-#' Yotov applications data
+#' AGTPA applications data
 #'
 #' Returns a remote database table with the data required to replicate the
 #' exercises from the book.
@@ -99,7 +99,7 @@ tp_data <- function(table) {
 }
 
 
-#' Disconnect from the Yotov database
+#' Disconnect from the AGTPA database
 #'
 #' A utility function for disconnecting from the database.
 #'
@@ -117,14 +117,14 @@ tp_disconnect_ <- function(environment = tp_cache) {
   }
   observer <- getOption("connectionObserver")
   if (!is.null(observer)) {
-    observer$connectionClosed("YotovDB", "yotovdb")
+    observer$connectionClosed("TradePolicyDB", "tradepolicydb")
   }
 }
 
 
-#' Get the status of the current local Yotov database
+#' Get the status of the current local AGTPA database
 #'
-#' Get the status of the current local Yotov database. It displays informative message
+#' Get the status of the current local AGTPA database. It displays informative message
 #' about how to create the local database if it can't be found or it is corrupt.
 #'
 #' @param verbose Whether to print a status message
@@ -140,10 +140,10 @@ tp_status <- function(verbose = TRUE) {
   existing_tables <- sort(DBI::dbListTables(tp_database()))
 
   if (isTRUE(all.equal(expected_tables, existing_tables))) {
-    status_msg <- paste(crayon::green(cli::symbol$tick, "Local Yotov database is OK."))
+    status_msg <- paste(crayon::green(cli::symbol$tick, "Local AGTPA database is OK."))
     out <- TRUE
   } else {
-    status_msg <- paste(crayon::red(cli::symbol$cross, "Local Yotov database empty or corrupt. Download with tp_download()"))
+    status_msg <- paste(crayon::red(cli::symbol$cross, "Local AGTPA database empty or corrupt. Download with tp_download()"))
     out <- FALSE
   }
   if (verbose) {
@@ -153,7 +153,7 @@ tp_status <- function(verbose = TRUE) {
   invisible(out)
 }
 
-#' Yotov available tables
+#' AGTPA available tables
 #' @export
 tp_tables <- function() {
   sort(c(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/connection-pane.R
 \name{tp_pane}
 \alias{tp_pane}
-\title{Open Yotov database connection pane in RStudio}
+\title{Open AGTPA database connection pane in RStudio}
 \usage{
 tp_pane()
 }

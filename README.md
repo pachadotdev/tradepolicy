@@ -1,4 +1,4 @@
-# tradepolicy: Datasets and Functions to Fit the Models From 'An Advanced Guide to Trade Policy Analysis'
+# tradepolicy: Replication of 'An Advanced Guide To Trade Policy Analysis'
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
@@ -16,7 +16,7 @@ Instead of providing large datasets in RDS or CSV format, this provides function
 
 For the analysis, this provides functions to compute robust clustered standard errors in generalized linear models.
 
-See https://pacha.dev/tradepolicy for a fully detailed replication of Yotov's results.
+See https://r.tiid.org/R_structural_gravity/ for a fully detailed replication of AGTPA's results.
 
 # Installation
 

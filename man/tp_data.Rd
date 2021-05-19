@@ -2,7 +2,7 @@
 % Please edit documentation in R/connections.R
 \name{tp_data}
 \alias{tp_data}
-\title{Yotov applications data}
+\title{AGTPA applications data}
 \usage{
 tp_data(table)
 }

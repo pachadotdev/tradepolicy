@@ -2,10 +2,10 @@
 % Please edit documentation in R/connections.R
 \name{tp_tables}
 \alias{tp_tables}
-\title{Yotov available tables}
+\title{AGTPA available tables}
 \usage{
 tp_tables()
 }
 \description{
-Yotov available tables
+AGTPA available tables
 }

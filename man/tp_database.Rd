@@ -2,7 +2,7 @@
 % Please edit documentation in R/connections.R
 \name{tp_database}
 \alias{tp_database}
-\title{The local Yotov database}
+\title{The local AGTPA database}
 \usage{
 tp_database(dir = tp_path())
 }
