@@ -12,13 +12,13 @@
 #' # THESE REGRESSIONS ARE JUST FOR TESTING!!!
 #'
 #' model1 <- lm(mpg ~ wt, data = mtcars)
-#' tradepolicy_clustered_summary(model1, "cyl")
+#' tp_clustered_summary(model1, "cyl")
 #'
 #' model2 <- glm(mpg ~ wt, data = mtcars, family = quasipoisson)
-#' tradepolicy_clustered_summary(model2, "cyl")
+#' tp_clustered_summary(model2, "cyl")
 #' @export
 
-tradepolicy_clustered_summary <- function(model, cluster) {
+tp_clustered_summary <- function(model, cluster) {
   # Check ----
   stopifnot(any(class(model) %in% c("lm", "glm")))
   if (any(class(model) == "glm") & !any(grepl("poisson", model$call))) {

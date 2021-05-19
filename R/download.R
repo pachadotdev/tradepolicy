@@ -7,7 +7,7 @@ globalVariables(c("term"))
 #' During import over 3.5 GB of disk space may be used temporarily.
 #'
 #' The database is stored by default under `tools::R_user_dir("tradepolicy")`, or
-#' its location can be set with the environment variable `TRADEPOLICY_DB_DIR`.
+#' its location can be set with the environment variable `TRADEPOLICY_DIR`.
 #'
 #' @param tag What release tag of data to download. Defaults to the most recent.
 #' Releases are expected to come twice per year. See all releases at
@@ -22,77 +22,87 @@ globalVariables(c("term"))
 #'   dbWriteTable dbListTables
 #'
 #' @examples
-#' \donttest{
-#' \dontrun{
-#' tradepolicy_db_download()
-#' }
-#' }
-tradepolicy_db_download <- function(tag = NULL, destdir = tempdir(),
-                              cleanup = TRUE, verbose = interactive()) {
-  if (verbose) msg("Downloading data...\n")
+#' \dontrun{ tp_download() }
+tp_download <- function(ver = NULL, verbose = interactive()) {
+  if (verbose) msg("\nDecompressing and building local database...\n")
+
+  destdir <- tempdir()
+  dir <- tp_path()
+
+  suppressWarnings(try(dir.create(dir, recursive = TRUE)))
+
   zfile <- get_gh_release_file("pachamaltese/tradepolicy",
-                               tag_name = tag,
-                               destdir = destdir, verbose = verbose
+                               tag_name = ver,
+                               dir = destdir
   )
   ver <- attr(zfile, "ver")
-  if (verbose) msg("\nDecompressing and building local database...\n")
-  temp_tsv <- tempfile(fileext = ".tsv")
-  destdir <- paste0(destdir, "/yotov-trade-db")
-  destdir <- gsub("\\\\", "/", destdir)
-  try(dir.create(destdir))
-  utils::unzip(zfile, overwrite = TRUE, exdir = destdir)
 
-  tradepolicy_db_disconnect()
-  try(unlink(tradepolicy_path(), recursive = TRUE))
+  suppressWarnings(try(tp_disconnect()))
 
-  finp <- list.files(destdir, full.names = TRUE)
+  duckdb_version <- utils::packageVersion("duckdb")
+  db_pattern <- paste0("v", gsub("\\.", "", duckdb_version), ".duckdb")
 
-  for (x in seq_along(finp)) {
-    tout <- gsub(".*/", "", gsub("\\.tsv", "", finp[x]))
+  existing_files <- list.files(tp_path())
 
-    msg(sprintf("Creating %s ...", tout))
-
-    d <- utils::read.delim(finp[x],
-                    sep = "\t",
-                    stringsAsFactors = FALSE)
-
-    if (any("year" %in% colnames(d))) {
-      l <- list("year", "exporter", "importer")
-    } else {
-      l <- list("exporter", "importer")
-    }
-
-    if (any("country" %in% colnames(d))) {
-      l <- list("country")
-    }
-
-    dplyr::copy_to(
-      tradepolicy_db(),
-      d,
-      tout,
-      indexes = l,
-      temporary = FALSE
-    )
-
-    rm(d, tout)
-
-    tradepolicy_db_disconnect()
+  if (!any(grepl(db_pattern, existing_files))) {
+    try(tp_delete())
   }
 
-  file.remove(finp)
+  utils::unzip(zfile, overwrite = TRUE, exdir = destdir)
+  unlink(zfile)
 
-  invisible(dbListTables(tradepolicy_db()))
-  tradepolicy_db_disconnect()
+  finp_tsv <- list.files(destdir, full.names = TRUE, pattern = "tsv")
 
-  update_tradepolicy_pane()
-  tradepolicy_pane()
-  invisible(tradepolicy_status)
+  invisible(create_schema())
+
+  for (x in seq_along(finp_tsv)) {
+
+    tout <- gsub(".*/", "", gsub("\\.tsv", "", finp_tsv[x]))
+
+    msg(sprintf("Creating %s table...", tout))
+
+    con <- tp_database()
+
+    suppressMessages(
+      DBI::dbExecute(
+        con,
+        paste0(
+          "COPY ", tout, " FROM '",
+          finp_tsv[x],
+          "' ( DELIMITER '\t', HEADER 1, NULL 'NA' )"
+        )
+      )
+    )
+
+    DBI::dbDisconnect(con, shutdown = TRUE)
+
+    unlink(finp_tsv[x])
+    invisible(gc())
+  }
+
+  metadata <- data.frame(duckdb_version = utils::packageVersion("duckdb"),
+                          modification_date = Sys.time())
+  metadata$duckdb_version <- as.character(metadata$duckdb_version)
+  metadata$modification_date <- as.character(metadata$modification_date)
+
+  con <- tp_database()
+  suppressMessages(DBI::dbWriteTable(con, "metadata", metadata, append = T, temporary = F))
+  DBI::dbDisconnect(con, shutdown = TRUE)
+
+  unlink(destdir, recursive = TRUE)
+
+  invisible(DBI::dbListTables(tp_database()))
+  tp_disconnect()
+
+  update_tp_pane()
+  tp_pane()
+  tp_status()
 }
 
 
 #' @importFrom httr GET stop_for_status content accept write_disk progress
 #' @importFrom purrr keep
-get_gh_release_file <- function(repo, tag_name = NULL, destdir = tempdir(),
+get_gh_release_file <- function(repo, tag_name = NULL, dir = tempdir(),
                                 overwrite = TRUE, verbose = interactive()) {
   releases <- GET(
     paste0("https://api.github.com/repos/", repo, "/releases")
@@ -115,7 +125,7 @@ get_gh_release_file <- function(repo, tag_name = NULL, destdir = tempdir(),
 
   download_url <- release_obj[[1]]$assets[[2]]$url
   filename <- basename(release_obj[[1]]$assets[[2]]$browser_download_url)
-  out_path <- normalizePath(file.path(destdir, filename), mustWork = FALSE)
+  out_path <- normalizePath(file.path(dir, filename), mustWork = FALSE)
   response <- GET(
     download_url,
     accept("application/octet-stream"),

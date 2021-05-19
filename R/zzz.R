@@ -18,14 +18,14 @@ globalVariables(c("country", "exporter", "importer", "name", "type", "value"))
   msg(crayon::cyan(paste(cli::symbol$warning,
                           "If you don't want to create a database in your home directory,")))
   msg(crayon::cyan(paste(cli::symbol$warning,
-                          "run usethis::edit_r_environ() and create the environment variable TRADEPOLICY_DB_DIR with your desired location.")))
+                          "run usethis::edit_r_environ() and create the environment variable TRADEPOLICY_DIR with your desired location.")))
 
-  tradepolicy_attach()
+  tp_attach()
 
   if (interactive() && Sys.getenv("RSTUDIO") == "1" && !in_chk()) {
-    tradepolicy_pane()
+    tp_pane()
   }
-  if (interactive()) tradepolicy_status()
+  if (interactive()) tp_status()
 }
 
 in_chk <- function() {

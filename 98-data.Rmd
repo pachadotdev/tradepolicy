@@ -74,7 +74,7 @@ read_and_clean <- function(finp) {
     d <- read_dta(finp) %>% 
       clean_names()
     
-    data.table::fwrite(d, fout2, sep = "\t")
+    data.table::fwrite(d, fout2, sep = "\t", na = NA)
   }
 }
 

@@ -13,14 +13,14 @@ Please see the note from page 42 in @yotov2016advanced. It's a really important 
 3. Remove cases where both the exporter and the importer are the same
 4. Drop observations where the trade flow is zero
 
-Provided that the datasets use 3 GB on disk, we opted to use a local SQL database ([DuckDB](https://duckdb.org)) instead of spreadsheets or even native R files. If you are not familiar with SQL, do not worry because we provide the function `tradepolicy_data()`, so that `tradepolicy_data("ch1_application1")` goes to the database and returns the data for this exercise.
+Provided that the datasets use 3 GB on disk, we opted to use a local SQL database ([DuckDB](https://duckdb.org)) instead of spreadsheets or even native R files. If you are not familiar with SQL, do not worry because we provide the function `tp_data()`, so that `tp_data("ch1_application1")` goes to the database and returns the data for this exercise.
 
 Step 1 is straightforward:
 
 ```{r ch1_app1_data_1}
 library(tradepolicy)
 
-ch1_application1_2 <-  tradepolicy_data("ch1_application1") %>%
+ch1_application1_2 <-  tp_data("ch1_application1") %>%
   filter(year %in% seq(1986, 2006, 4))
 ```
 
@@ -134,7 +134,7 @@ Now the model is almost ready! Now we only need to stick to the methodology from
 @yotov2016advanced and cluster the standard errors by country pair (see the note in page 42, it is extremely important). This is not straightforward and requires additional work.
 
 The `tradepolicy` package provides a nice function to do this and more. Please read
-the documentation of the package and look the `tradepolicy_model_summary()` function, it
+the documentation of the package and look the `tp_model_summary()` function, it
 summarises the model in the exact way as reported in the book by providing:
 
 * Clustered standard errors
@@ -148,7 +148,7 @@ This is returned as a list to keep it simple.
 Finally, here is the model as reported in the book:
 
 ```{r ch1_app1_ols_2}
-tradepolicy_model_summary(
+tp_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e",
   data = filter(ch1_application1_2, trade > 0),
   method = "lm"
@@ -178,7 +178,7 @@ See page 43 in @yotov2016advanced for a full detail of each variable.
 Our approach follows box #1 in page 43 from @yotov2016advanced. Fitting the regression is straightforward, it's just about adding more regressors to what we did in the last section, and we can create a list with a summary for the model:
 
 ```{r ch1_app1_ols_remoteness_1}
-tradepolicy_model_summary(
+tp_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
     log_remoteness_exp + log_remoteness_imp",
   data = filter(ch1_application1_2, trade > 0),
@@ -202,7 +202,7 @@ account for exporter-time and importer-time fixed effects respectively. See page
 Now we can easily generate a list as we did with the previous models:
 
 ```{r ch1_app1_fe_1}
-tradepolicy_model_summary(
+tp_model_summary(
   formula = "log_trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
   data = filter(ch1_application1_2, trade > 0),
   method = "lm"
@@ -239,12 +239,12 @@ In the previous model, a `glm` model object carries a copy of its training data 
 
 If you decide to run this model and print the summary yourself, you'll notice that it doesn't report $R^2$ and that it shows a large list of fixed effects. The $R^2$ needs to be computed afterwards as a function of the correlation between the observed and predicted values. Please see @silva2006log for the details as well as for the RESET test for PPML (GLM) models.
 
-Software such as Stata, without dedicated functions, reports an incorrect $R^2$ for PPML model, it actually reports a pseudo-$R^2$. To construct a proper $R^2$, `tradepolicy_model_summary()` takes the correlation between actual and predicted trade flows.
+Software such as Stata, without dedicated functions, reports an incorrect $R^2$ for PPML model, it actually reports a pseudo-$R^2$. To construct a proper $R^2$, `tp_model_summary()` takes the correlation between actual and predicted trade flows.
 
 We can obtain a detailed list as in the previous examples:
 
 ```{r ch1_app1_ppml_2}
-tradepolicy_model_summary(
+tp_model_summary(
   formula = "trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
   data = ch1_application1_2,
   method = "glm"
@@ -276,7 +276,7 @@ For the OLS model we need to remove cases where the exporter is the same as the 
 In order to avoid creating  two datasets that are very similar, we shall create one dataset to cover both OLS and PPML:
 
 ```{r ch1_app2_data_1}
-ch1_application2_2 <- tradepolicy_data("ch1_application2") %>%
+ch1_application2_2 <- tp_data("ch1_application2") %>%
   # this filter covers both OLS and PPML
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
@@ -317,7 +317,7 @@ The gravity specification, which includes $\pi_{i,t} + \chi_{i,t}$, means that w
 With the data from above, the model specification is straightforward:
 
 ```{r ch1_app2_ols_1}
-tradepolicy_model_summary2(
+tp_model_summary2(
   formula = "log_trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
@@ -333,7 +333,7 @@ Notice that, unlike the previous section, we used the notation `y ~ 0 + ...`. Th
 This model is very similar to the one specified in the PPML section from the last section. We can fit the model in a direct way:
 
 ```{r ch1_app2_ppml_1}
-tradepolicy_model_summary2(
+tp_model_summary2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year",
@@ -347,7 +347,7 @@ tradepolicy_model_summary2(
 This model just requires us to add the `log_dist_intra` variable to the PPML model and not to filter the rows where the exporter and the importer are the same:
 
 ```{r ch1_app2_intra_1}
-tradepolicy_model_summary2(
+tp_model_summary2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + log_dist_intra",
@@ -361,7 +361,7 @@ tradepolicy_model_summary2(
 This model just requires us to add the `smctry` variable to the internal distance model and repeat the rest of the steps from the last section:
 
 ```{r ch1_app2_home_1}
-tradepolicy_model_summary2(
+tp_model_summary2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + log_dist_intra + smctry",
@@ -375,7 +375,7 @@ tradepolicy_model_summary2(
 This model just requires us to remove the variables `log_dist_intra` and `smctry` from the last model and include the `intra_pair` variable to account for the intra-national fixed effects:
 
 ```{r ch1_app2_fe_1}
-tradepolicy_model_summary2(
+tp_model_summary2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + intra_pair",
@@ -401,7 +401,7 @@ We need to create additional variables, in comparison to the previous examples, 
 The direct way of obtaining the desired variables is quite similar to what we did in the previous sections:
 
 ```{r ch1_app3_data_1}
-ch1_application3_2 <- tradepolicy_data("ch1_application3") %>%
+ch1_application3_2 <- tp_data("ch1_application3") %>%
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
     exp_year = paste0(exporter, year),
@@ -434,7 +434,7 @@ The gravity specification, which includes $\pi_{i,t} + \chi_{i,t}$, means that w
 With the data from above, the model specification is straightforward:
 
 ```{r ch1_app3_ols_1}
-tradepolicy_model_summary3(
+tp_model_summary3(
   formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
   data = filter(ch1_application3_2, trade > 0, importer != exporter),
@@ -447,7 +447,7 @@ tradepolicy_model_summary3(
 The model specification is very similar to OLS and we only need to change the function `lm()`:
 
 ```{r ch1_app3_ppml_1}
-tradepolicy_model_summary3(
+tp_model_summary3(
   formula = "trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
   data = filter(ch1_application3_2, importer != exporter),
@@ -460,7 +460,7 @@ tradepolicy_model_summary3(
 The model specification is quite the same as PPML and we only need to add the variable `intl_brdr` but using the full dataset instead of removing rows where the importer and the exporter are the same:
 
 ```{r ch1_app3_intra_1}
-tradepolicy_model_summary3(
+tp_model_summary3(
   formula = "trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year + intl_brdr",
   data = ch1_application3_2,
@@ -473,7 +473,7 @@ tradepolicy_model_summary3(
 The model specification consists in including the `rta` variable and the fixed effects `exp_year`, `imp_year` and `pair_id_2` to account for domestic trade:
 
 ```{r ch1_app3_endg_1}
-tradepolicy_model_summary3(
+tp_model_summary3(
   formula = "trade ~ 0 + rta + exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3_2, sum_trade > 0),
   method = "glm"
@@ -485,7 +485,7 @@ tradepolicy_model_summary3(
 We need to modify the previous model in order to include the variable `rta_lead4` and to consider where `sum_trade` is greater than zero:
 
 ```{r ch1_app3_lead_1}
-tradepolicy_model_summary3(
+tp_model_summary3(
   formula = "trade ~ 0 + rta + rta_lead4 + exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3_2, sum_trade > 0),
   method = "glm"
@@ -497,7 +497,7 @@ tradepolicy_model_summary3(
 Instead of future-lagged `rta` variable, as in the previous model, we modify the previous model and include the `rta_lagN` past-lagged variables instead:
 
 ```{r ch1_app3_phsng_1}
-tradepolicy_model_summary3(
+tp_model_summary3(
   formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
     exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3_2, sum_trade > 0),
@@ -510,7 +510,7 @@ tradepolicy_model_summary3(
 Just as an addition to the previous model, we include the `intl_border_T` variables in addition to `rta_lagN`:
 
 ```{r ch1_app3_glbzn_1}
-tradepolicy_model_summary3(
+tp_model_summary3(
   formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
     intl_border_1986 + intl_border_1990 + intl_border_1994 +
     intl_border_1998 + intl_border_2002 +

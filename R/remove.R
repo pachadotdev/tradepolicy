@@ -7,13 +7,9 @@
 #' @importFrom DBI dbListTables dbRemoveTable
 #'
 #' @examples
-#' \donttest{
-#' \dontrun{
-#' tradepolicy_db_delete()
-#' }
-#' }
-tradepolicy_db_delete <- function() {
-  suppressWarnings(tradepolicy_db_disconnect())
-  try(unlink(tradepolicy_path(), recursive = TRUE))
-  update_tradepolicy_pane()
+#' \dontrun{ tp_delete() }
+tp_delete <- function() {
+  suppressWarnings(tp_disconnect())
+  try(unlink(gsub("/duckdb.*", "", tp_path()), recursive = TRUE))
+  update_tp_pane()
 }

@@ -17,7 +17,7 @@ same_library <- function(pkg) {
   )
 }
 
-tradepolicy_attach <- function() {
+tp_attach <- function() {
   to_load <- core_unloaded()
   if (length(to_load) == 0) {
     return(invisible())

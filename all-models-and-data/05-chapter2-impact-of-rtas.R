@@ -2,7 +2,7 @@ library(tradepolicy)
 
 # data ----
 
-ch2_application2 <- tradepolicy_data("ch2_application2") %>%
+ch2_application2 <- tp_data("ch2_application2") %>%
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
     log_dist = log(dist),
@@ -45,7 +45,7 @@ fit_baseline_app2 <- glm(
 
 ch2_application2 <- ch2_application2 %>%
   left_join(
-    tradepolicy_fixed_effects(fit_baseline_app2),
+    tp_fixed_effects(fit_baseline_app2),
     by = c("exp_year", "imp_year", "pair_id_2")
   )
 
@@ -91,7 +91,7 @@ ch2_application2 <- ch2_application2 %>%
   ungroup()
 
 ch2_application2 <- ch2_application2 %>%
-  left_join(tradepolicy_fixed_effects(fit_constrained_app2), by = c("exporter","importer"))
+  left_join(tp_fixed_effects(fit_constrained_app2), by = c("exporter","importer"))
 
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -119,7 +119,7 @@ fit_counterfactual_app2 <- glm(
 )
 
 ch2_application2 <- ch2_application2 %>%
-  left_join(tradepolicy_fixed_effects(fit_counterfactual_app2), by = c("exporter","importer")) %>%
+  left_join(tp_fixed_effects(fit_counterfactual_app2), by = c("exporter","importer")) %>%
   rename(
     fe_exporter_bln = fe_exporter.x,
     fe_exporter_cfl = fe_exporter.y,
@@ -200,7 +200,7 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
 
   ch2_application2 <- ch2_application2 %>%
     left_join(
-      tradepolicy_fixed_effects(fit_counterfactual_app2_2),
+      tp_fixed_effects(fit_counterfactual_app2_2),
       by = c("exporter", "importer")
     )
 

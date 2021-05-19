@@ -1,20 +1,14 @@
-tradepolicy_path <- function() {
+tp_path <- function() {
   duckdb_version <- utils::packageVersion("duckdb")
-  sys_tradepolicy_path <- Sys.getenv("TRADEPOLICY_DB_DIR")
-  sys_tradepolicy_path <- gsub("\\\\", "/", sys_tradepolicy_path)
-  if (sys_tradepolicy_path == "") {
+  sys_tp_path <- Sys.getenv("TRADEPOLICY_DIR")
+  sys_tp_path <- gsub("\\\\", "/", sys_tp_path)
+  if (sys_tp_path == "") {
     return(gsub("\\\\", "/", paste0(
       tools::R_user_dir("tradepolicy"),
       "/duckdb-", duckdb_version
     )))
   } else {
-    return(gsub("\\\\", "/", paste0(sys_tradepolicy_path, "/duckdb-", duckdb_version)))
-  }
-}
-
-tradepolicy_check_status <- function() {
-  if (!tradepolicy_status(FALSE)) {
-    stop("Local yotov database empty or corrupt. Download with tradepolicy_db_download()")
+    return(gsub("\\\\", "/", paste0(sys_tp_path, "/duckdb-", duckdb_version)))
   }
 }
 
@@ -22,60 +16,63 @@ tradepolicy_check_status <- function() {
 #'
 #' Returns a connection to the local tradepolicy database. This is a DBI-compliant
 #' duckdb database connection. When using **dplyr**-based
-#' workflows, one typically accesses tables with [tradepolicy_data()], but this
+#' workflows, one typically accesses tables with [tp_data()], but this
 #' function lets the user interact with the database directly via SQL.
 #'
-#' @param dbdir The location of the database on disk. Defaults to
+#' @param dir The location of the database on disk. Defaults to
 #' `tradepolicy` under `tools::R_user_dir("tradepolicy")`, or the path specified
-#' in the environment variable `TRADEPOLICY_DB_DIR`.
+#' in the environment variable `TRADEPOLICY_DIR`.
 #'
 #' @export
 #'
 #' @examples
-#' if (tradepolicy_status()) {
-#'   DBI::dbListTables(tradepolicy_db())
+#' if (tp_status()) {
+#'   DBI::dbListTables(tp_database())
 #'
-#'   ch1_application1 <- DBI::dbReadTable(tradepolicy_db(), "ch1_application1")
+#'   ch1_application1 <- DBI::dbReadTable(tp_database(), "ch1_application1")
 #'
 #'   DBI::dbGetQuery(
-#'     tradepolicy_db(),
+#'     tp_database(),
 #'     "SELECT * FROM ch1_application1"
 #'   )
 #' }
-tradepolicy_db <- function(dbdir = tradepolicy_path()) {
-  db <- mget("tradepolicy_db", envir = tradepolicy_cache, ifnotfound = NA)[[1]]
+tp_database <- function(dir = tp_path()) {
+  duckdb_version <- utils::packageVersion("duckdb")
+  db_file <- paste0(dir, "/tradepolicy_duckdb_v", gsub("\\.", "", duckdb_version), ".duckdb")
+
+  db <- mget("tp_database", envir = tp_cache, ifnotfound = NA)[[1]]
+
   if (inherits(db, "DBIConnection")) {
     if (DBI::dbIsValid(db)) {
       return(db)
     }
   }
 
-  try(dir.create(dbdir, showWarnings = FALSE, recursive = TRUE))
+  try(dir.create(dir, showWarnings = FALSE, recursive = TRUE))
 
-  tryCatch(
-    {
-      db <- DBI::dbConnect(
-        duckdb::duckdb(),
-        paste0(dbdir, "/tradepolicy_db.duckdb")
+  tryCatch({
+    db <- DBI::dbConnect(
+      duckdb::duckdb(),
+      db_file
+    )
+  },
+  error = function(e) {
+    if (grepl("Failed to open database", e)) {
+      stop(paste(
+        "Local yotov database is locked by another R session.\n",
+        "Try closing or running tp_disconnect() in that session."
+      ),
+      call. = FALSE
       )
-    },
-    error = function(e) {
-      if (grepl("(Database lock|bad rolemask)", e)) {
-        stop(paste(
-          "Local yotov database is locked by another R session.\n",
-          "Try closing or running tradepolicy_db_disconnect() in that session."
-        ),
-        call. = FALSE
-        )
-      } else {
-        stop(e)
-      }
-    },
-    finally = NULL
+    } else {
+      stop(e)
+    }
+  },
+  finally = NULL
   )
 
-  assign("tradepolicy_db", db, envir = tradepolicy_cache)
-  db
+  assign("tp_database", db, envir = tp_cache)
+  return(db)
 }
 
 
@@ -89,14 +86,15 @@ tradepolicy_db <- function(dbdir = tradepolicy_path()) {
 #' @export
 #'
 #' @examples
-#' if (tradepolicy_status()) {
-#'   tradepolicy_data("ch1_application1")
+#' if (tp_status()) {
+#'   tp_data("ch1_application1")
 #' }
 #' @importFrom dplyr tbl
-tradepolicy_data <- function(table) {
-  tradepolicy_check_status()
-  df <- dplyr::as_tibble(DBI::dbReadTable(tradepolicy_db(), table))
-  tradepolicy_db_disconnect()
+tp_data <- function(table) {
+  df <- tryCatch(
+    tibble::as_tibble(DBI::dbReadTable(tp_database(), table)),
+    error = function(e) { read_table_error(e) }
+  )
   return(df)
 }
 
@@ -106,14 +104,14 @@ tradepolicy_data <- function(table) {
 #' A utility function for disconnecting from the database.
 #'
 #' @examples
-#' tradepolicy_db_disconnect()
+#' tp_disconnect()
 #' @export
 #'
-tradepolicy_db_disconnect <- function() {
-  tradepolicy_db_disconnect_()
+tp_disconnect <- function() {
+  tp_disconnect_()
 }
-tradepolicy_db_disconnect_ <- function(environment = tradepolicy_cache) {
-  db <- mget("tradepolicy_db", envir = tradepolicy_cache, ifnotfound = NA)[[1]]
+tp_disconnect_ <- function(environment = tp_cache) {
+  db <- mget("tp_database", envir = tp_cache, ifnotfound = NA)[[1]]
   if (inherits(db, "DBIConnection")) {
     DBI::dbDisconnect(db, shutdown = TRUE)
   }
@@ -136,16 +134,16 @@ tradepolicy_db_disconnect_ <- function(environment = tradepolicy_cache) {
 #' @importFrom DBI dbExistsTable
 #' @importFrom tools toTitleCase
 #' @examples
-#' tradepolicy_status()
-tradepolicy_status <- function(verbose = TRUE) {
-  expected_tables <- sort(tradepolicy_db_tables())
-  existing_tables <- sort(DBI::dbListTables(tradepolicy_db()))
+#' tp_status()
+tp_status <- function(verbose = TRUE) {
+  expected_tables <- sort(tp_tables())
+  existing_tables <- sort(DBI::dbListTables(tp_database()))
 
   if (isTRUE(all.equal(expected_tables, existing_tables))) {
     status_msg <- paste(crayon::green(cli::symbol$tick, "Local Yotov database is OK."))
     out <- TRUE
   } else {
-    status_msg <- paste(crayon::red(cli::symbol$cross, "Local Yotov database empty or corrupt. Download with tradepolicy_db_download()"))
+    status_msg <- paste(crayon::red(cli::symbol$cross, "Local Yotov database empty or corrupt. Download with tp_download()"))
     out <- FALSE
   }
   if (verbose) {
@@ -157,7 +155,7 @@ tradepolicy_status <- function(verbose = TRUE) {
 
 #' Yotov available tables
 #' @export
-tradepolicy_db_tables <- function() {
+tp_tables <- function() {
   sort(c(
     "ch1_application1", "ch1_application2",
     "ch1_application3", "ch1_exercise1", "ch1_exercise2", "ch2_application1",
@@ -176,9 +174,10 @@ tradepolicy_db_tables <- function() {
     "ch2_rta_impacts_results_full_cons", "ch2_rta_impacts_results_full_prod",
     "ch2_rta_impacts_results_fullge", "ch2_rta_impacts",
     "ch2_trade_without_border_full_cons", "ch2_trade_without_border_full_prod",
-    "ch2_trade_without_border_fullge", "ch2_trade_without_border"
+    "ch2_trade_without_border_fullge", "ch2_trade_without_border",
+    "metadata"
   ))
 }
 
-tradepolicy_cache <- new.env()
-reg.finalizer(tradepolicy_cache, tradepolicy_db_disconnect_, onexit = TRUE)
+tp_cache <- new.env()
+reg.finalizer(tp_cache, tp_disconnect_, onexit = TRUE)

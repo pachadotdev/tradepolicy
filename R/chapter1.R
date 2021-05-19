@@ -11,7 +11,7 @@
 #' @param itfe Importer time fixed effects column (defaults to "imp_year")
 #' @export
 
-tradepolicy_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
+tp_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
                                 etfe = "exp_year", itfe = "imp_year") {
   stopifnot(any(method %in% c("lm", "glm")))
 
@@ -105,7 +105,7 @@ tradepolicy_model_summary <- function(formula, data, method = "lm", pair = "pair
 #' @param csfe Country-specific fixed effects (defaults to "intra_pair")
 #' @export
 
-tradepolicy_model_summary2 <- function(formula, data, method = "lm",
+tp_model_summary2 <- function(formula, data, method = "lm",
                                  pair = "pair_id", etfe = "exp_year",
                                  itfe = "imp_year", dist = "log_dist",
                                  intr = "log_dist_intra", csfe = "intra_pair") {
@@ -201,7 +201,7 @@ tradepolicy_model_summary2 <- function(formula, data, method = "lm",
 #' @param brdr Inter-national borders column (defaults to "intl_brdr")
 #' @export
 
-tradepolicy_model_summary3 <- function(formula, data, method = "lm",
+tp_model_summary3 <- function(formula, data, method = "lm",
                                  pair = "pair_id", pair2 = "pair_id_2",
                                  etfe = "exp_year", itfe = "imp_year",
                                  dist = "log_dist", intr = "log_dist_intra",
