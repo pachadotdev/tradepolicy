@@ -12,6 +12,9 @@ tp_clustered_summary(model, cluster)
 \item{cluster}{The clustering variable in the model data (e.g.
 \code{"pair_id"})}
 }
+\value{
+a list
+}
 \description{
 Returns a list for a a general \code{lm} or \code{glm} which returns number
 of observations, F-statistic (with degrees of freedom and p-value), R-squared

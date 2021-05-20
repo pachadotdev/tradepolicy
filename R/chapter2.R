@@ -8,6 +8,7 @@
 #' @param data A tibble or data.frame
 #' @param pair Inter-national fixed effects column (defaults to "pair_id")
 #' @param fe_pattern A pattern for the fixed effects variable, allows character or regex (defaults to "^exporter|^importer")
+#' @return a tibble
 #' @export
 
 tp_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exporter|^importer") {
@@ -41,7 +42,8 @@ tp_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exp
 #' pastes the effects and allows to create a column with the predicted output.
 #'
 #' @importFrom dplyr %>%
-#' @param fit A regression object
+#' @param fit regression object
+#' @return a tibble
 #' @export
 
 tp_fixed_effects <- function(fit) {

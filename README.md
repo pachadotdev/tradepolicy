@@ -46,10 +46,10 @@ BibTeX entry:
 
 ```
 @Manual{,
-  title = {tradepolicy: An Advanced Guide to Trade Policy Analysis},
+  title = {tradepolicy: Replication of 'An Advanced Guide To Trade Policy Analysis'},
   author = {Mauricio Vargas},
-  year = {2020},
-  note = {R package version 0.2},
+  year = {2021},
+  note = {R package version 0.4.1},
   url = {https://pacha.dev/tradepolicy/},
   doi = {10.5281/zenodo.4277741}
 }

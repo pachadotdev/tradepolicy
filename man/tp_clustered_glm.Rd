@@ -20,6 +20,9 @@ tp_clustered_glm(
 
 \item{fe_pattern}{A pattern for the fixed effects variable, allows character or regex (defaults to "^exporter|^importer")}
 }
+\value{
+a tibble
+}
 \description{
 Fits a regression with robust clustered standard errors. This uses a quasi-poisson
 family and returns the estimated coefficients after computing a clustered

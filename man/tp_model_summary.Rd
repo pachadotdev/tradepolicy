@@ -26,6 +26,9 @@ tp_model_summary(
 
 \item{itfe}{Importer time fixed effects column (defaults to "imp_year")}
 }
+\value{
+a list
+}
 \description{
 Computes clustered standard errors, tests on coefficients with
 clustered standard errors and obtains RESET test p-value.

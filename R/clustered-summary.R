@@ -16,6 +16,7 @@
 #'
 #' model2 <- glm(mpg ~ wt, data = mtcars, family = quasipoisson)
 #' tp_clustered_summary(model2, "cyl")
+#' @return a list
 #' @export
 
 tp_clustered_summary <- function(model, cluster) {

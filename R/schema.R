@@ -1,5 +1,3 @@
-#' Crea el esquema SQL
-#' @noRd
 create_schema <- function() {
   con <- tp_database()
 

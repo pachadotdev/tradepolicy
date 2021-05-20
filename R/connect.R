@@ -1,23 +1,26 @@
 tp_path <- function() {
-  duckdb_version <- utils::packageVersion("duckdb")
   sys_tp_path <- Sys.getenv("TRADEPOLICY_DIR")
   sys_tp_path <- gsub("\\\\", "/", sys_tp_path)
   if (sys_tp_path == "") {
-    return(gsub("\\\\", "/", paste0(
-      tools::R_user_dir("tradepolicy"),
-      "/duckdb-", duckdb_version
-    )))
+    return(gsub("\\\\", "/", tools::R_user_dir("tradepolicy")))
   } else {
-    return(gsub("\\\\", "/", paste0(sys_tp_path, "/duckdb-", duckdb_version)))
+    return(gsub("\\\\", "/", sys_tp_path))
   }
 }
 
+
+tp_check_status <- function() {
+  if (!tp_status(FALSE)) {
+    stop("Local AGTPA database empty or corrupt. Download with tp_download().")
+  }
+}
+
+
 #' The local AGTPA database
 #'
-#' Returns a connection to the local tradepolicy database. This is a DBI-compliant
-#' duckdb database connection. When using **dplyr**-based
-#' workflows, one typically accesses tables with [tp_data()], but this
-#' function lets the user interact with the database directly via SQL.
+#' Returns a local database connection, which is a DuckDB DBI-compatible connection.
+#' Unlike [tradepolicy::tp_table()], this function is more flexible and can be used
+#' with dbplyr to read exactly what you need or with DBI to use SQL commands.
 #'
 #' @param dir The location of the database on disk. Defaults to
 #' `tradepolicy` under `tools::R_user_dir("tradepolicy")`, or the path specified
@@ -26,19 +29,17 @@ tp_path <- function() {
 #' @export
 #'
 #' @examples
-#' if (tp_status()) {
-#'   DBI::dbListTables(tp_database())
+#' \dontrun{
+#'  DBI::dbListTables(tp_database())
 #'
-#'   ch1_application1 <- DBI::dbReadTable(tp_database(), "ch1_application1")
-#'
-#'   DBI::dbGetQuery(
-#'     tp_database(),
-#'     "SELECT * FROM ch1_application1"
-#'   )
+#'  DBI::dbGetQuery(
+#'   tp_database(),
+#'   "SELECT * FROM ch1_application1 WHERE exporter = 'CAN'"
+#'  )
 #' }
 tp_database <- function(dir = tp_path()) {
   duckdb_version <- utils::packageVersion("duckdb")
-  db_file <- paste0(dir, "/tradepolicy_duckdb_v", gsub("\\.", "", duckdb_version), ".duckdb")
+  db_file <- paste0(dir, "/tp_duckdb_v", gsub("\\.", "", duckdb_version), ".sql")
 
   db <- mget("tp_database", envir = tp_cache, ifnotfound = NA)[[1]]
 
@@ -50,19 +51,19 @@ tp_database <- function(dir = tp_path()) {
 
   try(dir.create(dir, showWarnings = FALSE, recursive = TRUE))
 
+  drv <- duckdb::duckdb(db_file, read_only = FALSE)
+
   tryCatch({
-    db <- DBI::dbConnect(
-      duckdb::duckdb(),
-      db_file
-    )
+    con <- DBI::dbConnect(drv)
   },
   error = function(e) {
     if (grepl("Failed to open database", e)) {
-      stop(paste(
-        "Local AGTPA database is locked by another R session.\n",
-        "Try closing or running tp_disconnect() in that session."
-      ),
-      call. = FALSE
+      stop(
+        paste(
+          "Local AGTPA database is locked by another R session.\n",
+          "Try closing or running tp_disconnect() in that session."
+        ),
+        call. = FALSE
       )
     } else {
       stop(e)
@@ -71,26 +72,24 @@ tp_database <- function(dir = tp_path()) {
   finally = NULL
   )
 
-  assign("tp_database", db, envir = tp_cache)
-  return(db)
+  assign("tp_database", con, envir = tp_cache)
+  con
 }
 
 
 #' AGTPA applications data
 #'
 #' Returns a remote database table with the data required to replicate the
-#' exercises from the book.
+#' exercises from the book. For pre-filtered data please use
+#' [tradepolicy::tp_database()].
 #'
 #' @param table A string indicating the table to extract
-#' @return A **dplyr** tibble ([dplyr::tbl()])
+#' @return A tibble
 #' @export
 #'
 #' @examples
-#' if (tp_status()) {
-#'   tp_data("ch1_application1")
-#' }
-#' @importFrom dplyr tbl
-tp_data <- function(table) {
+#' \dontrun{ tp_table("ch1_application1") }
+tp_table <- function(tabla) {
   df <- tryCatch(
     tibble::as_tibble(DBI::dbReadTable(tp_database(), table)),
     error = function(e) { read_table_error(e) }
@@ -105,11 +104,13 @@ tp_data <- function(table) {
 #'
 #' @examples
 #' tp_disconnect()
+#' @return NULL
 #' @export
-#'
 tp_disconnect <- function() {
   tp_disconnect_()
 }
+
+
 tp_disconnect_ <- function(environment = tp_cache) {
   db <- mget("tp_database", envir = tp_cache, ifnotfound = NA)[[1]]
   if (inherits(db, "DBIConnection")) {
@@ -127,31 +128,31 @@ tp_disconnect_ <- function(environment = tp_cache) {
 #' Get the status of the current local AGTPA database. It displays informative message
 #' about how to create the local database if it can't be found or it is corrupt.
 #'
-#' @param verbose Whether to print a status message
+#' @param msg Whether to print a status message
 #'
 #' @return TRUE if the database exists, FALSE if it is not detected. (invisible)
 #' @export
 #' @importFrom DBI dbExistsTable
 #' @importFrom tools toTitleCase
 #' @examples
-#' tp_status()
-tp_status <- function(verbose = TRUE) {
+#' \dontrun{ tp_status() }
+tp_status <- function(msg = TRUE) {
   expected_tables <- sort(tp_tables())
   existing_tables <- sort(DBI::dbListTables(tp_database()))
 
   if (isTRUE(all.equal(expected_tables, existing_tables))) {
-    status_msg <- paste(crayon::green(cli::symbol$tick, "Local AGTPA database is OK."))
+    status_msg <- crayon::green(paste(cli::symbol$tick,
+    "Local AGTPA database is OK."))
     out <- TRUE
   } else {
-    status_msg <- paste(crayon::red(cli::symbol$cross, "Local AGTPA database empty or corrupt. Download with tp_download()"))
+    status_msg <- crayon::red(paste(cli::symbol$cross,
+    "Local AGTPA database empty or corrupt. Download with tp_download()."))
     out <- FALSE
   }
-  if (verbose) {
-    msg(cli::rule("Database status"))
-    msg(status_msg)
-  }
+  if (msg) msg(status_msg)
   invisible(out)
 }
+
 
 #' AGTPA available tables
 #' @export
@@ -178,6 +179,7 @@ tp_tables <- function() {
     "metadata"
   ))
 }
+
 
 tp_cache <- new.env()
 reg.finalizer(tp_cache, tp_disconnect_, onexit = TRUE)

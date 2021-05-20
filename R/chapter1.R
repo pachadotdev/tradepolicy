@@ -9,6 +9,7 @@
 #' @param pair Inter-national fixed effects column (defaults to "pair_id")
 #' @param etfe Exporter time fixed effects column (defaults to "exp_year")
 #' @param itfe Importer time fixed effects column (defaults to "imp_year")
+#' @return a list
 #' @export
 
 tp_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
@@ -103,6 +104,7 @@ tp_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
 #' @param dist Distance column (defaults to "log_dist")
 #' @param intr Intra-national distance column (defaults to "log_dist_intra")
 #' @param csfe Country-specific fixed effects (defaults to "intra_pair")
+#' @return a list
 #' @export
 
 tp_model_summary2 <- function(formula, data, method = "lm",
@@ -199,6 +201,7 @@ tp_model_summary2 <- function(formula, data, method = "lm",
 #' @param dist Distance column (defaults to "log_dist")
 #' @param intr Intra-national distance column (defaults to "log_dist_intra")
 #' @param brdr Inter-national borders column (defaults to "intl_brdr")
+#' @return a list
 #' @export
 
 tp_model_summary3 <- function(formula, data, method = "lm",

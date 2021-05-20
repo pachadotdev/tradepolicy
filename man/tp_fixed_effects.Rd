@@ -7,7 +7,10 @@
 tp_fixed_effects(fit)
 }
 \arguments{
-\item{fit}{A regression object}
+\item{fit}{regression object}
+}
+\value{
+a tibble
 }
 \description{
 Takes an lm/glm object and extracts the fixed effects estimated coefficients.

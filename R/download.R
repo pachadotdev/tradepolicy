@@ -56,7 +56,6 @@ tp_download <- function(ver = NULL, verbose = interactive()) {
   invisible(create_schema())
 
   for (x in seq_along(finp_tsv)) {
-
     tout <- gsub(".*/", "", gsub("\\.tsv", "", finp_tsv[x]))
 
     msg(sprintf("Creating %s table...", tout))
@@ -81,7 +80,7 @@ tp_download <- function(ver = NULL, verbose = interactive()) {
   }
 
   metadata <- data.frame(duckdb_version = utils::packageVersion("duckdb"),
-                          modification_date = Sys.time())
+                         modification_date = Sys.time())
   metadata$duckdb_version <- as.character(metadata$duckdb_version)
   metadata$modification_date <- as.character(metadata$modification_date)
 

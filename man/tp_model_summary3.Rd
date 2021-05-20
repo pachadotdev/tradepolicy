@@ -38,6 +38,9 @@ tp_model_summary3(
 
 \item{brdr}{Inter-national borders column (defaults to "intl_brdr")}
 }
+\value{
+a list
+}
 \description{
 Computes clustered standard errors, tests on coefficients with
 clustered standard errors and returns total RTAs effect with its associated

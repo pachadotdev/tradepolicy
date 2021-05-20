@@ -35,6 +35,9 @@ tp_model_summary2(
 
 \item{csfe}{Country-specific fixed effects (defaults to "intra_pair")}
 }
+\value{
+a list
+}
 \description{
 Computes clustered standard errors, tests on coefficients with
 clustered standard errors and uses the delta method to obtain changes in
