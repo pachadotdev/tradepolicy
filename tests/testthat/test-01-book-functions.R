@@ -1,24 +1,7 @@
-olddir <- Sys.getenv("TRADEPOLICY_DB_DIR")
-Sys.setenv(TRADEPOLICY_DB_DIR = normalizePath(file.path(getwd(), "tradepolicy"),
-                                        mustWork = FALSE
-))
-
-context("Tables")
-
-test_that("Tables have expected types", {
-  skip_on_cran()
-  skip_if_not(tradepolicy_status())
-  expect_is(tradepolicy_db(), "duckdb_connection")
-  for (t in tradepolicy_db_tables()) {
-    expect_is(tradepolicy_data(t), "tbl_df")
-  }
-})
-
 test_that("Functions from Ch.1 work as expected, part 1", {
   skip_on_cran()
-  skip_if_not(tradepolicy_status())
 
-  d_test <- tbl(tradepolicy_db(), "ch1_application1") %>%
+  d_test <- agtpa_applications %>%
     filter(
       exporter == "ARG",
       importer !=  "ARG",
@@ -28,18 +11,17 @@ test_that("Functions from Ch.1 work as expected, part 1", {
     mutate(
       log_trade = log(trade),
       log_dist = log(dist)
-    ) %>%
-    collect()
+    )
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary1 <- tradepolicy_model_summary(
+  summary1 <- tp_summary(
     formula = "log_trade ~ log_dist + cntg + lang + clny",
     data = d_test,
     method = "lm"
   )
 
-  summary2 <- tradepolicy_model_summary(
+  summary2 <- tp_summary(
     formula = "trade ~ log_dist + cntg + lang + clny",
     data = d_test,
     method = "glm"
@@ -52,16 +34,14 @@ test_that("Functions from Ch.1 work as expected, part 1", {
 
 test_that("Functions from Ch.1 work as expected, part 2", {
   skip_on_cran()
-  skip_if_not(tradepolicy_status())
 
-  d_test <- tbl(tradepolicy_db(), "ch1_application2") %>%
+  d_test <- agtpa_applications %>%
     filter(
       exporter == "ARG",
       importer != "ARG",
       year >= 2002,
       trade > 0
     ) %>%
-    collect() %>%
     mutate(
       exp_year = paste0(exporter, year),
       imp_year = paste0(importer, year),
@@ -77,14 +57,14 @@ test_that("Functions from Ch.1 work as expected, part 2", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary3 <- tradepolicy_model_summary2(
+  summary3 <- tp_summary_puzzle(
     formula = "log_trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
     data = d_test,
     method = "lm"
   )
 
-  summary4 <- tradepolicy_model_summary2(
+  summary4 <- tp_summary_puzzle(
     formula = "trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
     data = d_test,
@@ -98,16 +78,14 @@ test_that("Functions from Ch.1 work as expected, part 2", {
 
 test_that("Functions from Ch.1 work as expected, part 3", {
   skip_on_cran()
-  skip_if_not(tradepolicy_status())
 
-  d_test <- tbl(tradepolicy_db(), "ch1_application3") %>%
+  d_test <- agtpa_applications %>%
     filter(
       exporter == "ARG",
       importer != "ARG",
       year >= 2002,
       trade > 0
     ) %>%
-    collect() %>%
     mutate(
       exp_year = paste0(exporter, year),
       imp_year = paste0(importer, year),
@@ -122,14 +100,14 @@ test_that("Functions from Ch.1 work as expected, part 3", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary5 <- tradepolicy_model_summary3(
+  summary5 <- tp_summary_rtas(
     formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
     data = d_test,
     method = "lm"
   )
 
-  summary6 <- tradepolicy_model_summary3(
+  summary6 <- tp_summary_rtas(
     formula = "trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
     data = d_test,
@@ -140,17 +118,15 @@ test_that("Functions from Ch.1 work as expected, part 3", {
   expect_is(summary6, "list")
 })
 
-test_that("Functions from Ch.1 work as expected, part 3", {
+test_that("Functions from Ch.1 work as expected, part 4", {
   skip_on_cran()
-  skip_if_not(tradepolicy_status())
 
-  d_test <- tbl(tradepolicy_db(), "ch2_application1") %>%
+  d_test <- agtpa_applications %>%
     filter(
       exporter %in% c("ARG", "CHL"),
       year == 2002,
       trade > 0
     ) %>%
-    collect() %>%
     mutate(
       log_dist = log(dist),
       intl = ifelse(exporter != importer, 1, 0)
@@ -164,11 +140,9 @@ test_that("Functions from Ch.1 work as expected, part 3", {
     data = d_test
   )
 
-  robust_test <- tradepolicy_clustered_glm(fit_test$formula, d_test)
-  fe_test <- tradepolicy_fixed_effects(fit_test)
+  robust_test <- tp_clustered_glm(fit_test$formula, d_test)
+  fe_test <- tp_fixed_effects(fit_test)
 
   expect_is(robust_test, "coeftest")
   expect_is(fe_test, "data.frame")
 })
-
-Sys.setenv(TRADEPOLICY_DB_DIR = olddir)

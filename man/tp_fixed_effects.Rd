@@ -2,15 +2,33 @@
 % Please edit documentation in R/chapter2.R
 \name{tp_fixed_effects}
 \alias{tp_fixed_effects}
-\title{Extract fixed effects from regression object}
+\title{Extract Fixed Effects From Regression Objects}
 \usage{
-tp_fixed_effects(fit)
+tp_fixed_effects(
+  fit,
+  fe_exp_pattern = "^exporter|^exp_year",
+  fe_imp_pattern = "^importer|^imp_year",
+  fe_pair_pattern = "^pair_id_2",
+  fe_time_pattern = "year"
+)
 }
 \arguments{
-\item{fit}{regression object}
+\item{fit}{Regression object}
+
+\item{fe_exp_pattern}{Pattern for the fixed effects exporter variable, allows character
+or regex (defaults to \code{"^exporter|^exp_year"})}
+
+\item{fe_imp_pattern}{Pattern for the fixed effects exporter variable, allows character
+or regex (defaults to \code{"^importer|^imp_year"})}
+
+\item{fe_pair_pattern}{Pattern for the fixed effects exporter variable, allows character
+or regex (defaults to \code{"^pair_id_2"})}
+
+\item{fe_time_pattern}{Pattern for the time-depending fixed effects, allows character
+or regex (defaults to \code{"year"})}
 }
 \value{
-a tibble
+A tibble
 }
 \description{
 Takes an lm/glm object and extracts the fixed effects estimated coefficients.

@@ -18,12 +18,7 @@ CNAME
 cover.png
 ^dev$
 ^data-raw$
-^data-tsv$
-yotov-trade-db.zip
-inst/*.pdf
-inst/*.md
-inst/*.log
-inst/apa.csl
+^data-parquet$
 ^codemeta\.json$
 README.md
 ^cran-comments\.md$

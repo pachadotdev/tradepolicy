@@ -5,21 +5,19 @@
 #' (and pseudo R-squared for Poisson-type generalized models), root MSE and clustered
 #' standard errors for estimated coefficients.
 #'
-#' @param model Any \code{lm} or \code{glm} object
-#' @param cluster The clustering variable in the model data (e.g.
+#' @param model \code{lm} or \code{glm} object
+#' @param cluster Clustering variable in the model data (e.g.
 #' \code{"pair_id"})
 #' @examples
-#' # THESE REGRESSIONS ARE JUST FOR TESTING!!!
-#'
+#' # These regressions constitute a dummy example
 #' model1 <- lm(mpg ~ wt, data = mtcars)
-#' tp_clustered_summary(model1, "cyl")
+#' tp_summary_clustered(model1, "cyl")
 #'
 #' model2 <- glm(mpg ~ wt, data = mtcars, family = quasipoisson)
-#' tp_clustered_summary(model2, "cyl")
-#' @return a list
+#' tp_summary_clustered(model2, "cyl")
+#' @return A list
 #' @export
-
-tp_clustered_summary <- function(model, cluster) {
+tp_summary_clustered <- function(model, cluster) {
   # Check ----
   stopifnot(any(class(model) %in% c("lm", "glm")))
   if (any(class(model) == "glm") & !any(grepl("poisson", model$call))) {

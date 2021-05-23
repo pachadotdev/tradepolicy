@@ -3,16 +3,16 @@
 #' Computes clustered standard errors, tests on coefficients with
 #' clustered standard errors and obtains RESET test p-value.
 #'
-#' @param formula A formula for the model
-#' @param data A tibble or data.frame
+#' @param formula Formula for the model
+#' @param data Tibble or data.frame
 #' @param method Regression method, which can be "lm" (default) or "glm"
 #' @param pair Inter-national fixed effects column (defaults to "pair_id")
 #' @param etfe Exporter time fixed effects column (defaults to "exp_year")
 #' @param itfe Importer time fixed effects column (defaults to "imp_year")
-#' @return a list
+#' @return A list
 #' @export
 
-tp_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
+tp_summary <- function(formula, data, method = "lm", pair = "pair_id",
                                 etfe = "exp_year", itfe = "imp_year") {
   stopifnot(any(method %in% c("lm", "glm")))
 
@@ -95,8 +95,8 @@ tp_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
 #' clustered standard errors and uses the delta method to obtain changes in
 #' time-based distance estimated coefficients.
 #'
-#' @param formula A formula for the model
-#' @param data A tibble or data.frame
+#' @param formula Formula for the model
+#' @param data Tibble or data.frame
 #' @param method Regression method (lm or glm)
 #' @param pair Inter-national fixed effects column (defaults to "pair_id")
 #' @param etfe Exporter time fixed effects column (defaults to "exp_year")
@@ -104,10 +104,9 @@ tp_model_summary <- function(formula, data, method = "lm", pair = "pair_id",
 #' @param dist Distance column (defaults to "log_dist")
 #' @param intr Intra-national distance column (defaults to "log_dist_intra")
 #' @param csfe Country-specific fixed effects (defaults to "intra_pair")
-#' @return a list
+#' @return A list
 #' @export
-
-tp_model_summary2 <- function(formula, data, method = "lm",
+tp_summary_puzzle <- function(formula, data, method = "lm",
                                  pair = "pair_id", etfe = "exp_year",
                                  itfe = "imp_year", dist = "log_dist",
                                  intr = "log_dist_intra", csfe = "intra_pair") {
@@ -191,8 +190,8 @@ tp_model_summary2 <- function(formula, data, method = "lm",
 #' clustered standard errors and returns total RTAs effect with its associated
 #' standard error.
 #'
-#' @param formula A formula for the model
-#' @param data A tibble or data.frame
+#' @param formula Formula for the model
+#' @param data Tibble or data.frame
 #' @param method Regression method, which can be "lm" (default) or "glm"
 #' @param pair Inter-national fixed effects column (defaults to "pair_id")
 #' @param pair2 Intra-national fixed effects column (defaults to "pair_id_2")
@@ -201,10 +200,9 @@ tp_model_summary2 <- function(formula, data, method = "lm",
 #' @param dist Distance column (defaults to "log_dist")
 #' @param intr Intra-national distance column (defaults to "log_dist_intra")
 #' @param brdr Inter-national borders column (defaults to "intl_brdr")
-#' @return a list
+#' @return A list
 #' @export
-
-tp_model_summary3 <- function(formula, data, method = "lm",
+tp_summary_rtas <- function(formula, data, method = "lm",
                                  pair = "pair_id", pair2 = "pair_id_2",
                                  etfe = "exp_year", itfe = "imp_year",
                                  dist = "log_dist", intr = "log_dist_intra",

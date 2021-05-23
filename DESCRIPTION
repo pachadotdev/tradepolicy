@@ -37,7 +37,6 @@ Imports:
     magrittr,
     tibble,
     ggplot2,
-    dbplyr,
     dplyr,
     tidyr,
     purrr,
@@ -48,16 +47,10 @@ Imports:
     broom,
     Matrix,
     msm,
-    DBI,
-    duckdb,
-    utils,
-    rappdirs,
-    tools,
-    httr,
     rstudioapi
 Suggests:
-    devtools,
     testthat,
     covr
 Depends:
     R (>= 4.0)
+LazyData: true

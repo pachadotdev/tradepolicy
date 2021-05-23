@@ -2,7 +2,7 @@ library(tradepolicy)
 
 # data ----
 
-ch2_application2 <- tp_data("ch2_application2") %>%
+ch2_application2 <- tp_table("ch2_application2") %>%
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
     log_dist = log(dist),

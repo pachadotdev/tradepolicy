@@ -48,6 +48,8 @@ tp_attach <- function() {
     lapply(to_load, same_library)
   )
 
+  msg(" ")
+
   invisible()
 }
 

@@ -9,7 +9,7 @@ Unlike the previous chapter, we shall proceed by alternating both data transform
 To do what is shown in box #1 from page 104 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU". We could have used "AAA", the book uses "ZZZ" but in R "ZZZ" won't be treated as the reference factor. It is important to mention that box #1 doesn't show a previous step that is mentioned in page 103, which is to filter and keep observations for the year 2006 only.
 
 ```{r ch2_app1_data_1}
-ch2_application1 <- tp_data("ch2_application1") %>%
+ch2_application1 <- tp_table("ch2_application1") %>%
   filter(year == 2006) %>%
   mutate(
     log_dist = log(dist),
@@ -472,7 +472,7 @@ ggplot(data = ch2_application1 %>% filter(exporter != "HKG")) +
 
 As in the previous application, we shall proceed by alternating both data transforming and regressions. Before doing what is shown in box #1 from page 112 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU", just as in the last section, but we shall keep panel dimension of the dataset in order to identify the effects of RTAs and to comprehensively capture the impact of all time-invariant trade costs with the use of pair fixed  effects:
 ```{r ch2_app2_data_1}
-ch2_application2 <- tp_data("ch2_application2") %>%
+ch2_application2 <- tp_table("ch2_application2") %>%
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
     log_dist = log(dist),

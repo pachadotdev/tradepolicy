@@ -12,16 +12,17 @@ tp_clustered_glm(
 )
 }
 \arguments{
-\item{formula}{A formula for the model}
+\item{formula}{Formula for the model}
 
-\item{data}{A tibble or data.frame}
+\item{data}{Tibble or data.frame}
 
 \item{pair}{Inter-national fixed effects column (defaults to "pair_id")}
 
-\item{fe_pattern}{A pattern for the fixed effects variable, allows character or regex (defaults to "^exporter|^importer")}
+\item{fe_pattern}{Pattern for the fixed effects variable, allows character
+or regex (defaults to "^exporter|^importer")}
 }
 \value{
-a tibble
+A coeftest
 }
 \description{
 Fits a regression with robust clustered standard errors. This uses a quasi-poisson

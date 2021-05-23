@@ -4,13 +4,13 @@
 #' family and returns the estimated coefficients after computing a clustered
 #' variance-covariance matrix.
 #'
-#' @param formula A formula for the model
-#' @param data A tibble or data.frame
+#' @param formula Formula for the model
+#' @param data Tibble or data.frame
 #' @param pair Inter-national fixed effects column (defaults to "pair_id")
-#' @param fe_pattern A pattern for the fixed effects variable, allows character or regex (defaults to "^exporter|^importer")
-#' @return a tibble
+#' @param fe_pattern Pattern for the fixed effects variable, allows character
+#' or regex (defaults to "^exporter|^importer")
+#' @return A coeftest
 #' @export
-
 tp_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exporter|^importer") {
   fit <- stats::glm(stats::as.formula(formula),
     family = stats::quasipoisson(link = "log"),
@@ -35,59 +35,76 @@ tp_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exp
   return(coef_test)
 }
 
-#' Extract fixed effects from regression object
+#' Extract Fixed Effects From Regression Objects
 #'
 #' Takes an lm/glm object and extracts the fixed effects estimated coefficients.
 #' This function was created to be used with `left_join()` and `predict()` as it
 #' pastes the effects and allows to create a column with the predicted output.
 #'
-#' @importFrom dplyr %>%
-#' @param fit regression object
-#' @return a tibble
+#' @param fit Regression object
+#' @param fe_exp_pattern Pattern for the fixed effects exporter variable, allows character
+#' or regex (defaults to \code{"^exporter|^exp_year"})
+#' @param fe_imp_pattern Pattern for the fixed effects exporter variable, allows character
+#' or regex (defaults to \code{"^importer|^imp_year"})
+#' @param fe_pair_pattern Pattern for the fixed effects exporter variable, allows character
+#' or regex (defaults to \code{"^pair_id_2"})
+#' @param fe_time_pattern Pattern for the time-depending fixed effects, allows character
+#' or regex (defaults to \code{"year"})
+#' @return A tibble
 #' @export
+tp_fixed_effects <- function(fit, fe_exp_pattern = "^exporter|^exp_year",
+                             fe_imp_pattern = "^importer|^imp_year",
+                             fe_pair_pattern = "^pair_id_2",
+                             fe_time_pattern = "year") {
+  # exporter FE
 
-tp_fixed_effects <- function(fit) {
-  panel_coef <- any(grepl("^exp_year|^imp_year|^pair_id_2", names(fit$coefficients)))
+  fe_exp_pattern_2 <- grep(fe_exp_pattern, names(fit$model), value = TRUE)
+  if (length(fe_exp_pattern_2) > 1) {
+    fe_exp_pattern_2 <- grep(fe_time_pattern, fe_exp_pattern_2, value = TRUE)
+  }
 
-  if (panel_coef) {
-    exp_coef <- fit$coefficients[grepl("^exp_", names(fit$coefficients))]
-    exp_coef <- tibble::enframe(exp_coef) %>%
-      dplyr::mutate(name = gsub("exp_year", "", name)) %>%
-      dplyr::rename(exp_year = name, fe_exp_year = value)
+  exp_coef <- tibble::enframe(
+    fit$coefficients[grepl(fe_exp_pattern, names(fit$coefficients))]) %>%
+    dplyr::mutate(name = gsub(fe_exp_pattern_2, "", name))
 
-    imp_coef <- fit$coefficients[grepl("^imp_", names(fit$coefficients))]
-    imp_coef <- tibble::enframe(imp_coef) %>%
-      dplyr::mutate(name = gsub("imp_year", "", name)) %>%
-      dplyr::rename(imp_year = name, fe_imp_year = value)
+  colnames(exp_coef) <- c(fe_exp_pattern_2, paste0("fe_", fe_exp_pattern_2))
 
-    pair_coef <- fit$coefficients[grepl("^pair_id_2", names(fit$coefficients))]
-    pair_coef <- tibble::enframe(pair_coef) %>%
-      dplyr::mutate(name = gsub("pair_id_2", "", name)) %>%
-      dplyr::rename(pair_id_2 = name, fe_pair_id_2 = value)
+  # importer FE
 
-    d <- fit$data[, c("exp_year", "imp_year", "pair_id_2")]
+  fe_imp_pattern_2 <- grep(fe_imp_pattern, names(fit$model), value = TRUE)
+  if (length(fe_imp_pattern_2) > 1) {
+    fe_imp_pattern_2 <- grep(fe_time_pattern, fe_imp_pattern_2, value = TRUE)
+  }
 
+  imp_coef <- tibble::enframe(
+    fit$coefficients[grepl(fe_imp_pattern, names(fit$coefficients))]) %>%
+    dplyr::mutate(name = gsub(fe_imp_pattern_2, "", name))
+
+  colnames(imp_coef) <- c(fe_imp_pattern_2, paste0("fe_", fe_imp_pattern_2))
+
+  # pair FE
+
+  fe_pair_pattern_2 <- grep(fe_pair_pattern, names(fit$model), value = TRUE)
+
+  if (length(fe_pair_pattern_2) > 0) {
+    pair_coef <- tibble::enframe(fit$coefficients[grepl(fe_pair_pattern, names(fit$coefficients))]) %>%
+      dplyr::mutate(name = gsub(fe_pair_pattern_2, "", name))
+
+    colnames(pair_coef) <- c(fe_pair_pattern_2, paste0("fe_", fe_pair_pattern_2))
+  }
+
+  # combine FE
+
+  if (length(fe_pair_pattern_2) > 0) {
     suppressMessages(
-      d <- d %>%
+      d <- fit$data[, c(fe_exp_pattern_2, fe_imp_pattern_2, fe_pair_pattern_2)] %>%
         dplyr::left_join(exp_coef) %>%
         dplyr::left_join(imp_coef) %>%
         dplyr::left_join(pair_coef)
     )
   } else {
-    exp_coef <- fit$coefficients[grepl("^exporter", names(fit$coefficients))]
-    exp_coef <- tibble::enframe(exp_coef) %>%
-      dplyr::mutate(name = gsub("exporter", "", name)) %>%
-      dplyr::rename(exporter = name, fe_exporter = value)
-
-    imp_coef <- fit$coefficients[grepl("^importer", names(fit$coefficients))]
-    imp_coef <- tibble::enframe(imp_coef) %>%
-      dplyr::mutate(name = gsub("importer", "", name)) %>%
-      dplyr::rename(importer = name, fe_importer = value)
-
-    d <- fit$data[, c("exporter", "importer")]
-
     suppressMessages(
-      d <- d %>%
+      d <- fit$data[, c(fe_exp_pattern_2, fe_imp_pattern_2)] %>%
         dplyr::left_join(exp_coef) %>%
         dplyr::left_join(imp_coef)
     )

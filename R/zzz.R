@@ -1,5 +1,3 @@
-globalVariables(c("country", "exporter", "importer", "name", "type", "value"))
-
 .onAttach <- function(...) {
   needed <- core[!is_attached(core)]
   if (length(needed) == 0) {
@@ -7,34 +5,12 @@ globalVariables(c("country", "exporter", "importer", "name", "type", "value"))
   }
 
   msg(cli::rule(crayon::bold(paste0("tradepolicy ", package_version("tradepolicy")))))
-  msg(crayon::cyan(paste(cli::symbol$star,
-                          "Please, read the documentation.")))
-  msg(crayon::cyan(paste(cli::symbol$star,
-                          "Use the command citation('tradepolicy') to cite this package in publications.")))
-  msg(crayon::cyan(paste(cli::symbol$star,
-                          "Visit https://buymeacoffee.com/pacha if you'd like to donate to help improving this software.")))
-  msg(crayon::cyan(paste(cli::symbol$warning,
-                          "This package downloads a 30 MB compressed file and creates a 6 GB database.")))
-  msg(crayon::cyan(paste(cli::symbol$warning,
-                          "If you don't want to create a database in your home directory,")))
-  msg(crayon::cyan(paste(cli::symbol$warning,
-                          "run usethis::edit_r_environ() and create the environment variable TRADEPOLICY_DIR with your desired location.")))
+  msg(paste(cli::symbol$star,
+  "Please, read the documentation."))
+  msg(paste(cli::symbol$star,
+  "Use the command citation('tradepolicy') to cite this package in publications."))
 
   tp_attach()
-
-  if (interactive() && Sys.getenv("RSTUDIO") == "1" && !in_chk()) {
-    tp_pane()
-  }
-  if (interactive()) tp_status()
-}
-
-in_chk <- function() {
-  any(
-    grepl(
-      "check",
-      sapply(sys.calls(), function(a) paste(deparse(a), collapse = "\n"))
-    )
-  )
 }
 
 is_attached <- function(x) {
