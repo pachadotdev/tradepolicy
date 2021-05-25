@@ -1,4 +1,4 @@
-#' Traditional Gravity Estimates Reporting Style
+#' Application 1 (Traditional Gravity Estimates) Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
 #' clustered standard errors and obtains RESET test p-value.
@@ -12,7 +12,7 @@
 #' @return A list
 #' @export
 
-tp_summary <- function(formula, data, method = "lm", pair = "pair_id",
+tp_summary_app1 <- function(formula, data, method = "lm", pair = "pair_id",
                                 etfe = "exp_year", itfe = "imp_year") {
   stopifnot(any(method %in% c("lm", "glm")))
 
@@ -89,7 +89,7 @@ tp_summary <- function(formula, data, method = "lm", pair = "pair_id",
   )
 }
 
-#' The "Distance Puzzle" Resolved Reporting Style
+#' Application 2 (The "Distance Puzzle" Resolved) Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
 #' clustered standard errors and uses the delta method to obtain changes in
@@ -106,7 +106,7 @@ tp_summary <- function(formula, data, method = "lm", pair = "pair_id",
 #' @param csfe Country-specific fixed effects (defaults to "intra_pair")
 #' @return A list
 #' @export
-tp_summary_puzzle <- function(formula, data, method = "lm",
+tp_summary_app2 <- function(formula, data, method = "lm",
                                  pair = "pair_id", etfe = "exp_year",
                                  itfe = "imp_year", dist = "log_dist",
                                  intr = "log_dist_intra", csfe = "intra_pair") {
@@ -184,7 +184,7 @@ tp_summary_puzzle <- function(formula, data, method = "lm",
   )
 }
 
-#' Regional Trade Agreements Effects Reporting Style
+#' Application 3 (Regional Trade Agreements Effects) Reporting Style
 #'
 #' Computes clustered standard errors, tests on coefficients with
 #' clustered standard errors and returns total RTAs effect with its associated
@@ -202,7 +202,7 @@ tp_summary_puzzle <- function(formula, data, method = "lm",
 #' @param brdr Inter-national borders column (defaults to "intl_brdr")
 #' @return A list
 #' @export
-tp_summary_rtas <- function(formula, data, method = "lm",
+tp_summary_app3 <- function(formula, data, method = "lm",
                                  pair = "pair_id", pair2 = "pair_id_2",
                                  etfe = "exp_year", itfe = "imp_year",
                                  dist = "log_dist", intr = "log_dist_intra",

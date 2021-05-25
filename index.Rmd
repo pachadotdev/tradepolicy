@@ -24,14 +24,14 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 </br>
 
 Welcome to the online solutions manual for for An Advanced Guide to Trade 
-Policy Analysis, AGTPA [@yotov2016advanced].
+Policy Analysis (AGTPA).
 
 This material is intended to provide a comprehensive explanation to reproduce 
-the book's results in R. We don’t attempt to give a thorough discussion of the 
-theory behind gravity models, the references cited through the chapters shall 
-fill those details.
+the book's results from @yotov2016advanced in R. We don’t attempt to give a 
+thorough discussion of the theory behind gravity models, the book and the 
+references cited through the chapters shall fill those details.
 
-The manual is written for two audiences:
+This manual is written for two audiences:
 
 * People who know R and are interested in learning about gravity models.
 * People with no R knowledge who know gravity models theory.
@@ -44,11 +44,12 @@ Stata, in R as a way to contribute to Reproducible Research. R is free and
 available on almost every operating system. It is a wonderful tool for all 
 statistical analysis.
 
-## Obtaining the datasets and functions
+## Reproducing AGTPA results yourself
 
-`tradepolicy` is an R package created specifically to distribute the datasets 
-required to reproduce the results from AGTPA. It acts as a metapackage that 
-calls other packages to use several functions that augment R capabilities.
+We created `tradepolicy`, an R package created specifically to to reproduce the 
+results from AGTPA. It acts as a metapackage that calls other packages to use 
+several functions that augment R capabilities, and it features its own functions
+to compute clustered standard errors and much more.
 
 You can get all the functions and datasets if you run these lines from your R 
 console:

@@ -4,6 +4,7 @@
 ^packrat/
 ^\.Rprofile$
 ^LICENSE\.md$
+^all-models-and-data$
 ^data-raw$
 ^docs$
 ^00-application-files$
@@ -13,14 +14,12 @@
 .*bib
 .*yml
 .*css
-_bookdown_files
-CNAME
-cover.png
+^_bookdown_files$
+^cover.png$
 ^dev$
 ^data-raw$
 ^data-parquet$
 ^codemeta\.json$
-README.md
+^README.md$
 ^cran-comments\.md$
-all-models-and-data
 ^CRAN-RELEASE$

@@ -2,7 +2,8 @@ library(tradepolicy)
 
 # data ----
 
-ch2_application2 <- tp_table("ch2_application2") %>%
+ch2_application2 <- agtpa_applications %>%
+  select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny, rta) %>%
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
     log_dist = log(dist),
@@ -344,4 +345,4 @@ indexes_final <- exporter_indexes %>%
 indexes_final <- indexes_final %>%
   mutate_if(is.numeric, function(x) round(x, 2))
 
-save.image("all-models-and-data/05-chapter2-impact-of-rtas.RData")
+save.image("all-models-and-data/05-chapter2-impact-of-rtas.RData", compress = "xz")

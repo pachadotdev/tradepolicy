@@ -2,7 +2,8 @@ library(tradepolicy)
 
 # data ----
 
-ch1_application2_2 <- tp_table("ch1_application2") %>%
+ch1_application2 <- agtpa_applications %>%
+  select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) %>%
   # this filter covers both OLS and PPML
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
@@ -23,52 +24,52 @@ ch1_application2_2 <- tp_table("ch1_application2") %>%
 
 # ols ----
 
-ch1_app2_ols <- tp_summary_puzzle(
+ch1_app2_ols <- tp_summary_app2(
   formula = "log_trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
-  data = filter(ch1_application2_2, importer != exporter, trade > 0),
+  data = filter(ch1_application2, importer != exporter, trade > 0),
   method = "lm"
 )
 
 # ppml ----
 
-ch1_app2_ppml <- tp_summary_puzzle(
+ch1_app2_ppml <- tp_summary_app2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year",
-  data = filter(ch1_application2_2, importer != exporter),
+  data = filter(ch1_application2, importer != exporter),
   method = "glm"
 )
 
 # internal distance ----
 
-ch1_app2_intra <- tp_summary_puzzle(
+ch1_app2_intra <- tp_summary_app2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + log_dist_intra",
-  data = ch1_application2_2,
+  data = ch1_application2,
   method = "glm"
 )
 
 # internal distance and home bias ----
 
-ch1_app2_home <- tp_summary_puzzle(
+ch1_app2_home <- tp_summary_app2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + log_dist_intra + smctry",
-  data = ch1_application2_2,
+  data = ch1_application2,
   method = "glm"
 )
 
 # fe ----
 
-ch1_app2_fe <- tp_summary_puzzle(
+ch1_app2_fe <- tp_summary_app2(
   formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
     log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
     cntg + lang + clny + exp_year + imp_year + intra_pair",
-  data = ch1_application2_2,
+  data = ch1_application2,
   method = "glm"
 )
 
-save.image("all-models-and-data/02-chapter1-distance-puzzle.RData")
+save.image("all-models-and-data/02-chapter1-distance-puzzle.RData", compress = "xz")

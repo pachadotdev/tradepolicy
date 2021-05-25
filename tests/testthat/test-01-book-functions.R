@@ -15,13 +15,13 @@ test_that("Functions from Ch.1 work as expected, part 1", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary1 <- tp_summary(
+  summary1 <- tp_summary_app1(
     formula = "log_trade ~ log_dist + cntg + lang + clny",
     data = d_test,
     method = "lm"
   )
 
-  summary2 <- tp_summary(
+  summary2 <- tp_summary_app1(
     formula = "trade ~ log_dist + cntg + lang + clny",
     data = d_test,
     method = "glm"
@@ -57,14 +57,14 @@ test_that("Functions from Ch.1 work as expected, part 2", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary3 <- tp_summary_puzzle(
+  summary3 <- tp_summary_app2(
     formula = "log_trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
     data = d_test,
     method = "lm"
   )
 
-  summary4 <- tp_summary_puzzle(
+  summary4 <- tp_summary_app2(
     formula = "trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
     lang + clny + exp_year + imp_year",
     data = d_test,
@@ -100,14 +100,14 @@ test_that("Functions from Ch.1 work as expected, part 3", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary5 <- tp_summary_rtas(
+  summary5 <- tp_summary_app3(
     formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
     data = d_test,
     method = "lm"
   )
 
-  summary6 <- tp_summary_rtas(
+  summary6 <- tp_summary_app3(
     formula = "trade ~ 0 + log_dist + cntg + lang + clny +
     rta + exp_year + imp_year",
     data = d_test,

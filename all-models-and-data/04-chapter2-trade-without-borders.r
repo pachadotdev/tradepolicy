@@ -2,7 +2,8 @@ library(tradepolicy)
 
 # Data ----
 
-ch2_application1 <- tp_table("ch2_application1") %>%
+ch2_application1 <- agtpa_applications %>%
+  select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) %>%
   filter(year == 2006) %>%
   mutate(
     log_dist = log(dist),
@@ -319,4 +320,4 @@ ch2_app1_figures_2 <- ggplot(data = ch2_application1 %>%
     values = c("#b6b8dd","#232958")
   )
 
-save.image("all-models-and-data/04-chapter2-trade-without-borders.RData")
+save.image("all-models-and-data/04-chapter2-trade-without-borders.RData", compress = "xz")

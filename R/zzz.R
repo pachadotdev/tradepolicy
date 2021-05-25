@@ -8,7 +8,7 @@
   msg(paste(cli::symbol$star,
   "Please, read the documentation."))
   msg(paste(cli::symbol$star,
-  "Use the command citation('tradepolicy') to cite this package in publications."))
+  "Use the command citation('tradepolicy') to cite this package in publications.\n"))
 
   tp_attach()
 }
