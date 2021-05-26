@@ -6,8 +6,7 @@
 \alias{tradepolicy-package}
 \title{tradepolicy: Replication of 'An Advanced Guide To Trade Policy Analysis'}
 \description{
-On-disk embedded SQL database containing the original datasets from
-    An Advanced Guide to Trade Policy Analysis
+Datasets from An Advanced Guide to Trade Policy Analysis
     (Year: 2016, ISBN: 978-92-870-4367-2) by Yotov, et al. and functions to 
     report regression summaries with clustered robust standard errors.
 }
@@ -24,9 +23,9 @@ Useful links:
 
 Other contributors:
 \itemize{
-  \item Alexey Kravchenko \email{kravchenkoa@un.org} [thesis advisor]
-  \item Constanza Prado \email{mcprado@uc.cl} [thesis advisor]
-  \item Yoto Yotov \email{yvy23@drexel.edu} [thesis advisor]
+  \item Alexey Kravchenko [thesis advisor]
+  \item Constanza Prado [thesis advisor]
+  \item Yoto Yotov [thesis advisor]
   \item  The United Nations [data contributor, copyright holder, funder]
 }
 

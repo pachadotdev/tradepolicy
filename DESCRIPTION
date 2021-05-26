@@ -9,22 +9,18 @@ Authors@R: c(
                comment = c(ORCID = "0000-0003-1017-7574")),
         person(given = "Alexey",
                family = "Kravchenko",
-               role = c("ths"),
-               email = "kravchenkoa@un.org"),
+               role = c("ths")),
         person(given = "Constanza",
                family = "Prado",
-               role = c("ths"),
-               email = "mcprado@uc.cl"),
+               role = c("ths")),
         person(given = "Yoto",
                family = "Yotov",
-               role = c("ths"),
-               email = "yvy23@drexel.edu"),
+               role = c("ths")),
         person(family = "The United Nations",
                role = c("dtc", "cph", "fnd")
         )
     )
-Description: On-disk embedded SQL database containing the original datasets from
-    An Advanced Guide to Trade Policy Analysis
+Description: Datasets from An Advanced Guide to Trade Policy Analysis
     (Year: 2016, ISBN: 978-92-870-4367-2) by Yotov, et al. and functions to 
     report regression summaries with clustered robust standard errors.
 URL: https://r.tiid.org/R_structural_gravity/
