@@ -119,7 +119,7 @@ $$
 
 See page 41 in @yotov2016advanced for a full detail of each variable.
 
-The model for this case is straightforward, and in this case we need to apply step 4 from thje previous section to drop cases where the trade is zero:
+The model for this case is straightforward, and in this case we need to apply step 4 from the previous section to drop cases where the trade is zero:
 
 ```{r ch1_app1_ols_1}
 fit_ols <- lm(
@@ -260,8 +260,6 @@ Please notice that the previous summary intentionally doesn't show time exporter
 
 Please see the note from page 47 in @yotov2016advanced. We need to proceed with similar steps as in the previous section.
 
-Unlike the previous section, we will create different tables for OLS, PPML and its variations, because the solution for the "distance puzzle" implies different transformations and filters for each case.
-
 The distance puzzle proposes this gravity specification:
 
 $$
@@ -274,7 +272,8 @@ The difference with respect to the last section is that now we need to separate 
 
 For the OLS model we need to remove cases where the exporter is the same as the importer and cases where trade is zero. For the PPML models we need to mark rows where the exporter and the importer are the same, and we need to create the `smctry` column, which is also required to transform the `log_dist_*` variables as shown in box #1 in page 48 from @yotov2016advanced:
 
-In order to avoid creating  two datasets that are very similar, we shall create one dataset to cover both OLS and PPML:
+In order to avoid creating two datasets that are very similar, we shall create one dataset to cover both OLS and PPML:
+
 
 ```{r ch1_app2_data_1}
 ch1_application2 <- agtpa_applications %>%
@@ -310,7 +309,7 @@ ch1_application2 %>%
   )
 ```
 
-Also notice that the OLS model shall require filtering when we specify the model, because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same.
+Also notice that the OLS model shall require filtering when we specify the model, because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same. Because the solution for the "distance puzzle" implies different transformations and filters for the OLS and PPML cases, one possibility is to filter in the same summary functions.
 
 ### OLS solution for the "distance puzzle"
 
