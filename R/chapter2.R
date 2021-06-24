@@ -12,7 +12,7 @@
 #' @return A coeftest
 #' @export
 tp_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exporter|^importer") {
-  fit <- stats::glm(stats::as.formula(formula),
+  fit <- eflm::eglm(stats::as.formula(formula),
     family = stats::quasipoisson(link = "log"),
     data = data
   )

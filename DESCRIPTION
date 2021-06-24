@@ -1,6 +1,6 @@
 Package: tradepolicy
 Title: Replication of 'An Advanced Guide To Trade Policy Analysis'
-Version: 0.5.0
+Version: 0.5.0.9000
 Authors@R: c( 
         person(given = "Mauricio",
                family = "Vargas",
@@ -42,7 +42,8 @@ Imports:
     lmtest,
     broom,
     msm,
-    rstudioapi
+    rstudioapi,
+    eflm
 Suggests:
     testthat,
     covr

@@ -21,10 +21,10 @@ tp_summary_app1 <- function(formula, data, method = "lm", pair = "pair_id",
   }
 
   if (method == "lm") {
-    fit <- stats::lm(stats::as.formula(formula), data = data)
+    fit <- eflm::elm(stats::as.formula(formula), data = data)
   }
   if (method == "glm") {
-    fit <- stats::glm(stats::as.formula(formula),
+    fit <- eflm::eglm(stats::as.formula(formula),
       family = stats::quasipoisson(link = "log"),
       data = data,
       y = FALSE,
@@ -56,7 +56,7 @@ tp_summary_app1 <- function(formula, data, method = "lm", pair = "pair_id",
     # reset test: http://personal.lse.ac.uk/tenreyro/reset.do
     data$predict2 <- (stats::predict(fit))^2 # Get fitted values of the linear index, not of trade
     form_reset <- stats::update(fit$formula, ~ predict2 + .)
-    fit_reset <- stats::glm(form_reset,
+    fit_reset <- eflm::eglm(form_reset,
       family = stats::quasipoisson(link = "log"),
       data = data,
       y = FALSE,
@@ -117,10 +117,10 @@ tp_summary_app2 <- function(formula, data, method = "lm",
   }
 
   if (method == "lm") {
-    fit <- stats::lm(stats::as.formula(formula), data = data)
+    fit <- eflm::elm(stats::as.formula(formula), data = data)
   }
   if (method == "glm") {
-    fit <- stats::glm(stats::as.formula(formula),
+    fit <- eflm::eglm(stats::as.formula(formula),
       family = stats::quasipoisson(link = "log"),
       data = data,
       y = FALSE,
@@ -214,10 +214,10 @@ tp_summary_app3 <- function(formula, data, method = "lm",
   }
 
   if (method == "lm") {
-    fit <- stats::lm(stats::as.formula(formula), data = data)
+    fit <- eflm::elm(stats::as.formula(formula), data = data)
   }
   if (method == "glm") {
-    fit <- stats::glm(stats::as.formula(formula),
+    fit <- eflm::eglm(stats::as.formula(formula),
       family = stats::quasipoisson(link = "log"),
       data = data,
       y = FALSE,
