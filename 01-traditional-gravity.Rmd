@@ -171,7 +171,7 @@ $$
 Where
 $$
 \log(REM\_EXP_{i,t}) = \log \left( \sum_j \frac{DIST_{i,j}}{E_{j,t} / Y_t} \right)\\
-\log(REM\_IMP_{i,t}) = \log \left( \sum_i \frac{DIST_{i,j}}{E_{i,t} / Y_t} \right)
+\log(REM\_IMP_{j,t}) = \log \left( \sum_i \frac{DIST_{i,j}}{Y_{i,t} / Y_t} \right)
 $$
 
 See page 43 in @yotov2016advanced for a full detail of each variable.

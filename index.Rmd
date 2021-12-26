@@ -1,7 +1,7 @@
 ---
 title: "Solutions Manual for An Advanced Guide to Trade Policy Analysis in R"
 author: Mauricio "Pachá" Vargas Sepúlveda
-date: "`r Sys.Date()`"
+date: "2021-12-21"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [00-references.bib, 00-packages.bib]
@@ -10,7 +10,7 @@ link-citations: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, warning = FALSE, message = FALSE)
 ```
 
 # Introduction {#intro}
