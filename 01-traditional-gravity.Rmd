@@ -4,20 +4,20 @@
 
 ### Preparing the data
 
-If you haven't used R before, or to be more precise, you have only fitted a few regressions without much practice on transforming and cleaning data before, check chapters 5 and 18 from @wickham2016r.
+If the reader has not used R before, or to be more precise, has only fitted a few regressions without much practice on transforming and cleaning data before, please check chapters 5 and 18 from @wickham2016r.
 
-Please see the note from page 42 in @yotov2016advanced. It's a really important note, which tells us that we need to:
+Please see the note from page 42 in @yotov2016advanced. It is a really important note, which tells us that we need to:
 
 1. Filter observations for a range of years (1986, 1990, 1994, 1998, 2002 and 2006)
 2. Transform some variables to logarithm scale (trade and dist) and create new variables from those in the original dataset
 3. Remove cases where both the exporter and the importer are the same
 4. Drop observations where the trade flow is zero
 
-Unlike @yotov2016advanced, here we shall use a single dataset for all the applications, and we shall subset its columns depending on what we need. This decision was made to keep the `tradepolicy` R package as light as possible.
+Unlike @yotov2016advanced, here we shall use a single dataset for all the applications and subset its columns depending on what we need. This decision kept the *tradepolicy* R package as light as possible.
 
-Step 1, including subsetting columns for this application, is straightforward:
+Step 1, including subsetting columns for this application, is straightforward.
 
-```{r ch1_app1_data_1}
+```{r ch1_app_1_data_1}
 library(tradepolicy)
 
 ch1_application1 <- agtpa_applications %>%
@@ -25,9 +25,9 @@ ch1_application1 <- agtpa_applications %>%
   filter(year %in% seq(1986, 2006, 4))
 ```
 
-For step 2, this can be divided in parts, starting with the log transformation of `trade` and `dist`:
+For step 2, this can be divided in parts, starting with the log transformation of trade and distance.
 
-```{r ch1_app1_data_2}
+```{r ch1_app_1_data_2}
 ch1_application1 <- ch1_application1 %>%
   mutate(
     log_trade = log(trade),
@@ -35,9 +35,9 @@ ch1_application1 <- ch1_application1 %>%
   )
 ```
 
-Continuing step 2, we can now create the variables $Y_{i,t}$ and $E_{i,t}$ that appear on the OLS model equation:
+Continuing step 2, we can now create the variables $Y_{i,t}$ and $E_{i,t}$ that appear on the OLS model equation in the book.
 
-```{r ch1_app1_data_3}
+```{r ch1_app_1_data_3}
 ch1_application1 <- ch1_application1 %>%
   # Create Yit
   group_by(exporter, year) %>%
@@ -54,9 +54,9 @@ ch1_application1 <- ch1_application1 %>%
   )
 ```
 
-The OLS model with remoteness index needs both exporter and importer index, which can be created by grouping variables:
+The OLS model with remoteness index needs both exporter and importer index, which grouping variables can create. We divide it into sub-steps: Replicate the computation of total exports, then the remoteness index for exporters, and finally the total imports with the corresponding remoteness index for importers.
 
-```{r ch1_app1_data_4}
+```{r ch1_app_1_data_4}
 ch1_application1 <- ch1_application1 %>%
   # Replicate total_e
   group_by(exporter, year) %>%
@@ -85,9 +85,9 @@ ch1_application1 <- ch1_application1 %>%
   )
 ```
 
-To create the variables for the OLS with Fixed Effects Model, we followed box #1 in page 44 from @yotov2016advanced. We combine both exporter and importer variables with the year in order to create the fixed effects variables:
+To create the variables for the OLS with Fixed Effects Model, we followed box #1 on page 44 from @yotov2016advanced. We combine both exporter and importer variables with the year to create the fixed effects variables.
 
-```{r ch1_app1_data_5}
+```{r ch1_app_1_data_5}
 ch1_application1 <- ch1_application1 %>%
   # This merges the columns exporter/importer with year
   mutate(
@@ -96,63 +96,59 @@ ch1_application1 <- ch1_application1 %>%
   )
 ```
 
-This concludes step 2.
+The addition of exporter/importer time fixed effects concludes step 2, and now we need to perform step 3.
 
-Now we need to perform step 3:
-
-```{r ch1_app1_data_6}
+```{r ch1_app_1_data_6}
 ch1_application1 <- ch1_application1 %>%
   filter(exporter != importer)
 ```
 
-Step 4 is used in some cases and we will be explicit about it.
+Some cases require conducting step 4, and we will be explicit about it when needed.
 
 ### OLS estimation ignoring multilateral resistance terms
 
-The general equation for this model is:
+The general equation for this model is
 $$
 \begin{align}
 \log X_{ij,t} =& \:\beta_0 + \beta_1 DIST_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \beta_5 \log Y_{i,t} +\\
-\text{ }& \:\beta_6 \log E_{j,t} + \varepsilon_{ij,t}
+\text{ }& \:\beta_6 \log E_{j,t} + \varepsilon_{ij,t}.
 \end{align}
 $$
 
-See page 41 in @yotov2016advanced for a full detail of each variable.
+Please see page 41 in @yotov2016advanced for full detail of each variable.
 
-The model for this case is straightforward, and in this case we need to apply step 4 from the previous section to drop cases where the trade is zero:
+The model for this case is straightforward, and in this case, we need to apply step 4 from the previous section to drop cases where the trade is zero.
 
-```{r ch1_app1_ols_1}
-fit_ols <- lm(
+```{r ch1_app_1_ols_1}
+fit_ols <- feols(
   log_trade ~ log_dist + cntg + lang + clny + log_y + log_e,
-  data = ch1_application1 %>%
-    filter(trade > 0)
+  data = filter(ch1_application1, trade > 0)
 )
 
 summary(fit_ols)
 ```
 
-Now the model is almost ready! Now we only need to stick to the methodology from
-@yotov2016advanced and cluster the standard errors by country pair (see the note in page 42, it is extremely important). This is not straightforward and requires additional work.
+Now the model is almost ready! Now we only need to stick to the methodology from @yotov2016advanced and cluster the standard errors by country pair (see the note on page 42, it is imperative). This note is not straightforward to replicate in R and requires additional work.
 
-The `tradepolicy` package provides a nice function to do this and more. Please read
-the documentation of the package and look for the `tp_summary_app1()` function, it
+The *tradepolicy* package provides a nice function to do this and more. Please read
+the documentation of the package and look for the `tp_summary_app_1()` function, it
 summarises the model in the exact way as reported in the book by providing:
 
-* Clustered standard errors
-* Number of observations
-* $R^2$ (if applicable)
-* Presence (or absence) of exporter and exporter time fixed effects
-* RESET test p-value
+The *tradepolicy* package provides a nice function to do this and more. Please read the documentation of the package and look for the `tp_summary_app_1()` function, it exactly summarises the model as reported in the book by providing:
 
-This is returned as a list to keep it simple.
+* Clustered standard errors.
+* Number of observations.
+* $R^2$ (if applicable).
+* Presence (or absence) of exporter and exporter time fixed effects.
+* RESET test p-value.
 
-Finally, here is the model as reported in the book:
+These statistical results are returned as a list to keep it simple, which we can see for the model in the same format as reported in the book.
 
-```{r ch1_app1_ols_2}
-tp_summary_app1(
+```{r ch1_app_1_ols_2}
+tp_summary_app_1(
   formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e",
   data = filter(ch1_application1, trade > 0),
-  method = "lm"
+  method = "ols"
 )
 ```
 
@@ -160,99 +156,95 @@ Please notice that the summary hides the exporter/importer fixed effects.
 
 ### OLS estimation controlling for multilateral resistance terms with remote indexes
 
-The remoteness model adds variables to the OLS model. The general equation for this model is:
+The remoteness model adds variables to the OLS model. The general equation for this model is
 $$
 \begin{align}
 \log X_{ij,t} =& \:\beta_0 + \beta_1 DIST_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \beta_5 \log Y_{i,t} +\\
-\text{ }& \beta_6 \log E_{j,t} + \beta_7 \log(REM\_EXP_i,t) + \beta_8 \log(REM\_IMP_i,t) + \varepsilon_{ij,t}
+\text{ }& \beta_6 \log E_{j,t} + \beta_7 \log(REM\_EXP_i,t) + \beta_8 \log(REM\_IMP_i,t) + \varepsilon_{ij,t}.
 \end{align}
 $$
 
-Where
+In the equation above $REM\_EXP$ and $REM\_IMP$ are defined as
 $$
-\log(REM\_EXP_{i,t}) = \log \left( \sum_j \frac{DIST_{i,j}}{E_{j,t} / Y_t} \right)\\
-\log(REM\_IMP_{j,t}) = \log \left( \sum_i \frac{DIST_{i,j}}{Y_{i,t} / Y_t} \right)
+\begin{align}
+\log(REM\_EXP_{i,t}) &= \log \left( \sum_j \frac{DIST_{i,j}}{E_{j,t} / Y_t} \right) \text{, and }\\
+\log(REM\_IMP_{j,t}) &= \log \left( \sum_i \frac{DIST_{i,j}}{Y_{i,t} / Y_t} \right).
+\end{align}
 $$
 
-See page 43 in @yotov2016advanced for a full detail of each variable.
+Please see page 43 in @yotov2016advanced for full detail of each variable.
 
-Our approach follows box #1 in page 43 from @yotov2016advanced. Fitting the regression is straightforward, it's just about adding more regressors to what we did in the last section, and we can create a list with a summary for the model:
+Our approach follows box #1 on page 43 from @yotov2016advanced. Fitting the regression is straightforward. It is just about adding more regressors to what we did in the last section, and we can create a list with a summary for the model.
 
-```{r ch1_app1_ols_remoteness_1}
-tp_summary_app1(
+```{r ch1_app_1_ols_remoteness_1}
+tp_summary_app_1(
   formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
     log_remoteness_exp + log_remoteness_imp",
   data = filter(ch1_application1, trade > 0),
-  method = "lm"
+  method = "ols"
 )
 ```
 
 ### OLS estimation controlling for multilateral resistance terms with fixed effects
 
-The general equation for this model is:
+The general equation for this model is
 $$
 \begin{align}
 \log X_{ij,t} =& \:\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\\
-\text{ }& \:\beta_4 CLNY_{i,j} + \varepsilon_{ij,t}
+\text{ }& \:\beta_4 CLNY_{i,j} + \varepsilon_{ij,t}.
 \end{align}
 $$
 
-Where the added terms, with respect to the OLS model, are $\pi_{i,t}$ and $\chi_{i,t}$ that
-account for exporter-time and importer-time fixed effects respectively. See page 44 in @yotov2016advanced for a full detail of each variable.
+Where the added terms, concerning the OLS model, are $\pi_{i,t}$ and $\chi_{i,t}$ that account for exporter-time and importer-time fixed effects, respectively. See page 44 in @yotov2016advanced for full detail of each variable.
 
-Now we can easily generate a list as we did with the previous models:
+We can quickly generate a list as we did with the previous models. The only difference to the previous models is that in this case that the variables to the right of the "|" operator are the fixed effects, which are treated differently by the *fixest* package, which is used internally by the *tradepolicy* package, for faster model fitting.
 
-```{r ch1_app1_fe_1}
-tp_summary_app1(
-  formula = "log_trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
+```{r ch1_app_1_fe_1}
+tp_summary_app_1(
+  formula = "log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year",
   data = filter(ch1_application1, trade > 0),
-  method = "lm"
+  method = "ols"
 )
 ```
 
 ### PPML estimation controlling for multilateral resistance terms with fixed effects
 
-The general equation for this model is:
-
+The general equation for this model is
 $$
 \begin{align}
 X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} +\right.\\
-\text{ }& \:\left.\beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j}\right] \times \varepsilon_{ij,t}
+\text{ }& \:\left.\beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j}\right] \times \varepsilon_{ij,t}.
 \end{align}
 $$
 
-The reason to compute this model even in spite of speed is that PPML is the only estimator that is perfectly consistent with the theoretical gravity model. By estimating with PPML the fixed effects correspond exactly to the corresponding theoretical terms.
+The reason to compute this model, despite the lower speed compared to OLS, is that PPML is the only estimator perfectly consistent with the theoretical gravity model. By estimating with PPML, the fixed effects correspond precisely to the corresponding theoretical terms.
 
-The data for this model is exactly the same as for the fixed effects model.
+The data for this model is the same as for the fixed effects model, and one option in R is to use the `fepois()` function.
 
-One option in R is to use the `glm()` function and a quasi-poisson family to avoid overdispersion problems:
-
-```{r ch1_app1_ppml_1, eval = FALSE}
-fit_ppml <- glm(trade ~ log_dist + cntg + lang + clny + exp_year + imp_year,
-  family = quasipoisson(link = "log"),
+```{r ch1_app_1_ppml_1, eval = FALSE}
+fit_ppml <- fepois(trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
   data = ch1_application1,
-  y = FALSE,
-  model = FALSE
+  cluster = ~pair_id
 )
 ```
 
-In the previous model, a `glm` model object carries a copy of its training data by default. We used the settings `y = FALSE` and `model = FALSE` to turn this off, which decreases the size of the model without affecting the model’s predictions [@trimmingfat].
+`fepois()` does not carry a copy of its training data by default besides providing faster fitting for models with fixed effects. This is not the case in base R, where `glm()` objects include this data, increasing the model's size, but this does not affect the model's predictions and can be changed as the user needs it [@trimmingfat].
 
-If you decide to run this model and print the summary yourself, you'll notice that it doesn't report $R^2$ and that it shows a large list of fixed effects. The $R^2$ needs to be computed afterwards as a function of the correlation between the observed and predicted values. Please see @silva2006log for the details as well as for the RESET test for PPML (GLM) models.
+If the reader decides to run this model and print the summary, they will notice that it does not report an $R^2$ and displays an extensive fixed effect list. For PPML models, the $R^2$ needs to be computed afterwards as Kendall's correlation (or rank correlation) between the observed and predicted values. Please see @silva2006log for the details and the RESET test for PPML (GLM) models.
 
-Software such as Stata, without dedicated functions, reports an incorrect $R^2$ for PPML model, it actually reports a pseudo-$R^2$. To construct a proper $R^2$, `tp_summary_app1()` takes the correlation between actual and predicted trade flows.
+Beware that software such as Stata requires additional libraries such as *ppmlhdfe* to report a correct $R^2$ for the PPML model. What Stata shows is a reported pseudo-$R^2$. To construct a proper $R^2$ in R, `tp_summary_app_1()` takes the rank correlation between actual and predicted trade flows.
 
-We can obtain a detailed list as in the previous examples:
+We can obtain a detailed list as in the previous examples.
 
-```{r ch1_app1_ppml_2}
-tp_summary_app1(
-  formula = "trade ~ log_dist + cntg + lang + clny + exp_year + imp_year",
+```{r ch1_app_1_ppml_2}
+tp_summary_app_1(
+  formula = "trade ~ log_dist + cntg + lang + clny | exp_year + imp_year",
   data = ch1_application1,
-  method = "glm"
+  method = "ppml"
 )
 ```
 
-Please notice that the previous summary intentionally doesn't show time exporter/importer fixed effects.
+Please notice that the previous summary intentionally does not show time exporter/importer fixed effects.
 
 ## The "distance puzzle" resolved
 
@@ -260,22 +252,21 @@ Please notice that the previous summary intentionally doesn't show time exporter
 
 Please see the note from page 47 in @yotov2016advanced. We need to proceed with similar steps as in the previous section.
 
-The distance puzzle proposes this gravity specification:
-
+The distance puzzle proposes the gravity specification
 $$
 \begin{align}
 X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j}\right]\times\\
-\text{ }& \:\exp\left[\beta_4 CLNY_{i,j} + \beta_5 \log(DIST\_INTRA_{i,i})\right] \times \varepsilon_{ij,t}
+\text{ }& \:\exp\left[\beta_4 CLNY_{i,j} + \beta_5 \log(DIST\_INTRA_{i,i})\right] \times \varepsilon_{ij,t}.
 \end{align}
 $$
-The difference with respect to the last section is that now we need to separate the `log_dist` variable into multiple columns that account for discrete time effects. This is expressed into the $\beta_T$ terms of the equation. Perhaps the easiest option to do this is to transform `year` into a text column and then use the `spread()` function.
 
-For the OLS model we need to remove cases where the exporter is the same as the importer and cases where trade is zero. For the PPML models we need to mark rows where the exporter and the importer are the same, and we need to create the `smctry` column, which is also required to transform the `log_dist_*` variables as shown in box #1 in page 48 from @yotov2016advanced:
+The difference concerning the last section is that now we need to separate the distance variable into multiple columns that account for discrete-time effects. The $\beta_T$ terms of the equation reflect this. Perhaps the easiest option is to transform the year into a text column and then use the `pivot_wider()` function.
 
-In order to avoid creating two datasets that are very similar, we shall create one dataset to cover both OLS and PPML:
+We need to remove cases where the exporter is the same as the importer and cases where trade is zero for the OLS model. For the PPML models, we need to mark rows where the exporter and the importer are the same, and we need to create the same country column, which is also required to transform the distance variables as shown in box #1 in page 48 from @yotov2016advanced.
 
+In order to avoid creating two very similar datasets, we shall create one dataset to cover both OLS and PPML.
 
-```{r ch1_app2_data_1}
+```{r ch1_app_2_data_1}
 ch1_application2 <- agtpa_applications %>%
   select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) %>%
   # this filter covers both OLS and PPML
@@ -293,95 +284,103 @@ ch1_application2 <- agtpa_applications %>%
     log_dist_intra = log_dist * smctry,
     intra_pair = ifelse(exporter == importer, exporter, "inter")
   ) %>%
-  spread(year, log_dist, fill = 0) %>%
-  mutate(across(log_dist_1986:log_dist_2006, ~ .x * (1 - smctry)))
+  pivot_wider(names_from = year, values_from = log_dist, values_fill = 0) %>%
+  mutate(across(log_dist_1986:log_dist_2006, function(x) x * (1 - smctry)))
 ```
 
-Here the `across()` function is a shortcut to avoid writing something like:
+The `across()` function is a shortcut to avoid repetition, as in the following example, we show it for reference without computation.
 
-```{r ch1_app2_data_3, eval = FALSE}
+```{r ch1_app_2_data_3, eval = FALSE}
 ch1_application2 %>%
   mutate(
     log_dist_1986 =  log_dist_1986 * (1 - smctry),
     log_dist_1990 =  log_dist_1990 * (1 - smctry),
-    ... REPEAT log_dist_T many_times ....
+    
+    # repeat log_dist_T many_times for T = 1994, 1998, ...
+    
     log_dist_2006 =  log_dist_2006 * (1 - smctry)
   )
 ```
 
-Also notice that the OLS model shall require filtering when we specify the model, because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same. Because the solution for the "distance puzzle" implies different transformations and filters for the OLS and PPML cases, one possibility is to filter in the same summary functions.
+Note that the OLS model shall require filtering when we specify the model because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same. Because the solution for the "distance puzzle" implies different transformations and filters for the OLS and PPML cases, one possibility is to filter in the same summary functions.
 
 ### OLS solution for the "distance puzzle"
 
 The gravity specification, which includes $\pi_{i,t} + \chi_{i,t}$, means that we need to do something very similar to what we did in the last section.
 
-With the data from above, the model specification is straightforward:
+With the data from above, the model specification is straightforward.
 
-```{r ch1_app2_ols_1}
-tp_summary_app2(
-  formula = "log_trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
-    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg +
-    lang + clny + exp_year + imp_year",
+```{r ch1_app_2_ols_1}
+tp_summary_app_2(
+  formula = "log_trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
+    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny | 
+    exp_year + imp_year",
   data = filter(ch1_application2, importer != exporter, trade > 0),
-  method = "lm"
+  method = "ols"
 )
 ```
 
-Notice that, unlike the previous section, we used the notation `y ~ 0 + ...`. The zero means not to include a constant.
+Notice that, unlike the previous section, if we had fitted the model in base R, with `glm()`, we would have needed to write a different formula.
+
+```r
+log_trade ~ 0 + log_dist_1986 + ... + clny + exp_year + imp_year
+```
+
+In which case, the initial zero means not to include a global constant besides the fixed effects. The fixed effect variables appear with regular plus signs, without a vertical bar to indicate them.
 
 ### PPML solution for the "distance puzzle"
 
-This model is very similar to the one specified in the PPML section from the last section. We can fit the model in a direct way:
+This model is very similar to the one specified in the PPML section from the last section. We can directly fit the model.
 
-```{r ch1_app2_ppml_1}
-tp_summary_app2(
-  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
-    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
-    cntg + lang + clny + exp_year + imp_year",
+```{r ch1_app_2_ppml_1}
+tp_summary_app_2(
+  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 + 
+    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny | 
+    exp_year + imp_year",
   data = filter(ch1_application2, importer != exporter),
-  method = "glm"
+  method = "ppml"
 )
 ```
 
 ### Internal distance solution for the "distance puzzle"
 
-This model just requires us to add the `log_dist_intra` variable to the PPML model and not to filter the rows where the exporter and the importer are the same:
+This model requires us to add the internal distance variable to the PPML model and not filter the rows where the exporter and the importer are the same.
 
-```{r ch1_app2_intra_1}
-tp_summary_app2(
-  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
-    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
-    cntg + lang + clny + exp_year + imp_year + log_dist_intra",
+```{r ch1_app_2_intra_1}
+tp_summary_app_2(
+  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 + 
+    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny + 
+    log_dist_intra | exp_year + imp_year",
   data = ch1_application2,
-  method = "glm"
+  method = "ppml"
 )
 ```
 
 ### Internal distance and home bias solution for the "distance puzzle"
 
-This model just requires us to add the `smctry` variable to the internal distance model and repeat the rest of the steps from the last section:
+This model requires us to add the same country variable to the internal distance model and repeat the rest of the steps from the last section.
 
-```{r ch1_app2_home_1}
-tp_summary_app2(
-  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
-    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
-    cntg + lang + clny + exp_year + imp_year + log_dist_intra + smctry",
+```{r ch1_app_2_home_1}
+tp_summary_app_2(
+  formula = "trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 + 
+    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny + 
+    log_dist_intra + smctry | exp_year + imp_year",
   data = ch1_application2,
-  method = "glm"
+  method = "ppml"
 )
 ```
 
 ### Fixed effects solution for the "distance puzzle"
 
-This model just requires us to remove the variables `log_dist_intra` and `smctry` from the last model and include the `intra_pair` variable to account for the intra-national fixed effects:
+This model requires us to remove the internal distance and same country variables from the last model and include the internal pair variable to account for the intra-national fixed effects.
 
-```{r ch1_app2_fe_1}
-tp_summary_app2(
-  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 +
-    log_dist_1994 + log_dist_1998 + log_dist_2002 + log_dist_2006 +
-    cntg + lang + clny + exp_year + imp_year + intra_pair",
+```{r ch1_app_2_fe_1}
+tp_summary_app_2(
+  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 + 
+    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny + 
+    intra_pair | exp_year + imp_year",
   data = ch1_application2,
-  method = "glm"
+  method = "ppml"
 )
 ```
 
@@ -389,19 +388,20 @@ tp_summary_app2(
 
 ### Preparing the data
 
-This model specification includes gravity covariates, including both importer and exporter time fixed effects:
+This model specification includes gravity covariates, including importer-time and exporter-time fixed effects, as in the equation
 
 $$
 \begin{align}
 X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\right.\\
-\text{ }& \:\left.\beta_4 CLNY_{i,j} + \beta_5 RTA_{ij,t}\right] \times \varepsilon_{ij,t}
+\text{ }& \:\left.\beta_4 CLNY_{i,j} + \beta_5 RTA_{ij,t}\right] \times \varepsilon_{ij,t}.
 \end{align}
 $$
-We need to create additional variables, in comparison to the previous examples, to include fixed effects that account for the observations where the exporter and the importer are the same. These variables are `intl_brdr`, `pair_id_2` and the columns of the form `intl_border_Y` where Y corresponds to the year.
 
-The direct way of obtaining the desired variables is quite similar to what we did in the previous sections:
+In comparison to the previous examples, we need to create additional variables to include fixed effects that account for the observations where the exporter and the importer are the same. These variables are internal border, internal dyad and internal borders for different years.
 
-```{r ch1_app3_data_1}
+The direct way of obtaining the desired variables is similar to what we did in the previous sections.
+
+```{r ch1_app_3_data_1}
 ch1_application3 <- agtpa_applications %>%
   filter(year %in% seq(1986, 2006, 4)) %>%
   mutate(
@@ -414,14 +414,14 @@ ch1_application3 <- agtpa_applications %>%
     intl_brdr_2 = ifelse(exporter == importer, 0, 1),
     pair_id_2 = ifelse(exporter == importer, "0-intra", pair_id)
   ) %>%
-  spread(year, intl_brdr_2, fill = 0)
+  pivot_wider(names_from = year, values_from = intl_brdr_2, values_fill = 0)
 ```
 
-Notice that we used `0-intra` and not just `intra`. This is because the rest of the observations in `pair_id_2` are numbers 1,...,N, and R internals shall consider `0-intra` as the reference factor for being the first item when it orders the unique observations alphabetically. This makes the difference between the expected behavior or any behavior in the next chapter.
+Notice that we used '0-intra' and not just 'intra' because the rest of the observations in the internal dyads are numbers 1, ..., N, and R internals shall consider '0-intra' as the reference factor for being the first item when it orders the unique observations alphabetically. Also, observe the order of the resulting table, the pivoting of the table will put '0-intra' as the first row for the first exporter-importer dyad. This makes the difference between the expected or other behaviours in the next chapter.
 
-In addition, we need to create the variable `sum_trade` to filter the cases where the sum by `pair_id` is zero:
+In addition, we need to create the variable containing the trade sum to filter the cases where the sum by dyad is zero.
 
-```{r ch1_app3_data_2}
+```{r ch1_app_3_data_2}
 ch1_application3 <- ch1_application3 %>%
   group_by(pair_id) %>%
   mutate(sum_trade = sum(trade)) %>%
@@ -432,91 +432,89 @@ ch1_application3 <- ch1_application3 %>%
 
 The gravity specification, which includes $\pi_{i,t} + \chi_{i,t}$, means that we need to do something very similar to what we did in the last section.
 
-With the data from above, the model specification is straightforward:
+With the data from above, the model specification is straightforward.
 
-```{r ch1_app3_ols_1}
-tp_summary_app3(
-  formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
-    rta + exp_year + imp_year",
+```{r ch1_app_3_ols_1}
+tp_summary_app_3(
+  formula = "log_trade ~ log_dist + cntg + lang + clny + rta | exp_year + 
+    imp_year",
   data = filter(ch1_application3, trade > 0, importer != exporter),
-  method = "lm"
+  method = "ols"
 )
 ```
 
 ### PPML standard RTA estimates with international trade only
 
-The model specification is very similar to OLS and we only need to change the function `lm()`:
+The model specification is very similar to OLS, and we only need to change the method specified in the function.
 
-```{r ch1_app3_ppml_1}
-tp_summary_app3(
-  formula = "trade ~ 0 + log_dist + cntg + lang + clny +
-    rta + exp_year + imp_year",
+```{r ch1_app_3_ppml_1}
+tp_summary_app_3(
+  formula = "trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year",
   data = filter(ch1_application3, importer != exporter),
-  method = "glm"
+  method = "ppml"
 )
 ```
 
 ### Addressing potential domestic trade diversion
 
-The model specification is quite the same as PPML and we only need to add the variable `intl_brdr` but using the full dataset instead of removing rows where the importer and the exporter are the same:
+The model specification is quite the same as PPML. We only need to add the international border variable but use the entire dataset instead of removing rows where the importer and the exporter are the same.
 
-```{r ch1_app3_intra_1}
-tp_summary_app3(
-  formula = "trade ~ 0 + log_dist + cntg + lang + clny +
-    rta + exp_year + imp_year + intl_brdr",
+```{r ch1_app_3_intra_1}
+tp_summary_app_3(
+  formula = "trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year +
+    intl_brdr",
   data = ch1_application3,
-  method = "glm"
+  method = "ppml"
 )
 ```
 
 ### Addressing potential endogeneity of RTAs
 
-The model specification consists in including the `rta` variable and the fixed effects `exp_year`, `imp_year` and `pair_id_2` to account for domestic trade:
+The model specification includes the RTA variable and the exporter-time, importer-time and internal dyad fixed effects to account for domestic trade.
 
-```{r ch1_app3_endg_1}
-tp_summary_app3(
-  formula = "trade ~ 0 + rta + exp_year + imp_year + pair_id_2",
+```{r ch1_app_3_endg_1}
+tp_summary_app_3(
+  formula = "trade ~ rta | exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3, sum_trade > 0),
-  method = "glm"
+  method = "ppml"
 )
 ```
 
 ### Testing for potential "reverse causality" between trade and RTAs
 
-We need to modify the previous model in order to include the variable `rta_lead4` and to consider where `sum_trade` is greater than zero:
+We need to modify the previous model to include the forward lagged RTA variable (by four years) and consider where the trade sum is larger than zero.
 
-```{r ch1_app3_lead_1}
-tp_summary_app3(
-  formula = "trade ~ 0 + rta + rta_lead4 + exp_year + imp_year + pair_id_2",
+```{r ch1_app_3_lead_1}
+tp_summary_app_3(
+  formula = "trade ~ rta + rta_lead4 | exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3, sum_trade > 0),
-  method = "glm"
+  method = "ppml"
 )
 ```
 
 ### Addressing potential non-linear and phasing-in effects of RTAs
 
-Instead of future-lagged `rta` variable, as in the previous model, we modify the previous model and include the `rta_lagN` past-lagged variables instead:
+Instead of future-lagged RTA variables, as in the previous model, we modify the previous model and include the RTA backwards lagged variables instead.
 
-```{r ch1_app3_phsng_1}
-tp_summary_app3(
-  formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
-    exp_year + imp_year + pair_id_2",
+```{r ch1_app_3_phsng_1}
+tp_summary_app_3(
+  formula = "trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 | exp_year + 
+    imp_year + pair_id_2",
   data = filter(ch1_application3, sum_trade > 0),
-  method = "glm"
+  method = "ppml"
 )
 ```
 
 ### Addressing globalization effects
 
-Just as an addition to the previous model, we include the `intl_border_T` variables in addition to `rta_lagN`:
+In addition to the previous model, we include the international borders on different years besides the lagged RTAs.
 
-```{r ch1_app3_glbzn_1}
-tp_summary_app3(
-  formula = "trade ~ 0 + rta + rta_lag4 + rta_lag8 + rta_lag12 +
-    intl_border_1986 + intl_border_1990 + intl_border_1994 +
-    intl_border_1998 + intl_border_2002 +
+```{r ch1_app_3_glbzn_1}
+tp_summary_app_3(
+  formula = "trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 + intl_border_1986 + 
+    intl_border_1990 + intl_border_1994 + intl_border_1998 + intl_border_2002 |
     exp_year + imp_year + pair_id_2",
   data = filter(ch1_application3, sum_trade > 0),
-  method = "glm"
+  method = "ppml"
 )
 ```

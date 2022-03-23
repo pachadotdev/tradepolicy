@@ -1,3 +1,14 @@
+# tradepolicu 0.6.0
+
+Breaking changes
+* Uses fixest estimation as default
+* For all the summary functions the default is "ols" (it was "lm")
+* The summary functions were renamed to tp_summary_app_T instead of tp_summary_appT (T={1,2,3})
+
+Removals
+* tp_clustered_glm(), which doesn't make sense anymore after using fixest,
+  which provides clustered standard errors directly
+
 # tradepolicy 0.5.0
 
 * Uses a single dataset + dplyr::filter for all the applications in the book

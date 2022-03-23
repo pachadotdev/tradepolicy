@@ -7,7 +7,7 @@
 tp_summary_app1(
   formula,
   data,
-  method = "lm",
+  method = "ppml",
   pair = "pair_id",
   etfe = "exp_year",
   itfe = "imp_year"
@@ -18,7 +18,7 @@ tp_summary_app1(
 
 \item{data}{Tibble or data.frame}
 
-\item{method}{Regression method, which can be "lm" (default) or "glm"}
+\item{method}{Regression method, which can be "ols" or "ppml" (default)}
 
 \item{pair}{Inter-national fixed effects column (defaults to "pair_id")}
 

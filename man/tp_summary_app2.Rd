@@ -7,7 +7,7 @@
 tp_summary_app2(
   formula,
   data,
-  method = "lm",
+  method = "ppml",
   pair = "pair_id",
   etfe = "exp_year",
   itfe = "imp_year",

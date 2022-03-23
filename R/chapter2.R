@@ -1,118 +1,179 @@
-#' GLM Regression With Clustered Standard Errors
+#' @title Poisson Pseudo Maximum Likelihood (PPML)
 #'
-#' Fits a regression with robust clustered standard errors. This uses a quasi-poisson
-#' family and returns the estimated coefficients after computing a clustered
-#' variance-covariance matrix.
+#' @description \code{ppml} estimates gravity models in their
+#' multiplicative form via Poisson Pseudo Maximum Likelihood.
 #'
-#' @param formula Formula for the model
-#' @param data Tibble or data.frame
-#' @param pair Inter-national fixed effects column (defaults to "pair_id")
-#' @param fe_pattern Pattern for the fixed effects variable, allows character
-#' or regex (defaults to "^exporter|^importer")
-#' @return A coeftest
+#' @details \code{ppml} is an estimation method for gravity models
+#' belonging to generalized linear models. It is estimated via \code{\link[stats]{glm}} using the quasipoisson
+#' distribution and a log-link. \code{ppml} is presented in \insertCite{Santos2006;textual}{gravity}.
+#'
+#' For similar functions, utilizing the multiplicative form via the log-link,
+#' but different distributions, see \code{\link[gravity]{gpml}}, \code{\link[gravity]{nls}},
+#' and \code{\link[gravity]{nbpml}}.
+#'
+#' \code{ppml} estimation can be used for both, cross-sectional as well as
+#' panel data. The function is designed to be consistent with the
+#' results from the Stata function \code{ppml} written by \insertCite{Santos2006;textual}{gravity}.
+#'
+#' The function \code{ols} was therefore tested for cross-sectional data. For the use with panel data
+#' no tests were performed. Therefore, it is up to the user to ensure that the functions can be applied
+#' to panel data.
+#'
+#' Depending on the panel dataset and the variables -
+#' specifically the type of fixed effects -
+#' included in the model, it may easily occur that the model is not computable.
+#' Also, note that by including bilateral fixed effects such as country-pair
+#' effects, the coefficients of time-invariant observables such as distance
+#' can no longer be estimated.
+#'
+#' Depending on the specific model, the code of the
+#' respective function may has to be changed in order to exclude the distance
+#' variable from the estimation.
+#'
+#' At the very least, the user should take special
+#' care with respect to the meaning of the estimated coefficients and variances
+#' as well as the decision about which effects to include in the estimation.
+#' When using panel data, the parameter and variance estimation of the models
+#' may have to be changed accordingly.
+#'
+#' For a comprehensive overview of gravity models for panel data
+#' see \insertCite{Egger2003;textual}{gravity}, \insertCite{Gomez-Herrera2013;textual}{gravity} and
+#' \insertCite{Head2010;textual}{gravity} as well as the references therein.
+#'
+#' @param dependent_variable (Type: character) name of the dependent variable. This variable is used as
+#' the dependent variable in the estimation.
+#'
+#' @param distance (Type: character) name of the distance variable that should be taken as the key independent variable
+#' in the estimation. The distance is logged automatically when the function is executed.
+#'
+#' @param additional_regressors (Type: character) names of the additional regressors to include in the model (e.g. a dummy
+#' variable to indicate contiguity). Unilateral metric variables such as GDPs can be added but those variables have to be
+#' logged first. Interaction terms can be added.
+#'
+#' Write this argument as \code{c(contiguity, common currency, ...)}. By default this is set to \code{NULL}.
+#'
+#' @param robust (Type: logical) whether robust fitting should be used. By default this is set to \code{FALSE}.
+#'
+#' @param data (Type: data.frame) the dataset to be used.
+#'
+#' @param ... Additional arguments to be passed to the function.
+#'
+#' @references
+#' For more information on gravity models, theoretical foundations and
+#' estimation methods in general see
+#'
+#' \insertRef{Anderson1979}{gravity}
+#'
+#' \insertRef{Anderson2001}{gravity}
+#'
+#' \insertRef{Anderson2010}{gravity}
+#'
+#' \insertRef{Baier2009}{gravity}
+#'
+#' \insertRef{Baier2010}{gravity}
+#'
+#' \insertRef{Feenstra2002}{gravity}
+#'
+#' \insertRef{Head2010}{gravity}
+#'
+#' \insertRef{Head2014}{gravity}
+#'
+#' \insertRef{Santos2006}{gravity}
+#'
+#' and the citations therein.
+#'
+#' See \href{https://sites.google.com/site/hiegravity/}{Gravity Equations: Workhorse, Toolkit, and Cookbook} for gravity datasets and Stata code for estimating gravity models.
+#'
+#' For estimating gravity equations using panel data see
+#'
+#' \insertRef{Egger2003}{gravity}
+#'
+#' \insertRef{Gomez-Herrera2013}{gravity}
+#'
+#' and the references therein.
+#'
+#' @examples
+#' # Example for CRAN checks:
+#' # Executable in < 5 sec
+#' library(dplyr)
+#' data("gravity_no_zeros")
+#'
+#' # Choose 5 countries for testing
+#' countries_chosen <- c("AUS", "CHN", "GBR", "BRA", "CAN")
+#' grav_small <- filter(gravity_no_zeros, iso_o %in% countries_chosen)
+#'
+#' fit <- ppml(
+#'   dependent_variable = "flow",
+#'   distance = "distw",
+#'   additional_regressors = c("rta", "iso_o", "iso_d"),
+#'   data = grav_small
+#' )
+#' @return
+#' The function returns the summary of the estimated gravity model as an
+#' \code{\link[stats]{glm}}-object.
+#'
+#' @seealso \code{\link[stats]{glm}}, \code{\link[lmtest]{coeftest}},
+#' \code{\link[sandwich]{vcovHC}}
+#'
 #' @export
-tp_clustered_glm <- function(formula, data, pair = "pair_id", fe_pattern = "^exporter|^importer") {
-  fit <- stats::glm(stats::as.formula(formula),
-    family = stats::quasipoisson(link = "log"),
-    data = data
-  )
 
-  vcov_cluster <- sandwich::vcovCL(
-    fit,
-    cluster = data[, pair]
-  )
+ppml <- function(dependent_variable,
+                 distance,
+                 additional_regressors,
+                 robust = FALSE,
+                 data, ...) {
+  # Checks ------------------------------------------------------------------
+  stopifnot(is.data.frame(data))
 
-  vcov_cluster_reduced <- vcov_cluster[
-    which(!grepl(fe_pattern, rownames(vcov_cluster))),
-    which(!grepl(fe_pattern, rownames(vcov_cluster)))
-  ]
+  stopifnot(is.character(dependent_variable), dependent_variable %in% colnames(data), length(dependent_variable) == 1)
 
-  coef_test <- lmtest::coeftest(
-    fit,
-    vcov_cluster_reduced
-  )
+  stopifnot(is.character(distance), distance %in% colnames(data), length(distance) == 1)
 
-  return(coef_test)
-}
-
-#' Extract Fixed Effects From Regression Objects
-#'
-#' Takes an lm/glm object and extracts the fixed effects estimated coefficients.
-#' This function was created to be used with `left_join()` and `predict()` as it
-#' pastes the effects and allows to create a column with the predicted output.
-#'
-#' @param fit Regression object
-#' @param fe_exp_pattern Pattern for the fixed effects exporter variable, allows character
-#' or regex (defaults to \code{"^exporter|^exp_year"})
-#' @param fe_imp_pattern Pattern for the fixed effects exporter variable, allows character
-#' or regex (defaults to \code{"^importer|^imp_year"})
-#' @param fe_pair_pattern Pattern for the fixed effects exporter variable, allows character
-#' or regex (defaults to \code{"^pair_id_2"})
-#' @param fe_time_pattern Pattern for the time-depending fixed effects, allows character
-#' or regex (defaults to \code{"year"})
-#' @return A tibble
-#' @export
-tp_fixed_effects <- function(fit, fe_exp_pattern = "^exporter|^exp_year",
-                             fe_imp_pattern = "^importer|^imp_year",
-                             fe_pair_pattern = "^pair_id_2",
-                             fe_time_pattern = "year") {
-  # exporter FE
-
-  fe_exp_pattern_2 <- grep(fe_exp_pattern, names(fit$model), value = TRUE)
-  if (length(fe_exp_pattern_2) > 1) {
-    fe_exp_pattern_2 <- grep(fe_time_pattern, fe_exp_pattern_2, value = TRUE)
+  if (!is.null(additional_regressors)) {
+    stopifnot(is.character(additional_regressors), all(additional_regressors %in% colnames(data)))
   }
 
-  exp_coef <- tibble::enframe(
-    fit$coefficients[grepl(fe_exp_pattern, names(fit$coefficients))]) %>%
-    dplyr::mutate(name = gsub(fe_exp_pattern_2, "", name))
+  # Discarding unusable observations -------------------------------------------
+  d <- discard_unusable(data, distance)
 
-  colnames(exp_coef) <- c(fe_exp_pattern_2, paste0("fe_", fe_exp_pattern_2))
+  # Transforming data, logging distances ---------------------------------------
+  d <- log_distance(d, distance)
 
-  # importer FE
+  # Transforming data, renaming dependent variable -----------------------------
+  d <- rename(d, y_ppml = !!sym(dependent_variable))
 
-  fe_imp_pattern_2 <- grep(fe_imp_pattern, names(fit$model), value = TRUE)
-  if (length(fe_imp_pattern_2) > 1) {
-    fe_imp_pattern_2 <- grep(fe_time_pattern, fe_imp_pattern_2, value = TRUE)
-  }
-
-  imp_coef <- tibble::enframe(
-    fit$coefficients[grepl(fe_imp_pattern, names(fit$coefficients))]) %>%
-    dplyr::mutate(name = gsub(fe_imp_pattern_2, "", name))
-
-  colnames(imp_coef) <- c(fe_imp_pattern_2, paste0("fe_", fe_imp_pattern_2))
-
-  # pair FE
-
-  fe_pair_pattern_2 <- grep(fe_pair_pattern, names(fit$model), value = TRUE)
-
-  if (length(fe_pair_pattern_2) > 0) {
-    pair_coef <- tibble::enframe(fit$coefficients[grepl(fe_pair_pattern, names(fit$coefficients))]) %>%
-      dplyr::mutate(name = gsub(fe_pair_pattern_2, "", name))
-
-    colnames(pair_coef) <- c(fe_pair_pattern_2, paste0("fe_", fe_pair_pattern_2))
-  }
-
-  # combine FE
-
-  if (length(fe_pair_pattern_2) > 0) {
-    suppressMessages(
-      d <- fit$data[, c(fe_exp_pattern_2, fe_imp_pattern_2, fe_pair_pattern_2)] %>%
-        dplyr::left_join(exp_coef) %>%
-        dplyr::left_join(imp_coef) %>%
-        dplyr::left_join(pair_coef)
-    )
+  # Model ----------------------------------------------------------------------
+  if (!is.null(additional_regressors)) {
+    vars <- paste(c("dist_log", additional_regressors), collapse = " + ")
   } else {
-    suppressMessages(
-      d <- fit$data[, c(fe_exp_pattern_2, fe_imp_pattern_2)] %>%
-        dplyr::left_join(exp_coef) %>%
-        dplyr::left_join(imp_coef)
-    )
+    vars <- "dist_log"
   }
 
-  d <- dplyr::mutate_if(d, is.numeric, function(x) {
-    ifelse(is.na(x), 0, x)
-  })
+  form <- stats::as.formula(paste("y_ppml", "~", vars))
 
-  return(d)
+  model_ppml <- stats::glm(form,
+                           data = d,
+                           family = stats::quasipoisson(link = "log")
+  )
+
+  if (robust == TRUE) {
+    model_ppml_robust <- model_ppml
+
+    robust_coefficients <- lmtest::coeftest(
+      model_ppml,
+      vcov = sandwich::vcovHC(model_ppml, type = "HC1", ...)
+    )
+
+    model_ppml_robust$coefficients <- robust_coefficients[1:length(rownames(robust_coefficients)),]
+  }
+
+  if (robust == FALSE) {
+    model_ppml$call <- form
+    class(model_ppml) <- c(class(model_ppml), "gravity_ppml")
+    return(model_ppml)
+  } else {
+    model_ppml_robust$call <- form
+    class(model_ppml_robust) <- c(class(model_ppml_robust), "gravity_ppml")
+    return(model_ppml_robust)
+  }
 }

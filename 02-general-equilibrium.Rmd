@@ -6,7 +6,9 @@
 
 Unlike the previous chapter, we shall proceed by alternating both data transforming and regressions. In the previous chapter it was possible to first process the datasets and then fit the regressions, but here we need the regressions' output in order to create new variables. In any case we will follow quite similar steps to the last chapter.
 
-To do what is shown in box #1 from page 104 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU". We could have used "AAA", the book uses "ZZZ" but in R "ZZZ" won't be treated as the reference factor. It is important to mention that box #1 doesn't show a previous step that is mentioned in page 103, which is to filter and keep observations for the year 2006 only.
+To do what is shown in box #1 from page 104 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU", so that the software sets it as the reference factor (i.e, "0-DEU" will be listed before any text string starting with A-Z). We could have used "AAA", the book uses "ZZZ" but in R "ZZZ" won't be treated as the reference factor. It is important to mention that box #1 doesn't show a previous step that is mentioned in page 103, which is to filter and keep observations for the year 2006 only.
+
+It is extremely important to arrange the table by importer, otherwise there is a difference in the estimated fixed effects that changes the factory prices in the last figure from this section, and here the aim to to fully replicate the two figures from this section in the book.
 
 ```{r ch2_app1_data_1}
 ch2_application1 <- agtpa_applications %>%
@@ -18,13 +20,14 @@ ch2_application1 <- agtpa_applications %>%
     exporter = ifelse(exporter == "DEU", "0-DEU", exporter),
     importer = ifelse(importer == "DEU", "0-DEU", importer)
   ) %>%
+  arrange(importer) %>% 
 
   # Create Yit
-  group_by(exporter, year) %>%
+  group_by(exporter) %>%
   mutate(y = sum(trade)) %>%
 
   # Create Eit
-  group_by(importer, year) %>%
+  group_by(importer) %>%
   mutate(e = sum(trade)) %>%
 
   # Create Er
@@ -45,26 +48,25 @@ $$
 With the data from above, the model specification is straightforward:
 
 ```{r ch2_app1_baseline_1}
-fit_baseline_app1 <- glm(
-  trade ~ 0 + log_dist + cntg + intl + exporter + importer,
-  family = quasipoisson(link = "log"),
+# fit_baseline_app1 <- glm(
+#   trade ~ 0 + log_dist + cntg + intl + exporter + importer,
+#   family = quasipoisson(link = "log"),
+#   data = ch2_application1
+# )
+
+fit_baseline_app1 <- fepois(
+  trade ~ log_dist + cntg + intl | exporter + importer,
   data = ch2_application1
 )
-```
-
-For now, we will concentrate on the fitted values and shall ignore the clustered standard errors in the next paragraphs, but still we can show the robust estimation by using the `tp_clustered_glm()` function:
-
-```{r ch2_app1_baseline_2}
-tp_clustered_glm(fit_baseline_app1$formula, ch2_application1)
 ```
 
 With the estimated model, we can proceed as in box #1 from page 105 in @yotov2016advanced in order to construct the variables for export and import fixed effects:
 
 ```{r ch2_app1_baseline_3}
 ch2_application1 <- ch2_application1 %>%
-  left_join(
-    tp_fixed_effects(fit_baseline_app1),
-    c("exporter", "importer")
+  mutate(
+    fe_exporter_bln = fixef(fit_baseline_app1)$exporter[exporter],
+    fe_importer_bln = fixef(fit_baseline_app1)$importer[importer]
   )
 ```
 
@@ -78,10 +80,10 @@ ch2_application1 <- ch2_application1 %>%
                   fit_baseline_app1$coefficients["intl"] * intl),
 
     # outward multilateral resistance (omr)
-    omr_bln = y * (e_r / exp(fe_exporter)),
+    omr_bln = y * (e_r / exp(fe_exporter_bln)),
 
     # inward multilateral resistance (imr)
-    imr_bln = e / (exp(fe_importer) * e_r)
+    imr_bln = e / (exp(fe_importer_bln) * e_r)
   )
 ```
 
@@ -89,7 +91,8 @@ To complete this stage of the estimation, we need to create a column with the es
 
 ```{r ch2_app1_baseline_5}
 ch2_application1 <- ch2_application1 %>%
-  mutate(tradehat_bln = predict(fit_baseline_app1, ch2_application1, "response")) %>%
+  # mutate(tradehat_bln = predict(fit_baseline_app1, ch2_application1, "response")) %>%
+  mutate(tradehat_bln = predict(fit_baseline_app1, ch2_application1)) %>%
   group_by(exporter) %>%
   mutate(xi_bln = sum(tradehat_bln * (exporter != importer))) %>%
   ungroup()
@@ -105,8 +108,7 @@ The first alternative is to eliminate the border variable and then generate the 
 ch2_application1 <- ch2_application1 %>%
   mutate(
     tij_cfl = exp(fit_baseline_app1$coefficients["log_dist"] * log_dist +
-                  fit_baseline_app1$coefficients["cntg"] * cntg),
-    log_tij_cfl = log(tij_cfl)
+                  fit_baseline_app1$coefficients["cntg"] * cntg)
   )
 ```
 
@@ -118,8 +120,7 @@ ch2_application1 <- ch2_application1 %>%
     intl_cfl = 0,
     tij_bln = exp(fit_baseline_app1$coefficients["log_dist"] * log_dist +
                   fit_baseline_app1$coefficients["cntg"] * cntg +
-                  fit_baseline_app1$coefficients["intl"] * intl_cfl),
-    log_tij_cfl = log(tij_cfl)
+                  fit_baseline_app1$coefficients["intl"] * intl_cfl)
   )
 ```
 
@@ -136,10 +137,16 @@ $$
 Box #1 from page 106 in @yotov2016advanced estimates the constrained gravity model with the PPML estimator by using an offset argument, and this is straightforward in R:
 
 ```{r ch2_app1_counterfactual_3}
-fit_counterfactual_app1 <- glm(
-  trade ~ 0 + exporter + importer + offset(log_tij_cfl),
-  family = quasipoisson(link = "log"),
-  data = ch2_application1
+# fit_counterfactual_app1 <- glm(
+#   trade ~ 0 + exporter + importer + offset(log_tij_cfl),
+#   family = quasipoisson(link = "log"),
+#   data = ch2_application1
+# )
+
+fit_counterfactual_app1 <- fepois(
+  trade ~ 0 | exporter + importer,
+  data = ch2_application1,
+  offset = ~log(tij_cfl)
 )
 ```
 
@@ -149,15 +156,9 @@ Unlike step I, to construct the variables for export and import fixed effects, w
 
 ```{r ch2_app1_counterfactual_4}
 ch2_application1 <- ch2_application1 %>%
-  left_join(
-    tp_fixed_effects(fit_counterfactual_app1),
-    by = c("exporter", "importer")
-  ) %>%
-  rename(
-    fe_exporter_bln = fe_exporter.x,
-    fe_exporter_cfl = fe_exporter.y,
-    fe_importer_bln = fe_importer.x,
-    fe_importer_cfl = fe_importer.y
+  mutate(
+    fe_exporter_cfl = fixef(fit_counterfactual_app1)$exporter[exporter],
+    fe_importer_cfl = fixef(fit_counterfactual_app1)$importer[importer]
   )
 ```
 
@@ -178,7 +179,8 @@ Box #2 also shows how to compute the conditional general equilibrium effects of 
 
 ```{r ch2_app1_counterfactual_6}
 ch2_application1 <- ch2_application1 %>%
-  mutate(tradehat_cfl = predict(fit_counterfactual_app1, ch2_application1, "response")) %>%
+  # mutate(tradehat_cfl = predict(fit_counterfactual_app1, ch2_application1, "response")) %>%
+  mutate(tradehat_cfl = predict(fit_counterfactual_app1, ch2_application1)) %>%
   group_by(exporter) %>%
   mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer))) %>%
   ungroup()
@@ -255,21 +257,28 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
     mutate(trade_1 = tradehat_0 * change_p_i_0 * change_p_j_0 / (change_omr_full_0 * change_imr_full_0))
 
   # repeat the counterfactual model
-  fit_counterfactual_app1_2 <- glm(
-    trade_1 ~ 0 + exporter + importer + offset(log_tij_cfl),
-    family = quasipoisson(link = "log"),
-    data = ch2_application1
+  # fit_counterfactual_app1_2 <- glm(
+  #   trade_1 ~ 0 + exporter + importer + offset(log_tij_cfl),
+  #   family = quasipoisson(link = "log"),
+  #   data = ch2_application1
+  # )
+  
+  fit_counterfactual_app1_2 <- fepois(
+    trade_1 ~ 0 | exporter + importer,
+    data = ch2_application1,
+    offset = ~log(tij_cfl)
   )
 
   ch2_application1 <- ch2_application1 %>%
-    left_join(
-      tp_fixed_effects(fit_counterfactual_app1_2),
-      by = c("exporter", "importer")
+    mutate(
+      fe_exporter_cfl_1 = fixef(fit_counterfactual_app1_2)$exporter[exporter],
+      fe_importer_cfl_1 = fixef(fit_counterfactual_app1_2)$importer[importer]
     )
 
   # compute the conditional general equilibrium effects of trade
   ch2_application1 <- ch2_application1 %>%
-    mutate(tradehat_1 = predict(fit_counterfactual_app1_2, ch2_application1, "response")) %>%
+    # mutate(tradehat_1 = predict(fit_counterfactual_app1_2, ch2_application1, "response")) %>%
+    mutate(tradehat_1 = predict(fit_counterfactual_app1_2, ch2_application1)) %>%
     group_by(exporter) %>%
     mutate(y_cfl_1 = sum(tradehat_1)) %>%
     ungroup() %>%
@@ -286,7 +295,7 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
 
   # compute the change in prices for exporters and importers
   ch2_application1 <- ch2_application1 %>%
-    mutate(change_p_i_1 = ((exp(fe_exporter) / e_r_cfl_1) /
+    mutate(change_p_i_1 = ((exp(fe_exporter_cfl_1) / e_r_cfl_1) /
       (exp(fe_exporter_cfl_0) / e_r_cfl_0))^(1 / (1 - sigma)))
 
   # compute the change in prices for exporters and importers
@@ -301,8 +310,8 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
   # compute both outward and inward multilateral resistance
   ch2_application1 <- ch2_application1 %>%
     mutate(
-      omr_cfl_1 = (y_cfl_1 * e_r_cfl_1) / exp(fe_exporter),
-      imr_cfl_1 = e_cfl_1 / (exp(fe_importer) * e_r_cfl_1)
+      omr_cfl_1 = (y_cfl_1 * e_r_cfl_1) / exp(fe_exporter_cfl_1),
+      imr_cfl_1 = e_cfl_1 / (exp(fe_importer_cfl_1) * e_r_cfl_1)
     )
 
   # update the differences
@@ -321,12 +330,12 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
       change_imr_full_0 = change_imr_full_1,
       change_p_i_0 = change_p_i_1,
       change_p_j_0 = change_p_j_1,
-      fe_exporter_cfl_0 = fe_exporter,
-      fe_importer_cfl_0 = fe_importer,
+      fe_exporter_cfl_0 = fe_exporter_cfl_1,
+      fe_importer_cfl_0 = fe_importer_cfl_1,
       tradehat_0 = tradehat_1,
       e_r_cfl_0 = e_r_cfl_1
     ) %>%
-    select(-fe_exporter, -fe_importer)
+    select(-c(fe_exporter_cfl_1, fe_importer_cfl_1))
 
   i <- i + 1
 }
@@ -419,10 +428,19 @@ ch2_application1 <- ch2_application1 %>%
 
 In addition, the original code removes Hong Kong for visualization scale purposes:
 ```{r ch2_app1_figures_2}
-ggplot(data = ch2_application1 %>%
-         filter(exporter != "HKG")) +
-  geom_point(aes(x = log_y, y = change_xi_cfl, color = "1")) +
-  geom_point(aes(x = log_y, y = change_xi_full, color = "2")) +
+data_figure_6 <- ch2_application1 %>% 
+  filter(exporter != "HKG") %>% 
+  select(x = log_y, change_xi_cfl, change_xi_full) %>% 
+  pivot_longer(names_to = "change", values_to = "y", -x) %>% 
+  mutate(
+    change = case_when(
+      change == "change_xi_cfl" ~ "Conditional general equilibrium",
+      TRUE ~ "Full endowment general equilibrium"
+    )
+  )
+
+ggplot(data = data_figure_6) +
+  geom_point(aes(x = x, y = y, color = change)) +
   labs(
     x = "Log value of output",
     y = "Percent change of exports",
@@ -432,22 +450,26 @@ ggplot(data = ch2_application1 %>%
   ) +
   theme_minimal() +
   theme(legend.position = "bottom") +
-  scale_color_manual(
-    labels = c(
-      "Conditional general equilibrium",
-      "Full endowment general equilibrium"
-    ),
-    values = c("#b6b8dd","#232958")
-  )
+  scale_color_manual(values = c("#b6b8dd","#232958"))
 ```
 
 To create figure 7, we proceed in the same way as we did with figure 6:
 
 ```{r ch2_app1_figures_3}
-ggplot(data = ch2_application1 %>% filter(exporter != "HKG")) +
-  geom_point(aes(x = log_y, y = change_imr_full, color = "1")) +
-  geom_point(aes(x = log_y, y = change_price_full, color = "2")) +
-  geom_point(aes(x = log_y, y = rgdp, color = "3")) +
+data_figure_7 <- ch2_application1 %>% 
+  filter(exporter != "HKG") %>% 
+  select(x = log_y, change_imr_full, change_price_full, rgdp) %>% 
+  pivot_longer(names_to = "change", values_to = "y", -x) %>% 
+  mutate(
+    change = case_when(
+      change == "change_imr_full" ~ "-(inward multilateral resistances)",
+      change == "change_price_full" ~ "Factory-gate price",
+      TRUE ~ "Real GDP"
+    )
+  )
+
+ggplot(data = data_figure_7) +
+  geom_point(aes(x = x, y = y, color = change)) +
   labs(
     x = "Log value of output",
     y = "Percent changes",
@@ -457,14 +479,7 @@ ggplot(data = ch2_application1 %>% filter(exporter != "HKG")) +
   ) +
   theme_minimal() +
   theme(legend.position = "bottom") +
-  scale_color_manual(
-    labels = c(
-      "-(inward multilateral resistances)",
-      "Factory-gate price",
-      "Real GDP"
-    ),
-    values = c("#3bade3", "#b6b8dd", "#232958")
-  )
+  scale_color_manual(values = c("#3bade3", "#b6b8dd", "#232958"))
 ```
 
 ## Impact of regional trade agreements
@@ -472,6 +487,7 @@ ggplot(data = ch2_application1 %>% filter(exporter != "HKG")) +
 ### Initial data
 
 As in the previous application, we shall proceed by alternating both data transforming and regressions. Before doing what is shown in box #1 from page 112 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU", just as in the last section, but we shall keep panel dimension of the dataset in order to identify the effects of RTAs and to comprehensively capture the impact of all time-invariant trade costs with the use of pair fixed  effects:
+
 ```{r ch2_app2_data_1}
 ch2_application2 <- agtpa_applications %>%
   select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny, rta) %>%
@@ -493,7 +509,8 @@ ch2_application2 <- agtpa_applications %>%
 
   # Create Er
   group_by(year) %>%
-  mutate(e_r = max(ifelse(importer == "0-DEU", e, NA), na.rm = T))
+  mutate(e_r = max(ifelse(importer == "0-DEU", e, NA), na.rm = T)) %>% 
+  arrange(importer)
 ```
 
 Because of the panel dimension, we proceed as we did in the previous chapter, by creating columns to combine exporter/importer and year (`exp_year` and `imp_year`) for the fixed effects, and a pairing variable `pair_id_2`:
@@ -520,9 +537,8 @@ ch2_application2 <- ch2_application2 %>%
 
 With the steps done before, it is straightforward to obtain the PPML regression shown in box #1 from page 112 in @yotov2016advanced:
 ```{r ch2_app2_baseline_1}
-fit_baseline_app2 <- glm(
-  trade ~ 0 + rta + exp_year + imp_year + pair_id_2,
-  family = quasipoisson(link = "log"),
+fit_baseline_app2 <- fepois(
+  trade ~ rta | exp_year + imp_year + pair_id_2,
   data = filter(ch2_application2, sum_trade > 0)
 )
 ```
@@ -530,9 +546,10 @@ fit_baseline_app2 <- glm(
 With the estimated model, we can construct the variables for export (`exp_year`), import (`imp_year`) and pair (`pair_id_2`) fixed effects:
 ```{r ch2_app2_baseline_2}
 ch2_application2 <- ch2_application2 %>%
-  left_join(
-    tp_fixed_effects(fit_baseline_app2),
-    by = c("exp_year", "imp_year", "pair_id_2")
+  mutate(
+    fe_exporter_bln = fixef(fit_baseline_app2)$exp_year[exp_year],
+    fe_importer_bln = fixef(fit_baseline_app2)$imp_year[imp_year],
+    fe_pair_id_2_bln = fixef(fit_baseline_app2)$pair_id_2[pair_id_2]
   )
 ```
 
@@ -544,8 +561,8 @@ We start by filtering to keep the observation from 1994, and then we compute the
 ```{r ch2_app2_costs_1}
 ch2_application2 <- ch2_application2 %>%
   mutate(
-    tij_bar = exp(fe_pair_id_2),
-    tij_bln = exp(fe_pair_id_2 + fit_baseline_app2$coefficients["rta"] * rta)
+    tij_bar = exp(fe_pair_id_2_bln),
+    tij_bln = exp(fe_pair_id_2_bln + fit_baseline_app2$coefficients["rta"] * rta)
   )
 ```
 
@@ -559,9 +576,8 @@ ch2_application2_1994 <- ch2_application2 %>%
 
 Now, unlike the book, which duplicates `tij_bar` by creating `tij`, we can fit a regression to estimate the costs:
 ```{r ch2_app2_costs_3}
-fit_costs_app2 <- glm(
-  tij_bar ~ 0 + log_dist + cntg + lang + clny + exporter + importer,
-  family = quasipoisson(link = "log"),
+fit_costs_app2 <- fepois(
+  tij_bar ~ log_dist + cntg + lang + clny | exporter + importer,
   data = ch2_application2_1994
 )
 ```
@@ -569,7 +585,7 @@ fit_costs_app2 <- glm(
 With the regression we add the fitted values to the sub-table:
 ```{r ch2_app2_costs_4}
 ch2_application2_1994 <- ch2_application2_1994 %>%
-  mutate(tij_no_rta = predict(fit_costs_app2, ch2_application2_1994, "response")) %>%
+  mutate(tij_no_rta = predict(fit_costs_app2, ch2_application2_1994)) %>%
   select(exporter, importer, tij_no_rta)
 ```
 
@@ -582,25 +598,24 @@ ch2_application2 <- ch2_application2 %>%
     tij_bar = ifelse(is.na(tij_bar), tij_no_rta, tij_bar),
     tij_bln = ifelse(is.na(tij_bln), tij_bar * exp(fit_baseline_app2$coefficients["rta"] * rta), tij_bln)
   ) %>%
-  select(-tij_no_rta) %>%
-  mutate(log_tij_bln = log(tij_bln))
+  select(-tij_no_rta)
 ```
 
 Box #2 from page 113 in @yotov2016advanced is more straightforward.
 
 The first part to complete Box #2 consists in solving the constrained baseline gravity model:
 ```{r ch2_app2_constrained_1}
-fit_constrained_app2 <- glm(
-  trade ~ 0 + exporter + importer + offset(log_tij_bln),
-  family = quasipoisson(link = "log"),
-  data = ch2_application2
+fit_constrained_app2 <- fepois(
+  trade ~ 0 | exporter + importer,
+  data = ch2_application2,
+  offset = ~log(tij_bln)
 )
 ```
 
 With the fitted model we can add the prediction and the `xi_bln` column:
 ```{r ch2_app2_constrained_2}
 ch2_application2 <- ch2_application2 %>%
-  mutate(tradehat_bln = predict(fit_constrained_app2, ch2_application2, "response")) %>%
+  mutate(tradehat_bln = predict(fit_constrained_app2, ch2_application2)) %>%
   group_by(exporter) %>%
   mutate(xi_bln = sum(tradehat_bln * (exporter != importer))) %>%
   ungroup()
@@ -609,12 +624,15 @@ ch2_application2 <- ch2_application2 %>%
 The book specifies that all other baseline indexes of interest can be obtained by applying the exact same procedure as described in the previous application. Here we'll obtain the multilateral resistances terms (`omr_bln` and `imr_bln`) by adding the fixed effects from the constrained model to the data:
 ```{r ch2_app2_additional_1}
 ch2_application2 <- ch2_application2 %>%
-  left_join(tp_fixed_effects(fit_constrained_app2), by = c("exporter","importer"))
+  mutate(
+    fe_exporter_cns = fixef(fit_constrained_app2)$exporter[exporter],
+    fe_importer_cns = fixef(fit_constrained_app2)$importer[importer]
+  )
 
 ch2_application2 <- ch2_application2 %>%
   mutate(
-    omr_bln = y * e_r/ exp(fe_exporter),
-    imr_bln = e / (exp(fe_importer) * e_r)
+    omr_bln = y * e_r/ exp(fe_exporter_cns),
+    imr_bln = e / (exp(fe_importer_cns) * e_r)
   )
 ```
 
@@ -627,8 +645,7 @@ nafta <- c("MEX", "USA", "CAN")
 ch2_application2 <- ch2_application2 %>%
   mutate(
     rta_no_nafta = ifelse(exporter %in% nafta & importer %in% nafta, 0, rta),
-    tij_cfl = tij_bar * exp(fit_baseline_app2$coefficients["rta"] * rta_no_nafta),
-    log_tij_cfl = log(tij_cfl)
+    tij_cfl = tij_bar * exp(fit_baseline_app2$coefficients["rta"] * rta_no_nafta)
   )
 ```
 
@@ -638,22 +655,19 @@ The  exact  same  procedure from the previous section applies to obtain the cond
 
 We start by fitting a counterfactual model:
 ```{r ch2_app2_counterfactual_2}
-fit_counterfactual_app2 <- glm(
-  trade ~ 0 + exporter + importer + offset(log_tij_cfl),
-  family = quasipoisson(link = "log"),
-  data = ch2_application2
+fit_counterfactual_app2 <- fepois(
+  trade ~ 0 | exporter + importer,
+  data = ch2_application2,
+  offset = ~log(tij_cfl)
 )
 ```
 
 With the fitted model we add the fixed effects:
 ```{r ch2_app2_counterfactual_3}
 ch2_application2 <- ch2_application2 %>%
-  left_join(tp_fixed_effects(fit_counterfactual_app2), by = c("exporter","importer")) %>%
-  rename(
-    fe_exporter_bln = fe_exporter.x,
-    fe_exporter_cfl = fe_exporter.y,
-    fe_importer_bln = fe_importer.x,
-    fe_importer_cfl = fe_importer.y
+  mutate(
+    fe_exporter_cfl = fixef(fit_counterfactual_app2)$exporter[exporter],
+    fe_importer_cfl = fixef(fit_counterfactual_app2)$importer[importer]
   )
 ```
 
@@ -669,17 +683,15 @@ ch2_application2 <- ch2_application2 %>%
 Up to this point we are ready to compute the conditional general equilibrium effects of trade:
 ```{r ch2_app2_counterfactual_5}
 ch2_application2 <- ch2_application2 %>%
-  mutate(tradehat_cfl = predict(fit_counterfactual_app2, ch2_application2, "response")) %>%
+  mutate(tradehat_cfl = predict(fit_counterfactual_app2, ch2_application2)) %>%
   group_by(exporter) %>%
   mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer))) %>%
   ungroup()
 ```
 
-Now we are going to compute the full endowment general equilibrium effects. We start by repeating the steps to obtain `change_tij` and `phi` from the last section:
+Now we are going to compute the full endowment general equilibrium effects. We start by repeating the steps to obtain `change_tij` and `phi` from the last section. The criteria of convergence ($\sigma = 7$), as the notes in the original Stata code say, is taken from the literature.
 
 ```{r ch2_app2_counterfactual_6}
-# set the criteria of convergence
-# taken from the literature (see the Stata code)
 sigma <- 7
 
 ch2_application2 <- ch2_application2 %>%
@@ -696,7 +708,7 @@ Now we compute `change_p_i`, `change_p_j` and `trade_cfl`. Again, this is just a
 ```{r ch2_app2_counterfactual_7}
 ch2_application2 <- ch2_application2 %>%
   group_by(exporter) %>%
-  mutate(change_p_i = ((exp(fe_exporter_cfl) / e_r) / (exp(fe_exporter_bln) / e_r))^(1 /(1 - sigma))) %>%
+  mutate(change_p_i = ((exp(fe_exporter_cfl) / e_r) / (exp(fe_exporter_cns) / e_r))^(1 /(1 - sigma))) %>%
   ungroup() %>%
 
   group_by(importer) %>%
@@ -740,21 +752,21 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
     mutate(trade_1 = tradehat_0 * change_p_i_0 * change_p_j_0 / (change_omr_full_0 * change_imr_full_0))
 
   # repeat the counterfactual model
-  fit_counterfactual_app2_2 <- glm(
-    trade_1 ~ 0 + exporter + importer + offset(log_tij_cfl),
-    family = quasipoisson(link = "log"),
-    data = ch2_application2
+  fit_counterfactual_app2_2 <- fepois(
+    trade_1 ~ 0 | exporter + importer,
+    data = ch2_application2,
+    offset = ~log(tij_cfl)
   )
 
   ch2_application2 <- ch2_application2 %>%
-    left_join(
-      tp_fixed_effects(fit_counterfactual_app2_2),
-      by = c("exporter", "importer")
+    mutate(
+      fe_exporter_cfl = fixef(fit_counterfactual_app2_2)$exporter[exporter],
+      fe_importer_cfl = fixef(fit_counterfactual_app2_2)$importer[importer]
     )
 
   # compute the conditional general equilibrium effects of trade
   ch2_application2 <- ch2_application2 %>%
-    mutate(tradehat_1 = predict(fit_counterfactual_app2_2, ch2_application2, "response")) %>%
+    mutate(tradehat_1 = predict(fit_counterfactual_app2_2, ch2_application2)) %>%
     group_by(exporter) %>%
     mutate(y_cfl_1 = sum(tradehat_1)) %>%
     ungroup() %>%
@@ -771,7 +783,7 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
 
   # compute the change in prices for exporters and importers
   ch2_application2 <- ch2_application2 %>%
-    mutate(change_p_i_1 = ((exp(fe_exporter) / e_r_cfl_1) /
+    mutate(change_p_i_1 = ((exp(fe_exporter_cfl) / e_r_cfl_1) /
       (exp(fe_exporter_cfl_0) / e_r_cfl_0))^(1 / (1 - sigma)))
 
   # compute the change in prices for exporters and importers
@@ -786,8 +798,8 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
   # compute both outward and inward multilateral resistance
   ch2_application2 <- ch2_application2 %>%
     mutate(
-      omr_cfl_1 = (y_cfl_1 * e_r_cfl_1) / exp(fe_exporter),
-      imr_cfl_1 = e_cfl_1 / (exp(fe_importer) * e_r_cfl_1)
+      omr_cfl_1 = (y_cfl_1 * e_r_cfl_1) / exp(fe_exporter_cfl),
+      imr_cfl_1 = e_cfl_1 / (exp(fe_importer_cfl) * e_r_cfl_1)
     )
 
   # update the differences
@@ -806,12 +818,12 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
       change_imr_full_0 = change_imr_full_1,
       change_p_i_0 = change_p_i_1,
       change_p_j_0 = change_p_j_1,
-      fe_exporter_cfl_0 = fe_exporter,
-      fe_importer_cfl_0 = fe_importer,
+      fe_exporter_cfl_0 = fe_exporter_cfl,
+      fe_importer_cfl_0 = fe_importer_cfl,
       tradehat_0 = tradehat_1,
       e_r_cfl_0 = e_r_cfl_1
     ) %>%
-    select(-fe_exporter, -fe_importer)
+    select(-fe_exporter_cfl, -fe_importer_cfl)
 
   i2 <- i2 + 1
 }
@@ -822,7 +834,7 @@ The last loop allows us to obtain `change_p_i_full`, `change_p_j_full` and `y_fu
 ch2_application2 <- ch2_application2 %>%
   mutate(
     change_p_i_full = ((exp(fe_exporter_cfl_0) / e_r_cfl_0) /
-                         (exp(fe_exporter_bln) / e_r))^(1 / (1 - sigma)),
+                         (exp(fe_exporter_cns) / e_r))^(1 / (1 - sigma)),
     change_p_j_full = change_p_i_full * (exporter == importer)
   ) %>%
   group_by(importer) %>%
@@ -887,7 +899,6 @@ exporter_indexes <- ch2_application2 %>%
 
 importer_indexes <- ch2_application2 %>%
   select(importer, imr_bln, imr_cfl, imr_full) %>%
-  ungroup()  %>%
   distinct() %>%
   mutate(importer = ifelse(importer == "0-DEU", "DEU", importer)) %>%
   arrange(importer) %>%
