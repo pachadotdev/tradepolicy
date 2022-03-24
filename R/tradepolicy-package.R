@@ -43,8 +43,17 @@ globalVariables(c("country", "exporter", "importer", "name", "type", "value", "t
 #' @keywords data
 NULL
 
-# Suppress R CMD check note
+# Funs for summaries
+#' @importFrom stats as.formula predict update cor pnorm
+#' @importFrom fixest feols fepois r2
+#' @importFrom broom tidy
+#' @importFrom sandwich vcovCL
+#' @importFrom msm deltamethod
+#' @importFrom dplyr mutate_if
+NULL
+
+# Funs for ebook
 #' @importFrom ggplot2 ggplot
 #' @importFrom purrr map
-#' @importFrom tidyr spread
+#' @importFrom tidyr pivot_wider
 NULL

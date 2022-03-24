@@ -15,16 +15,16 @@ test_that("Functions from Ch.1 work as expected, part 1", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary1 <- tp_summary_app1(
+  summary1 <- tp_summary_app_1(
     formula = "log_trade ~ log_dist + cntg + lang + clny",
     data = d_test,
-    method = "lm"
+    method = "ols"
   )
 
-  summary2 <- tp_summary_app1(
+  summary2 <- tp_summary_app_1(
     formula = "trade ~ log_dist + cntg + lang + clny",
     data = d_test,
-    method = "glm"
+    method = "ppml"
   )
 
   expect_is(summary1, "list")
@@ -52,23 +52,21 @@ test_that("Functions from Ch.1 work as expected, part 2", {
       log_dist_intra = log_dist * smctry,
       intra_pair = ifelse(exporter == importer, exporter, "inter")
     ) %>%
-    spread(year, log_dist, fill = 0) %>%
-    mutate(across(log_dist_2002:log_dist_2006, ~ .x * (1 - smctry)))
+    pivot_wider(names_from = year, values_from = log_dist, values_fill = 0) %>%
+    mutate(across(log_dist_1986:log_dist_2006, function(x) x * (1 - smctry)))
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary3 <- tp_summary_app2(
-    formula = "log_trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
-    lang + clny + exp_year + imp_year",
+  summary3 <- tp_summary_app_2(
+    formula = "log_trade ~ log_dist_2002 + log_dist_2006 + cntg + lang + clny | exp_year + imp_year",
     data = d_test,
-    method = "lm"
+    method = "ols"
   )
 
-  summary4 <- tp_summary_app2(
-    formula = "trade ~ 0 + log_dist_2002 + log_dist_2006 + cntg +
-    lang + clny + exp_year + imp_year",
+  summary4 <- tp_summary_app_2(
+    formula = "trade ~ log_dist_2002 + log_dist_2006 + cntg + lang + clny | exp_year + imp_year",
     data = d_test,
-    method = "glm"
+    method = "ppml"
   )
 
   expect_is(summary3, "list")
@@ -100,49 +98,18 @@ test_that("Functions from Ch.1 work as expected, part 3", {
 
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
-  summary5 <- tp_summary_app3(
-    formula = "log_trade ~ 0 + log_dist + cntg + lang + clny +
-    rta + exp_year + imp_year",
+  summary5 <- tp_summary_app_3(
+    formula = "log_trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year",
     data = d_test,
-    method = "lm"
+    method = "ols"
   )
 
-  summary6 <- tp_summary_app3(
-    formula = "trade ~ 0 + log_dist + cntg + lang + clny +
-    rta + exp_year + imp_year",
+  summary6 <- tp_summary_app_3(
+    formula = "trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year",
     data = d_test,
-    method = "glm"
+    method = "ppml"
   )
 
   expect_is(summary5, "list")
   expect_is(summary6, "list")
-})
-
-test_that("Functions from Ch.1 work as expected, part 4", {
-  skip_on_cran()
-
-  d_test <- agtpa_applications %>%
-    filter(
-      exporter %in% c("ARG", "CHL"),
-      year == 2002,
-      trade > 0
-    ) %>%
-    mutate(
-      log_dist = log(dist),
-      intl = ifelse(exporter != importer, 1, 0)
-    )
-
-  # THESE REGRESSIONS ARE JUST FOR TESTING !!
-
-  fit_test <- stats::glm(
-    trade ~ 0 + log_dist + cntg + intl + exporter + importer,
-    family = quasipoisson(link = "log"),
-    data = d_test
-  )
-
-  robust_test <- tp_clustered_glm(fit_test$formula, d_test)
-  fe_test <- tp_fixed_effects(fit_test)
-
-  expect_is(robust_test, "coeftest")
-  expect_is(fe_test, "data.frame")
 })

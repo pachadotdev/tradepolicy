@@ -2,7 +2,7 @@
 
 Breaking changes
 * Uses fixest estimation as default
-* For all the summary functions the default is "ols" (it was "lm")
+* For all the summary functions the default is "ppml" (it was "lm", now renamed to "ols")
 * The summary functions were renamed to tp_summary_app_T instead of tp_summary_appT (T={1,2,3})
 
 Removals

@@ -4,7 +4,7 @@
 ^packrat/
 ^\.Rprofile$
 ^LICENSE\.md$
-^all-models-and-data$
+^all-models-and-data-using-glm$
 ^data-raw$
 ^docs$
 ^00-application-files$

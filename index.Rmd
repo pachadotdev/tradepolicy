@@ -1,7 +1,7 @@
 ---
-title: "Solutions Manual for An Advanced Guide to Trade Policy Analysis in R"
+title: Solutions Manual for An Advanced Guide to Trade Policy Analysis in R
 author: Mauricio "Pachá" Vargas Sepúlveda
-date: Sys.Date()
+date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [00-references.bib, 00-packages.bib]
@@ -52,7 +52,7 @@ install.packages("tradepolicy")
 
 # development version
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("pachamaltese/tradepolicy")
+remotes::install_github("pachadotdev/tradepolicy")
 ```
 
 ## Getting the most out of this material
@@ -67,7 +67,7 @@ Please read @happygitwithr in case of questions about *git* or *GitHub*.
 
 ## Acknowledgments
 
-This ebook improved noticeably from its early drafts thanks to valuable comments and corrections from Alexey Kravchenko, Yoto Yotov, Constanza Prado, Chence Sun and Jinbo Hao.
+This ebook improved noticeably from its early drafts thanks to valuable comments and corrections from Jinbo Hao, Alexey Kravchenko, Constanza Prado, Chence Sun, Yoto Yotov.
 
 For the second (present) edition of the ebook, the communication and contributions to other projects by Laurent Berge, Paulo F. Olivera and Hernan Robledo were crucial to improving the computation time results.
 

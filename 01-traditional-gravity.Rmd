@@ -128,13 +128,11 @@ fit_ols <- feols(
 summary(fit_ols)
 ```
 
-Now the model is almost ready! Now we only need to stick to the methodology from @yotov2016advanced and cluster the standard errors by country pair (see the note on page 42, it is imperative). This note is not straightforward to replicate in R and requires additional work.
+Now the model is almost ready. We only need to stick to the methodology from @yotov2016advanced and cluster the standard errors by country pair (see the note on page 42, it is imperative).
 
 The *tradepolicy* package provides a nice function to do this and more. Please read
 the documentation of the package and look for the `tp_summary_app_1()` function, it
 summarises the model in the exact way as reported in the book by providing:
-
-The *tradepolicy* package provides a nice function to do this and more. Please read the documentation of the package and look for the `tp_summary_app_1()` function, it exactly summarises the model as reported in the book by providing:
 
 * Clustered standard errors.
 * Number of observations.
@@ -417,7 +415,7 @@ ch1_application3 <- agtpa_applications %>%
   pivot_wider(names_from = year, values_from = intl_brdr_2, values_fill = 0)
 ```
 
-Notice that we used '0-intra' and not just 'intra' because the rest of the observations in the internal dyads are numbers 1, ..., N, and R internals shall consider '0-intra' as the reference factor for being the first item when it orders the unique observations alphabetically. Also, observe the order of the resulting table, the pivoting of the table will put '0-intra' as the first row for the first exporter-importer dyad. This makes the difference between the expected or other behaviours in the next chapter.
+Notice that we used "0-intra" and not just "intra" because the rest of the observations in the internal dyads are numbers 1, ..., N, and R internals shall consider "0-intra" as the reference factor for being the first item when it orders the unique observations alphabetically. Also, observe the order of the resulting table, the pivoting of the table will put "0-intra" as the first row for the first exporter-importer dyad. This makes the difference between the expected or other behaviours in the next chapter.
 
 In addition, we need to create the variable containing the trade sum to filter the cases where the sum by dyad is zero.
 

@@ -4,11 +4,11 @@
 
 ### Initial data
 
-Unlike the previous chapter, we shall proceed by alternating both data transforming and regressions. In the previous chapter it was possible to first process the datasets and then fit the regressions, but here we need the regressions' output in order to create new variables. In any case we will follow quite similar steps to the last chapter.
+Unlike the previous chapter, we shall proceed by alternating both data transforming and regressions. In the previous chapter, it was possible first to process the datasets and then fit the regressions, but here we need the regressions' output to create new variables. In any case, we will follow quite similar steps to the last chapter.
 
-To do what is shown in box #1 from page 104 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU", so that the software sets it as the reference factor (i.e, "0-DEU" will be listed before any text string starting with A-Z). We could have used "AAA", the book uses "ZZZ" but in R "ZZZ" won't be treated as the reference factor. It is important to mention that box #1 doesn't show a previous step that is mentioned in page 103, which is to filter and keep observations for the year 2006 only.
+To do what is shown in box #1 from page 104 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU" so that the software sets it as the reference factor (i.e., "0-DEU" will be listed before any text string starting with a letter). The book uses "ZZZ," but in R, "ZZZ" will not be treated as the reference factor, for which case we could have used "AAA." It is important to mention that box #1 does not show a previous step to filter observations for 2006, which is mentioned on page 103.
 
-It is extremely important to arrange the table by importer, otherwise there is a difference in the estimated fixed effects that changes the factory prices in the last figure from this section, and here the aim to to fully replicate the two figures from this section in the book.
+It is imperative to arrange the table by importers. Otherwise, there is a difference in the estimated fixed effects that changes the factory prices in the last figure from this section, and here the aim is to fully replicate the two figures from this section in the book. We mentioned this in the RTA effects section from the previous chapter.
 
 ```{r ch2_app1_data_1}
 ch2_application1 <- agtpa_applications %>%
@@ -37,30 +37,25 @@ ch2_application1 <- agtpa_applications %>%
 
 ### Step I: Solve the baseline model
 
-We start by fitting the next model:
+We start by fitting the model
 
 $$
 \begin{align}
-X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 INTL_{i,j}\right] \times \varepsilon_{ij,t}
+X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 INTL_{i,j}\right] \times \varepsilon_{ij,t}.
 \end{align}
 $$
 
-With the data from above, the model specification is straightforward:
+With the data from above, the model specification is straightforward.
 
 ```{r ch2_app1_baseline_1}
-# fit_baseline_app1 <- glm(
-#   trade ~ 0 + log_dist + cntg + intl + exporter + importer,
-#   family = quasipoisson(link = "log"),
-#   data = ch2_application1
-# )
-
 fit_baseline_app1 <- fepois(
   trade ~ log_dist + cntg + intl | exporter + importer,
-  data = ch2_application1
+  data = ch2_application1,
+  glm.iter = 500
 )
 ```
 
-With the estimated model, we can proceed as in box #1 from page 105 in @yotov2016advanced in order to construct the variables for export and import fixed effects:
+With the estimated model, we can proceed as in box #1 from page 105 in @yotov2016advanced to construct the variables for exporter and importer fixed effects. This step is very different compared to Stata.
 
 ```{r ch2_app1_baseline_3}
 ch2_application1 <- ch2_application1 %>%
@@ -70,7 +65,7 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-Still following box #1, we need to compute the variables of bilateral trade costs and multilateral resistances:
+Still following box #1, we need to compute the variables of bilateral trade costs and multilateral resistances.
 
 ```{r ch2_app1_baseline_4}
 ch2_application1 <- ch2_application1 %>%
@@ -87,7 +82,7 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-To complete this stage of the estimation, we need to create a column with the estimated international trade for given output and expenditures. We start by adding a column, `tradehat_bln`, with the regression output, and then we group by exporter and summarise to obtain the required column `xi_bln`:
+To complete this estimation stage, we need to create a column with the estimated international trade for given output and expenditures. We start by adding a column with the estimated trade for the baseline model, and then we group by the exporter and summarise to obtain the required column $\xi$-baseline.
 
 ```{r ch2_app1_baseline_5}
 ch2_application1 <- ch2_application1 %>%
@@ -100,9 +95,7 @@ ch2_application1 <- ch2_application1 %>%
 
 ### Step II: Define a counterfactual scenario
 
-Box #2 from page 105 in @yotov2016advanced proposes two alternatives to define counterfactual scenario of removing international borders.
-
-The first alternative is to eliminate the border variable and then generate the logged trade costs used in the constraint:
+Box #2 from page 105 in @yotov2016advanced proposes two alternatives to define the counterfactual scenario of removing international borders. The first alternative is to eliminate the border variable and generate the logged trade costs used in the constraint.
 
 ```{r ch2_app1_counterfactual_1}
 ch2_application1 <- ch2_application1 %>%
@@ -112,7 +105,7 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-The second alternative is to define a new counterfactual border variable:
+The second alternative is to define a new counterfactual border variable. We only show this equivalent case without computation.
 
 ```{r ch2_app1_counterfactual_2, eval = FALSE}
 ch2_application1 <- ch2_application1 %>%
@@ -126,33 +119,26 @@ ch2_application1 <- ch2_application1 %>%
 
 ### Step III: Solve the counterfactual model
 
-We need to fit a model similar to the model from step I, the constrained gravity model, where $\pi_{j,t}$ and $\chi_{j,t}$ are altered:
+We need to fit a model similar to the model from step I, the constrained gravity model, where $\pi_{j,t}$ and $\chi_{j,t}$ are altered as in the equation
 
 $$
 \begin{align}
-X_{ij,t} =& \:\exp\left[\pi_{i,t}^{CFL} + \chi_{i,t}^{CFL} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 INTL_{i,j}\right] \times \varepsilon_{ij,t}
+X_{ij,t} =& \:\exp\left[\pi_{i,t}^{CFL} + \chi_{i,t}^{CFL} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 INTL_{i,j}\right] \times \varepsilon_{ij,t}.
 \end{align}
 $$
 
-Box #1 from page 106 in @yotov2016advanced estimates the constrained gravity model with the PPML estimator by using an offset argument, and this is straightforward in R:
+Box #1 from page 106 in @yotov2016advanced estimates the constrained gravity model with the PPML estimator using an offset argument, which is straightforward in R.
 
 ```{r ch2_app1_counterfactual_3}
-# fit_counterfactual_app1 <- glm(
-#   trade ~ 0 + exporter + importer + offset(log_tij_cfl),
-#   family = quasipoisson(link = "log"),
-#   data = ch2_application1
-# )
-
 fit_counterfactual_app1 <- fepois(
   trade ~ 0 | exporter + importer,
   data = ch2_application1,
-  offset = ~log(tij_cfl)
+  offset = ~log(tij_cfl),
+  glm.iter = 500
 )
 ```
 
-Unlike step I, to construct the variables for export and import fixed effects, we'll obtain the variables `fe_exporter.x` and `fe_exporter.y` because we already added an `fe_exporter` column to the dataset after obtaining the baseline model.
-
-`dplyr` is wise enough to rename the two `fe_exporter` columns (the same applies to the imports) but we need to specify that we want to join by exporter and importer instead of all columns with shared names. In any case, it is better to rename those columns and provide informative names:
+As in the previous chapter, we need to extract the fixed effects.
 
 ```{r ch2_app1_counterfactual_4}
 ch2_application1 <- ch2_application1 %>%
@@ -162,7 +148,7 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-Now we go for Box #2 from page 106 in @yotov2016advanced where the variables of bilateral trade costs and multilateral resistances are obtained:
+Now we go for Box #2 from page 106 in @yotov2016advanced, where the authors obtain the bilateral trade costs and multilateral resistances variables.
 
 ```{r ch2_app1_counterfactual_5}
 ch2_application1 <- ch2_application1 %>%
@@ -175,7 +161,7 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-Box #2 also shows how to compute the conditional general equilibrium effects of trade. This is very similar to what we did in step I:
+Box #2 also shows how to compute trade's conditional general equilibrium effects, similar to what we did in step I.
 
 ```{r ch2_app1_counterfactual_6}
 ch2_application1 <- ch2_application1 %>%
@@ -186,13 +172,11 @@ ch2_application1 <- ch2_application1 %>%
   ungroup()
 ```
 
-Box #1 from page 107 in @yotov2016advanced can be considerably simplified with R code. To construct the iterative procedure to converge to full endowment general equilibrium effects, we start by creating the required columns and parameters, so we will deviate from the original approach.
+Box #1 from page 107 in @yotov2016advanced can be simplified with R code. To construct the iterative procedure to converge to full endowment general equilibrium effects, we start by creating the required columns and parameters so that we will deviate from the original approach.
 
-We start computing change in bilateral trade costs (`change_tij`) and trade deficit or surplus (`phi`):
+We start computing the change in bilateral trade costs (changes in $t_{ij}$) and trade deficit or surplus ($phi$). The value for the elasticity of substitution, $\sigma = 7$, used to set the convergence criteria is taken from the literature. There is an explanation in the original Stata code.
 
 ```{r ch2_app1_counterfactual_7}
-# set the criteria of convergence
-# taken from the literature (see the Stata code)
 sigma <- 7
 
 ch2_application1 <- ch2_application1 %>%
@@ -205,7 +189,8 @@ ch2_application1 <- ch2_application1 %>%
   ungroup()
 ```
 
-Now we compute change in prices for exporters (`change_p_i`) and importers (`change_p_j`):
+We compute the change in prices for exporters (changes in $p_i$) and importers (changes in $p_j$).
+
 ```{r ch2_app1_counterfactual_8}
 ch2_application1 <- ch2_application1 %>%
   group_by(exporter) %>%
@@ -220,14 +205,15 @@ ch2_application1 <- ch2_application1 %>%
   ungroup()
 ```
 
-Next, we need to compute the counterfactual trade flows (`trade_cfl`):
+Next, we need to compute the counterfactual trade flows.
+
 ```{r ch2_app1_counterfactual_9}
 ch2_application1 <- ch2_application1 %>%
   mutate(trade_cfl = tradehat_cfl * change_p_i * change_p_j)
 ```
 
-To conclude the steps from Box #1 we need a `while()` loop and iterate until a convergence is reached.
-We need to duplicate some columns under new names for the loop operations, because we will overwrite them when using the iterative steps:
+To conclude the steps from Box #1 we need a `while()` loop and iterate until convergence is reached. We need to duplicate some columns under new names for the loop operations because we will overwrite them using the iterative steps.
+
 ```{r ch2_app1_counterfactual_10}
 ch2_application1 <- ch2_application1 %>%
   mutate(
@@ -244,7 +230,8 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-And now we run the loop, which cannot be divided into smaller pieces because the step $N$ depends on the step $N-1$:
+We run the loop, which cannot be divided into smaller pieces because the step $N$ depends on the step $N-1$.
+
 ```{r ch2_app1_counterfactual_11}
 # set parameters
 max_dif <- 1
@@ -257,16 +244,11 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
     mutate(trade_1 = tradehat_0 * change_p_i_0 * change_p_j_0 / (change_omr_full_0 * change_imr_full_0))
 
   # repeat the counterfactual model
-  # fit_counterfactual_app1_2 <- glm(
-  #   trade_1 ~ 0 + exporter + importer + offset(log_tij_cfl),
-  #   family = quasipoisson(link = "log"),
-  #   data = ch2_application1
-  # )
-  
   fit_counterfactual_app1_2 <- fepois(
     trade_1 ~ 0 | exporter + importer,
     data = ch2_application1,
-    offset = ~log(tij_cfl)
+    offset = ~log(tij_cfl),
+    glm.iter = 500
   )
 
   ch2_application1 <- ch2_application1 %>%
@@ -277,7 +259,6 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
 
   # compute the conditional general equilibrium effects of trade
   ch2_application1 <- ch2_application1 %>%
-    # mutate(tradehat_1 = predict(fit_counterfactual_app1_2, ch2_application1, "response")) %>%
     mutate(tradehat_1 = predict(fit_counterfactual_app1_2, ch2_application1)) %>%
     group_by(exporter) %>%
     mutate(y_cfl_1 = sum(tradehat_1)) %>%
@@ -341,9 +322,8 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
 }
 ```
 
-Box #1 from page 108 in @yotov2016advanced shows the steps to obtain different endowments, which can be divided into smaller pieces.
+Box #1 from page 108 in @yotov2016advanced shows the steps to obtain different endowments, which can be divided into smaller pieces. We start computing the full endowment general equilibrium of factory-gate price (changes in $p_i^{full}$ and $p_j^{full}$) and the full endowment general equilibrium of output ($y^{full}$).
 
-We start computing the full endowment general equilibrium of factory-gate price (`change_p_i_full` and `change_p_j_full`) and the full endowment general equilibrium of output (`y_full`):
 ```{r ch2_app1_counterfactual_12}
 ch2_application1 <- ch2_application1 %>%
   mutate(
@@ -357,7 +337,8 @@ ch2_application1 <- ch2_application1 %>%
   mutate(y_full = change_p_i_full * y)
 ```
 
-Now we compute the full endowment general equilibrium of aggregate expenditures (`e_full` and `e_full_r`):
+We compute the full endowment general equilibrium of aggregate expenditures ($e^{full}$ and $e_r^{full}$).
+
 ```{r ch2_app1_counterfactual_13}
 ch2_application1 <- ch2_application1 %>%
   mutate(e_full = change_p_j_full * e * (exporter == importer)) %>%
@@ -370,7 +351,8 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-With the aggregate expenditure we proceed to obtain the full endowment general equilibrium of the outward multilateral resistance (`omr_full`) and inward multilateral resistance (`imr_full`):
+With the aggregate expenditure, we proceed to obtain the full endowment general equilibrium of the outward multilateral resistance ($OMR^{full}$) and inward multilateral resistance ($IMR^{full}$).
+
 ```{r ch2_app1_counterfactual_14}
 ch2_application1 <- ch2_application1 %>%
   mutate(
@@ -379,7 +361,8 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-Finally we proceed to compute the full endowment general equilibrium of trade (`xi_full`):
+Finally, we proceed to compute the full endowment general equilibrium of trade ($\xi^{full}$).
+
 ```{r ch2_app1_counterfactual_15}
 ch2_application1 <- ch2_application1 %>%
   mutate(x_full = (y_full * e_full * tij_cfl) / (imr_full * omr_full)) %>%
@@ -390,7 +373,8 @@ ch2_application1 <- ch2_application1 %>%
 
 ### Step IV: Collect, construct, and report indexes of interest
 
-Box #1 from page 108 in @yotov2016advanced consists in to construct the percentage change of the general equilibrium indexes. The steps are direct, we need to compute the change in full endowment general equilibrium factory-gate price on export side (`change_price_full`), the change in conditional and full general equilibrium outward multilateral resistances (`change_omr_*`), and the change in conditional and full general equilibrium international trade (`change_xi_*`):
+Box #1 from page 108 in @yotov2016advanced consists of constructing the percentage change of the general equilibrium indexes. The steps are direct. We need to compute the change in full endowment general equilibrium factory-gate price on the export side (changes in $p_i{full}$), the change in conditional and full general equilibrium outward multilateral resistances (changes in $OMR^{CFL}$ and $OMR^{full}$), and the change in conditional and full general equilibrium international trade (changes in $\xi^{CFL}$ and $\xi^{full}$).
+
 ```{r ch2_app1_indexes_1}
 ch2_application1 <- ch2_application1 %>%
   mutate(
@@ -402,7 +386,8 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-In addition to this, we need to something very similar for importers, in order to be able to recreate figure 7 later:
+We also need to do something very similar for the importers in order to be able to recreate figure 7 later.
+
 ```{r ch2_app1_indexes_2}
 ch2_application1 <- ch2_application1 %>%
   mutate(
@@ -413,11 +398,10 @@ ch2_application1 <- ch2_application1 %>%
 
 ### Figures replication
 
-With all of the steps above, we are ready to create the plots from page 110. in @yotov2016advanced.
+With all of the steps above, we are ready to create the plots from page 110. in @yotov2016advanced. Figure 6 removes the observations where both the importer and the exporter are different, and this can be seen in the original Stata code provided with the book.
 
-Figure 6 removes the observations where both the importer and the exporter are different, this can be seen in the original Stata code provided with the book.
+We need to filter rows and to obtain $\log(y)$.
 
-We need to filter rows and to obtain `log(y)`:
 ```{r ch2_app1_figures_1}
 ch2_application1 <- ch2_application1 %>%
   filter(exporter == importer) %>%
@@ -426,7 +410,8 @@ ch2_application1 <- ch2_application1 %>%
   mutate(log_y = log(y))
 ```
 
-In addition, the original code removes Hong Kong for visualization scale purposes:
+In addition, the original code removes Hong Kong for visualization scale purposes.
+
 ```{r ch2_app1_figures_2}
 data_figure_6 <- ch2_application1 %>% 
   filter(exporter != "HKG") %>% 
@@ -453,7 +438,7 @@ ggplot(data = data_figure_6) +
   scale_color_manual(values = c("#b6b8dd","#232958"))
 ```
 
-To create figure 7, we proceed in the same way as we did with figure 6:
+To create Figure 7, we proceed in the same way as Figure 6.
 
 ```{r ch2_app1_figures_3}
 data_figure_7 <- ch2_application1 %>% 
@@ -486,7 +471,9 @@ ggplot(data = data_figure_7) +
 
 ### Initial data
 
-As in the previous application, we shall proceed by alternating both data transforming and regressions. Before doing what is shown in box #1 from page 112 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU", just as in the last section, but we shall keep panel dimension of the dataset in order to identify the effects of RTAs and to comprehensively capture the impact of all time-invariant trade costs with the use of pair fixed  effects:
+As in the previous application, we shall proceed by alternating both data transforming and regressions. To replicate the results from box #1 on page 112 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU", as in the previous section. 
+
+However, in this case, we shall keep the panel dimension of the dataset to identify the effects of RTAs and comprehensively capture the impact of all time-invariant trade costs with the use of pair fixed effects.
 
 ```{r ch2_app2_data_1}
 ch2_application2 <- agtpa_applications %>%
@@ -513,7 +500,8 @@ ch2_application2 <- agtpa_applications %>%
   arrange(importer)
 ```
 
-Because of the panel dimension, we proceed as we did in the previous chapter, by creating columns to combine exporter/importer and year (`exp_year` and `imp_year`) for the fixed effects, and a pairing variable `pair_id_2`:
+Because of the panel dimension, we proceed as we did in the previous chapter by creating columns to combine exporter/importer and year alongside a pairing variable for the internal dyads for the fixed effects.
+
 ```{r ch2_app2_data_2}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -523,7 +511,8 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-In addition, we need to create the variable `sum_trade` to filter the cases where the sum by `pair_id` is zero:
+In addition, we need to compute the trade sum to filter the cases where the sum by dyad is zero.
+
 ```{r ch2_app2_data_3}
 ch2_application2 <- ch2_application2 %>%
   group_by(pair_id) %>%
@@ -535,15 +524,18 @@ ch2_application2 <- ch2_application2 %>%
 
 #### Stage 1: Obtain the estimates of pair fixed effects and the effects of RTAs
 
-With the steps done before, it is straightforward to obtain the PPML regression shown in box #1 from page 112 in @yotov2016advanced:
+With the steps done before, it is straightforward to obtain the PPML regression shown in box #1 from page 112 in @yotov2016advanced.
+
 ```{r ch2_app2_baseline_1}
 fit_baseline_app2 <- fepois(
   trade ~ rta | exp_year + imp_year + pair_id_2,
-  data = filter(ch2_application2, sum_trade > 0)
+  data = filter(ch2_application2, sum_trade > 0),
+  glm.iter = 500
 )
 ```
 
-With the estimated model, we can construct the variables for export (`exp_year`), import (`imp_year`) and pair (`pair_id_2`) fixed effects:
+We can construct the variables for exporter-time, importer-time, and internal dyads with the estimated fixed effects from the model.
+
 ```{r ch2_app2_baseline_2}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -555,9 +547,8 @@ ch2_application2 <- ch2_application2 %>%
 
 #### Stage 2: Regress the estimates of pair fixed effects on gravity variables and country fixed effects
 
-Box #1 from page 113 in @yotov2016advanced can be divided in smaller chunks.
+Box #1 from page 113 in @yotov2016advanced can be divided into smaller chunks. We start by filtering to keep the observation from 1994, and then we compute the trade costs ($\overline{t_{ij}}$ and $t_{ij}^{BLN}$) from the internal dyads fixed effects and the estimated RTA coefficient.
 
-We start by filtering to keep the observation from 1994, and then we compute the trade costs (`tij_bar` and `tijn_bln`) from the `fe_pair_id_2` fixed effects and the estimated RTA coefficient:
 ```{r ch2_app2_costs_1}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -566,30 +557,33 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-Now we need to create a table for the year 1994 which will be used to predict the trade costs for the observations with zero trade flows. The reason to create a sub-table, instead of filtering observations in the regression function, is that is eases posterior work to predict the costs.
+We need to create a table for the year 1994, which we will use to predict the trade costs for the observations with zero trade flows. The reason to create a sub-table, instead of filtering observations in the regression function, is that it eases posterior work to predict the costs.
 
-To start the cost estimation we start with:
 ```{r ch2_app2_costs_2}
 ch2_application2_1994 <- ch2_application2 %>%
   filter(year == 1994, exporter != importer)
 ```
 
-Now, unlike the book, which duplicates `tij_bar` by creating `tij`, we can fit a regression to estimate the costs:
+Now, unlike the book, which duplicates $\overline{t_{ij}} by creating $t_{ij}$, we can fit a regression to estimate the costs.
+
 ```{r ch2_app2_costs_3}
 fit_costs_app2 <- fepois(
   tij_bar ~ log_dist + cntg + lang + clny | exporter + importer,
-  data = ch2_application2_1994
+  data = ch2_application2_1994,
+  glm.iter = 500
 )
 ```
 
-With the regression we add the fitted values to the sub-table:
+With the regression, we add the fitted values to the sub-table.
+
 ```{r ch2_app2_costs_4}
 ch2_application2_1994 <- ch2_application2_1994 %>%
   mutate(tij_no_rta = predict(fit_costs_app2, ch2_application2_1994)) %>%
   select(exporter, importer, tij_no_rta)
 ```
 
-The final step is to keep the observations for the year 1994 in the original table and replace the missing costs with the predicted values:
+The final step is to keep the observations for the year 1994 in the original table and replace the missing costs with the predicted values.
+
 ```{r ch2_app2_costs_5}
 ch2_application2 <- ch2_application2 %>%
   filter(year == 1994) %>%
@@ -601,18 +595,19 @@ ch2_application2 <- ch2_application2 %>%
   select(-tij_no_rta)
 ```
 
-Box #2 from page 113 in @yotov2016advanced is more straightforward.
+Box #2 from page 113 in @yotov2016advanced is easier to replicate. The first part of completing Box #2 involves solving the constrained baseline gravity model.
 
-The first part to complete Box #2 consists in solving the constrained baseline gravity model:
 ```{r ch2_app2_constrained_1}
 fit_constrained_app2 <- fepois(
   trade ~ 0 | exporter + importer,
   data = ch2_application2,
-  offset = ~log(tij_bln)
+  offset = ~log(tij_bln),
+  glm.iter = 500
 )
 ```
 
-With the fitted model we can add the prediction and the `xi_bln` column:
+With the fitted model, we can add the prediction and the $\xi^{BLN}$ column.
+
 ```{r ch2_app2_constrained_2}
 ch2_application2 <- ch2_application2 %>%
   mutate(tradehat_bln = predict(fit_constrained_app2, ch2_application2)) %>%
@@ -621,7 +616,8 @@ ch2_application2 <- ch2_application2 %>%
   ungroup()
 ```
 
-The book specifies that all other baseline indexes of interest can be obtained by applying the exact same procedure as described in the previous application. Here we'll obtain the multilateral resistances terms (`omr_bln` and `imr_bln`) by adding the fixed effects from the constrained model to the data:
+The book specifies that all other baseline indexes of interest can be obtained by applying the same procedure described in the previous application. Here we will obtain the multilateral resistances terms ($OMR^{BLN}$ and $IMR^{BLN}$) by adding the fixed effects from the constrained model to the data.
+
 ```{r ch2_app2_additional_1}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -638,7 +634,8 @@ ch2_application2 <- ch2_application2 %>%
 
 ### Step II: Define a counterfactual scenario
 
-Box #1 from page 114 in @yotov2016advanced is direct and consists in replacing the RTA values by zero if the pairs of countries are NAFTA members:
+Box #1 from page 114 in @yotov2016advanced is direct and consists in replacing the RTA values by zero if the pairs of countries are NAFTA members.
+
 ```{r ch2_app2_counterfactual_1}
 nafta <- c("MEX", "USA", "CAN")
 
@@ -651,18 +648,19 @@ ch2_application2 <- ch2_application2 %>%
 
 ### Step III: Solve the counterfactual model
 
-The  exact  same  procedure from the previous section applies to obtain the conditional general equilibrium effects and then to compute the full endowment general equilibrium effects.
+The same procedure from the previous section applies to obtain the conditional general equilibrium effects and then compute the full endowment general equilibrium effects. We start by fitting a counterfactual model.
 
-We start by fitting a counterfactual model:
 ```{r ch2_app2_counterfactual_2}
 fit_counterfactual_app2 <- fepois(
   trade ~ 0 | exporter + importer,
   data = ch2_application2,
-  offset = ~log(tij_cfl)
+  offset = ~log(tij_cfl),
+  glm.iter = 500
 )
 ```
 
-With the fitted model we add the fixed effects:
+With the fitted model we add the fixed effects.
+
 ```{r ch2_app2_counterfactual_3}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -671,7 +669,8 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-As we did in stage 2, we compute the multilateral resistance terms:
+As we did in stage 2, we compute the multilateral resistance terms.
+
 ```{r ch2_app2_counterfactual_4}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -680,7 +679,8 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-Up to this point we are ready to compute the conditional general equilibrium effects of trade:
+Up to this point, we are ready to compute the conditional general equilibrium effects of trade.
+
 ```{r ch2_app2_counterfactual_5}
 ch2_application2 <- ch2_application2 %>%
   mutate(tradehat_cfl = predict(fit_counterfactual_app2, ch2_application2)) %>%
@@ -689,7 +689,7 @@ ch2_application2 <- ch2_application2 %>%
   ungroup()
 ```
 
-Now we are going to compute the full endowment general equilibrium effects. We start by repeating the steps to obtain `change_tij` and `phi` from the last section. The criteria of convergence ($\sigma = 7$), as the notes in the original Stata code say, is taken from the literature.
+Now we are going to compute the full endowment general equilibrium effects. We start by repeating the steps to obtain changes in $t_{ij}$ $\phi$ from the last section. As the notes in the original Stata code say, the criteria of convergence ($\sigma = 7$) was taken from the literature.
 
 ```{r ch2_app2_counterfactual_6}
 sigma <- 7
@@ -704,7 +704,8 @@ ch2_application2 <- ch2_application2 %>%
   ungroup()
 ```
 
-Now we compute `change_p_i`, `change_p_j` and `trade_cfl`. Again, this is just a repetition of the previous steps with some adaptation:
+Now we compute changes in $p_i$, $p_j$ and $trade^{CFL}$, which is just a repetition of the previous steps with some adaptation.
+
 ```{r ch2_app2_counterfactual_7}
 ch2_application2 <- ch2_application2 %>%
   group_by(exporter) %>%
@@ -722,7 +723,8 @@ ch2_application2 <- ch2_application2 %>%
   mutate(trade_cfl = tradehat_cfl * change_p_i * change_p_j)
 ```
 
-Then we need a `while()` loop, but before we need to duplicate some columns under new names for the loop operations:
+Then we need a `while()` loop, but before, we need to duplicate some columns under new names for the loop operations.
+
 ```{r ch2_app2_counterfactual_8}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -739,7 +741,8 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-And now we run the loop, where the step $N$ depends on the step $N-1$ as in the previous section:
+Furthermore, now we run the loop, where the step $N$ depends on the step $N-1$ as in the previous section.
+
 ```{r ch2_app2_counterfactual_9}
 # set parameters
 max_dif <- 1
@@ -755,7 +758,8 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
   fit_counterfactual_app2_2 <- fepois(
     trade_1 ~ 0 | exporter + importer,
     data = ch2_application2,
-    offset = ~log(tij_cfl)
+    offset = ~log(tij_cfl),
+    glm.iter = 500
   )
 
   ch2_application2 <- ch2_application2 %>%
@@ -829,7 +833,8 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
 }
 ```
 
-The last loop allows us to obtain `change_p_i_full`, `change_p_j_full` and `y_full`:
+The last loop allows us to obtain changes in $p_i^{full}$, $p_j^{full}$ and $y^{full}$.
+
 ```{r ch2_app2_counterfactual_10}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -843,7 +848,8 @@ ch2_application2 <- ch2_application2 %>%
   mutate(y_full = change_p_i_full * y)
 ```
 
-Now we compute `e_full` and `e_full_r`:
+Now we compute $e^{full} and $e_r^{full}$.
+
 ```{r ch2_app2_counterfactual_11}
 ch2_application2 <- ch2_application2 %>%
   mutate(e_full = change_p_j_full * e * (exporter == importer)) %>%
@@ -856,7 +862,8 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-We also need `omr_full` and `imr_full`. This part of the code needs *attention* because the IMR full term is computed in a different way compared to the previous section, please see the script `RTAsEffects.do`. The way to replicate the original Stata code is:
+We also need `omr_full` and `imr_full`. This part of the code needs *attention* because the IMR full term is computed in a different way compared to the previous section. Please see the script *RTAsEffects.do*.
+
 ```{r ch2_app2_counterfactual_12}
 ch2_application2 <- ch2_application2 %>%
   mutate(
@@ -865,7 +872,8 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-To complete this step, we compute `xi_full`:
+To complete this step, we compute $xi^{full}$.
+
 ```{r ch2_app2_counterfactual_13}
 ch2_application2 <- ch2_application2 %>%
   mutate(x_full = (y_full * e_full * tij_cfl) / (imr_full * omr_full)) %>%
@@ -876,9 +884,10 @@ ch2_application2 <- ch2_application2 %>%
 
 ### Step IV: Collect, construct, and report indexes of interest
 
-The goal of this step is to reproduce the table from page 116 in @yotov2016advanced.
+This step aims to reproduce the table from page 116 in @yotov2016advanced.
 
-To ease the task of creating the table from the book, we divide between exporter and importer indexes:
+To ease the task of creating the table from the book, we divide between exporter and importer indexes.
+
 ```{r ch2_app2_counterfactual_14}
 exporter_indexes <- ch2_application2 %>%
   select(
@@ -908,7 +917,8 @@ importer_indexes <- ch2_application2 %>%
   )
 ```
 
-Finally, we can replicate the table that we wanted to:
+Finally, we can replicate the table that we wanted to.
+
 ```{r ch2_app2_counterfactual_15}
 indexes_final <- exporter_indexes %>%
   left_join(importer_indexes, by = c("exporter" = "importer")) %>%
