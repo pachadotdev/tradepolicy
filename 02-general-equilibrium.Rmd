@@ -230,7 +230,7 @@ ch2_application1 <- ch2_application1 %>%
   )
 ```
 
-We run the loop, which cannot be divided into smaller pieces because the step $N$ depends on the step $N-1$.
+We run the loop, which cannot be divided into smaller pieces because the step $N$ depends on the step $N-1$. As in the previous application, the idea is for the stopping criteria in this iteration is that the model converges when prices stop changing.
 
 ```{r ch2_app1_counterfactual_11}
 # set parameters
@@ -547,7 +547,7 @@ ch2_application2 <- ch2_application2 %>%
 
 #### Stage 2: Regress the estimates of pair fixed effects on gravity variables and country fixed effects
 
-Box #1 from page 113 in @yotov2016advanced can be divided into smaller chunks. We start by filtering to keep the observation from 1994, and then we compute the trade costs ($\overline{t_{ij}}$ and $t_{ij}^{BLN}$) from the internal dyads fixed effects and the estimated RTA coefficient.
+Box #1 from page 113 in @yotov2016advanced can be divided into smaller chunks. We start by filtering to keep the observation from 1994, and then we compute the trade costs ($\bar{t}_{ij}$ and $t_{ij}^{BLN}$) from the internal dyads fixed effects and the estimated RTA coefficient.
 
 ```{r ch2_app2_costs_1}
 ch2_application2 <- ch2_application2 %>%
@@ -872,7 +872,7 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-To complete this step, we compute $xi^{full}$.
+To complete this step, we compute $\xi^{full}$.
 
 ```{r ch2_app2_counterfactual_13}
 ch2_application2 <- ch2_application2 %>%
@@ -930,6 +930,8 @@ indexes_final <- exporter_indexes %>%
   select(exporter, change_xi_cfl, change_xi_full,
          change_rgdp_full, change_imr_full, change_omr_full, change_p_i_full)
 
-indexes_final %>%
+indexes_final <- indexes_final %>%
   mutate_if(is.numeric, function(x) round(x, 2))
+
+datatable(indexes_final, options = list(scrollX = T))
 ```

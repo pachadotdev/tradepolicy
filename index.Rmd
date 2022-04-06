@@ -11,6 +11,7 @@ link-citations: yes
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE, warning = FALSE, message = FALSE)
+library(DT)
 ```
 
 # Introduction {#intro}
@@ -67,9 +68,9 @@ Please read @happygitwithr in case of questions about *git* or *GitHub*.
 
 ## Acknowledgments
 
-This ebook improved noticeably from its early drafts thanks to valuable comments and corrections from Jinbo Hao, Alexey Kravchenko, Constanza Prado, Chence Sun, Yoto Yotov.
+This ebook improved noticeably from its early drafts thanks to valuable comments and corrections from two teams. United Nations: Jinbo Hao, Alexey Kravchenko, Chence Sun, Yoto Yotov. Catholic University of Chile: Luis Gutierrez, Leonardo Jofre, Jessica Pavani, Constanza Prado, Vanessa Reinoso.
 
-For the second (present) edition of the ebook, the communication and contributions to other projects by Laurent Berge, Paulo F. Olivera and Hernan Robledo were crucial to improving the computation time results.
+For the second (present) edition of the ebook, the communication and contributions to other projects by Laurent Berge, Paulo F. Olivera, Oliver Reiter, Hernan Robledo and Matthieu Stigler were crucial to improving the computation time results.
 
 Earlier versions of these solutions started during the development of the [gravity](https://cran.r-project.org/package=gravity) R package, where Hrisyana Doytchinova's comments and feedback were precious.
 

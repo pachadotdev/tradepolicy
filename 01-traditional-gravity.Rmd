@@ -4,7 +4,9 @@
 
 ### Preparing the data
 
-If the reader has not used R before, or to be more precise, has only fitted a few regressions without much practice on transforming and cleaning data before, please check chapters 5 and 18 from @wickham2016r.
+If the reader has never used R before, please check chapters 1 to 25 from @wickham2016r.
+
+If the reader has only fitted a few regressions in R, without much practice on transforming and cleaning data before, please check chapters 5 and 18 from @wickham2016r.
 
 Please see the note from page 42 in @yotov2016advanced. It is a really important note, which tells us that we need to:
 
@@ -128,16 +130,26 @@ fit_ols <- feols(
 summary(fit_ols)
 ```
 
-Now the model is almost ready. We only need to stick to the methodology from @yotov2016advanced and cluster the standard errors by country pair (see the note on page 42, it is imperative).
+The employed function, `feols()`, does not carry a copy of its training data by default besides providing faster fitting for models with fixed effects. This is not the case in base R, where `glm()` outputs include this data, increasing the model's size, but this does not affect the model's predictions and can be changed as the user needs it [@trimmingfat].
 
-The *tradepolicy* package provides a nice function to do this and more. Please read
-the documentation of the package and look for the `tp_summary_app_1()` function, it
-summarises the model in the exact way as reported in the book by providing:
+The model is almost ready. We only need to stick to the methodology from @yotov2016advanced and cluster the standard errors by country pair (see the note on page 42, it is imperative).
+
+```{r ch1_app_1_ols_1_2}
+fit_ols <- feols(
+  log_trade ~ log_dist + cntg + lang + clny + log_y + log_e,
+  data = filter(ch1_application1, trade > 0),
+  cluster = ~pair_id
+)
+
+summary(fit_ols)
+```
+
+The *tradepolicy* package provides functions to provide more informative summaries. Please read the documentation of the package and look for the `tp_summary_app_1()` function, it summarises the model in the exact way as reported in the book by providing:
 
 * Clustered standard errors.
 * Number of observations.
 * $R^2$ (if applicable).
-* Presence (or absence) of exporter and exporter time fixed effects.
+* Presence (or absence) of exporter and exporter-time fixed effects.
 * RESET test p-value.
 
 These statistical results are returned as a list to keep it simple, which we can see for the model in the same format as reported in the book.
@@ -165,7 +177,7 @@ $$
 In the equation above $REM\_EXP$ and $REM\_IMP$ are defined as
 $$
 \begin{align}
-\log(REM\_EXP_{i,t}) &= \log \left( \sum_j \frac{DIST_{i,j}}{E_{j,t} / Y_t} \right) \text{, and }\\
+\log(REM\_EXP_{i,t}) &= \log \left( \sum_j \frac{DIST_{i,j}}{E_{j,t} / Y_t} \right) \text{ and }\\
 \log(REM\_IMP_{j,t}) &= \log \left( \sum_i \frac{DIST_{i,j}}{Y_{i,t} / Y_t} \right).
 \end{align}
 $$
@@ -188,14 +200,16 @@ tp_summary_app_1(
 The general equation for this model is
 $$
 \begin{align}
-\log X_{ij,t} =& \:\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\\
-\text{ }& \:\beta_4 CLNY_{i,j} + \varepsilon_{ij,t}.
+\log X_{ij,t} =& \: \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\\
+\text{ }& \:\beta_4 CLNY_{i,j} + \pi_{i,t} + \chi_{i,t} + \varepsilon_{ij,t}.
 \end{align}
 $$
 
 Where the added terms, concerning the OLS model, are $\pi_{i,t}$ and $\chi_{i,t}$ that account for exporter-time and importer-time fixed effects, respectively. See page 44 in @yotov2016advanced for full detail of each variable.
 
 We can quickly generate a list as we did with the previous models. The only difference to the previous models is that in this case that the variables to the right of the "|" operator are the fixed effects, which are treated differently by the *fixest* package, which is used internally by the *tradepolicy* package, for faster model fitting.
+
+Please notice that the summaries intentionally do not show fixed effects, because there are cases where we have thousands of fixed effects.
 
 ```{r ch1_app_1_fe_1}
 tp_summary_app_1(
@@ -205,13 +219,36 @@ tp_summary_app_1(
 )
 ```
 
+There is another difference when we compare `feols()` or `fepois()` against `glm()` in the presence of fixed effects, which we can explain with an example.
+
+In the data used for the previous summary, we have $T$ years (1986, 1990, 1994, 1998, 2002 and 2006). We could be interested in filtering for a single exporter and a single importer to fit the fixed effects model
+$$
+\log X_{t} = \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \sum_{u} \beta_u FE_u + \varepsilon_{ij,t},
+$$
+where
+$$
+\begin{align*}
+&u \in \{1986, 1990, 1994, 1998, 2002, 2006\} \text{ and}\cr
+&FE_u = \begin{cases}
+1 & \text {if } t = u \cr
+0 & \text{otherwise}.
+\end{cases}
+\end{align*}
+$$
+
+When we use `feols()`, or any of the functions in the *fixest* package, a formula of the form $z \sim x_1 + x_2 \mid y$ will estimate the model described in the previous equations.
+
+If we do the same in base R, with `glm()`, the equivalent formula would be of the form $z \sim 0 + x_1 + x_2 + y$, otherwise base R estimates a model of the form $y_t = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \sum_u y_{u}$, which means that not including a zero in the formula estimates an additional coefficient in the estimation which corresponds to a global intercept or the "grand mean".
+
+On the $\beta_0$ constant, it is tough to interpret with many-way fixed effects, and it is advised against reporting it.
+
 ### PPML estimation controlling for multilateral resistance terms with fixed effects
 
 The general equation for this model is
 $$
 \begin{align}
-X_{ij,t} =& \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} +\right.\\
-\text{ }& \:\left.\beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j}\right] \times \varepsilon_{ij,t}.
+X_{ij,t} =& \:\exp\left[\beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} +\right.\\
+\text{ }& \:\left.\beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \pi_{i,t} + \chi_{i,t}\right] \times \varepsilon_{ij,t}.
 \end{align}
 $$
 
@@ -226,7 +263,7 @@ fit_ppml <- fepois(trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
 )
 ```
 
-`fepois()` does not carry a copy of its training data by default besides providing faster fitting for models with fixed effects. This is not the case in base R, where `glm()` objects include this data, increasing the model's size, but this does not affect the model's predictions and can be changed as the user needs it [@trimmingfat].
+Exactly as it was mentioned for `feols()`, `fepois()` shares the same differences regarding `glm()` objects.
 
 If the reader decides to run this model and print the summary, they will notice that it does not report an $R^2$ and displays an extensive fixed effect list. For PPML models, the $R^2$ needs to be computed afterwards as Kendall's correlation (or rank correlation) between the observed and predicted values. Please see @silva2006log for the details and the RESET test for PPML (GLM) models.
 
@@ -241,8 +278,6 @@ tp_summary_app_1(
   method = "ppml"
 )
 ```
-
-Please notice that the previous summary intentionally does not show time exporter/importer fixed effects.
 
 ## The "distance puzzle" resolved
 
@@ -317,14 +352,6 @@ tp_summary_app_2(
   method = "ols"
 )
 ```
-
-Notice that, unlike the previous section, if we had fitted the model in base R, with `glm()`, we would have needed to write a different formula.
-
-```r
-log_trade ~ 0 + log_dist_1986 + ... + clny + exp_year + imp_year
-```
-
-In which case, the initial zero means not to include a global constant besides the fixed effects. The fixed effect variables appear with regular plus signs, without a vertical bar to indicate them.
 
 ### PPML solution for the "distance puzzle"
 
