@@ -1,6 +1,6 @@
 Package: tradepolicy
 Title: Replication of 'An Advanced Guide To Trade Policy Analysis'
-Version: 0.5.0
+Version: 0.6.0
 Authors@R: c( 
         person(given = "Mauricio",
                family = "Vargas",
@@ -24,7 +24,7 @@ Description: Datasets from An Advanced Guide to Trade Policy Analysis
     (Year: 2016, ISBN: 978-92-870-4367-2) by Yotov, et al. and functions to 
     report regression summaries with clustered robust standard errors.
 URL: https://r.tiid.org/R_structural_gravity/
-BugReports: https://github.com/pachamaltese/tradepolicy/issues/
+BugReports: https://github.com/pachadotdev/tradepolicy/issues/
 License: CC BY 4.0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -38,7 +38,7 @@ Imports:
     purrr,
     cli,
     crayon,
-    fixest,
+    fixest (>= 0.10.4),
     sandwich,
     broom,
     msm,

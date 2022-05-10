@@ -12,7 +12,7 @@ Datasets from An Advanced Guide to Trade Policy Analysis (Year: 2016, ISBN: 978-
 Useful links:
 \itemize{
   \item \url{https://r.tiid.org/R_structural_gravity/}
-  \item Report bugs at \url{https://github.com/pachamaltese/tradepolicy/issues/}
+  \item Report bugs at \url{https://github.com/pachadotdev/tradepolicy/issues/}
 }
 
 }
