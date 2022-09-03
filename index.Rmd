@@ -61,6 +61,9 @@ git clone https://github.com/pachamaltese/tradepolicy.git
 
 Please read @happygitwithr in case of questions about *git* or *GitHub*.
 
+There's a separate resource, [ESCAP Online Training on Using R for Trade Analysis](https://r.tiid.org/), which gives you a certificate if you finish 
+the online training.
+
 ## Acknowledgments
 
 This ebook improved noticeably from its early drafts thanks to valuable comments and corrections from:
