@@ -322,6 +322,16 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
 }
 ```
 
+In the previous step, we obtained a warning that we cannot eliminate by increasing GLM interations. The fitted model has truncated deviance for steps eight and twenty-two in the while loop. We tested with 20,000
+GLM iterations for each step, resulting in a very similar message:
+
+> Warning: Absence of convergence: Maximum number of iterations reached (20000). Final deviance: 3.725e-8.
+> Warning: Absence of convergence: Maximum number of iterations reached (20000). Final deviance: -4.47e-8.
+
+This is not a problem by itself, and we can disregard this. A very different 
+case would be estimating a model with high collinearity, resulting in 
+coefficients with undefined standard errors and an unreliable result.
+
 Box #1 from page 108 in @yotov2016advanced shows the steps to obtain different endowments, which can be divided into smaller pieces. We start computing the full endowment general equilibrium of factory-gate price (changes in $p_i^{full}$ and $p_j^{full}$) and the full endowment general equilibrium of output ($y^{full}$).
 
 ```{r ch2_app1_counterfactual_12}
@@ -547,7 +557,8 @@ ch2_application2 <- ch2_application2 %>%
 
 #### Stage 2: Regress the estimates of pair fixed effects on gravity variables and country fixed effects
 
-Box #1 from page 113 in @yotov2016advanced can be divided into smaller chunks. We start by filtering to keep the observation from 1994, and then we compute the trade costs ($\bar{t}_{ij}$ and $t_{ij}^{BLN}$) from the internal dyads fixed effects and the estimated RTA coefficient.
+Box #1 from page 113 in @yotov2016advanced can be divided into smaller chunks. 
+We start by filtering to keep the observation from 1994, and then we compute the trade costs ($\bar{t}_{ij}$ and $t_{ij}^{BLN}$) from the internal dyads fixed effects and the estimated RTA coefficient.
 
 ```{r ch2_app2_costs_1}
 ch2_application2 <- ch2_application2 %>%
@@ -564,7 +575,8 @@ ch2_application2_1994 <- ch2_application2 %>%
   filter(year == 1994, exporter != importer)
 ```
 
-Now, unlike the book, which duplicates $\overline{t_{ij}} by creating $t_{ij}$, we can fit a regression to estimate the costs.
+Now, unlike the book, which duplicates $\overline{t_{ij}}$ by creating $t_{ij}$, we can fit a regression to estimate the costs. This is something that emerges
+from the small differences between expressing an idea in Stata or R.
 
 ```{r ch2_app2_costs_3}
 fit_costs_app2 <- fepois(
@@ -919,7 +931,7 @@ importer_indexes <- ch2_application2 %>%
 
 Finally, we can replicate the table that we wanted to.
 
-```{r ch2_app2_counterfactual_15}
+```{r ch2_app2_counterfactual_15, echo=FALSE}
 indexes_final <- exporter_indexes %>%
   left_join(importer_indexes, by = c("exporter" = "importer")) %>%
   mutate(
@@ -933,5 +945,11 @@ indexes_final <- exporter_indexes %>%
 indexes_final <- indexes_final %>%
   mutate_if(is.numeric, function(x) round(x, 2))
 
-datatable(indexes_final, options = list(scrollX = T))
+indexes_final
+```
+
+<!-- Here we don't print the raw table, we format it as HTML in a separate block -->
+
+```{r ch2_app2_counterfactual_15_2, echo=FALSE}
+DT::datatable(indexes_final, options = list(scrollX = T))
 ```

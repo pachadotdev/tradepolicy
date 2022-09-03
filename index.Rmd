@@ -45,15 +45,10 @@ The views and opinions expressed in this thesis project are solely those of the 
 
 We created *tradepolicy*, an R package explicitly created to reproduce the results from AGTPA. It acts as a meta-package that calls other packages to use several functions that augment R capabilities. It features its own functions to compute clustered standard errors and much more.
 
-The reader can get all the functions and datasets by running these lines from RStudio:
+The reader can get all the functions and datasets by running this line from RStudio:
 
 ```{r install_r_package, eval=FALSE}
-# stable version
 install.packages("tradepolicy")
-
-# development version
-if (!require("remotes")) install.packages("remotes")
-remotes::install_github("pachadotdev/tradepolicy")
 ```
 
 ## Getting the most out of this material
@@ -68,9 +63,14 @@ Please read @happygitwithr in case of questions about *git* or *GitHub*.
 
 ## Acknowledgments
 
-This ebook improved noticeably from its early drafts thanks to valuable comments and corrections from two teams. United Nations: Jinbo Hao, Alexey Kravchenko, Chence Sun, Yoto Yotov. Catholic University of Chile: Luis Gutierrez, Leonardo Jofre, Jessica Pavani, Constanza Prado, Vanessa Reinoso.
+This ebook improved noticeably from its early drafts thanks to valuable comments and corrections from:
 
-For the second (present) edition of the ebook, the communication and contributions to other projects by Laurent Berge, Paulo F. Olivera, Oliver Reiter, Hernan Robledo and Matthieu Stigler were crucial to improving the computation time results.
+* Yoto Yotov (Drexel University).
+* Luis Gutiérrez, Leonardo Jofré, Jessica Pavani, Constanza Prado, Vanessa Reinoso (Pontificia Universidad Católica de Chile).
+* Jinbo Hao, Alexey Kravchenko, Chence Sun (United Nations).
+
+For the second (present) edition of the ebook, the communication and contributions to other projects by Laurent Berge (Université Bordeaux), Paulo F. Olivera (Ministério da Economia), Oliver Reiter (Wiener Institut für Internationale Wirtschaftsvergleiche), Hernan Robledo (P. U. Católica de Chile), and Matthieu Stigler (ETH Zurich) were crucial to improving the computation time results. The comments from Maria Semenova (United Nations) largely improved this second edition 
+and helped to clarify different parts of the second chapter.
 
 Earlier versions of these solutions started during the development of the [gravity](https://cran.r-project.org/package=gravity) R package, where Hrisyana Doytchinova's comments and feedback were precious.
 
