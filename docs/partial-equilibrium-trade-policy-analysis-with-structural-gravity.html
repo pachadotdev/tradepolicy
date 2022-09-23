@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Partial equilibrium trade policy analysis with structural gravity | Solutions Manual for An Advanced Guide to Trade Policy Analysis in R</title>
+  <meta name="description" content="Chapter 2 Partial equilibrium trade policy analysis with structural gravity | Solutions Manual for An Advanced Guide to Trade Policy Analysis in R" />
+  <meta name="generator" content="bookdown 0.28 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Partial equilibrium trade policy analysis with structural gravity | Solutions Manual for An Advanced Guide to Trade Policy Analysis in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Partial equilibrium trade policy analysis with structural gravity | Solutions Manual for An Advanced Guide to Trade Policy Analysis in R" />
+  
+  
+  
+
+<meta name="author" content="Mauricio “Pachá” Vargas Sepúlveda" />
+
+
+<meta name="date" content="2022-09-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.24/datatables.js"></script>
+<link href="libs/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.11.3/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Solutions Manual for An Advanced Guide to Trade Policy Analysis</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#welcome"><i class="fa fa-check"></i><b>1.1</b> Welcome</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#disclaimer"><i class="fa fa-check"></i><b>1.2</b> Disclaimer</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#reproducing-agtpa-results-yourself"><i class="fa fa-check"></i><b>1.3</b> Reproducing AGTPA results yourself</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#getting-the-most-out-of-this-material"><i class="fa fa-check"></i><b>1.4</b> Getting the most out of this material</a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#acknowledgments"><i class="fa fa-check"></i><b>1.5</b> Acknowledgments</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#changes-concerning-the-first-edition"><i class="fa fa-check"></i><b>1.6</b> Changes concerning the first edition</a></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#contact"><i class="fa fa-check"></i><b>1.7</b> Contact</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><i class="fa fa-check"></i><b>2</b> Partial equilibrium trade policy analysis with structural gravity</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#traditional-gravity-estimates"><i class="fa fa-check"></i><b>2.1</b> Traditional Gravity Estimates</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data"><i class="fa fa-check"></i><b>2.1.1</b> Preparing the data</a></li>
+<li class="chapter" data-level="2.1.2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-ignoring-multilateral-resistance-terms"><i class="fa fa-check"></i><b>2.1.2</b> OLS estimation ignoring multilateral resistance terms</a></li>
+<li class="chapter" data-level="2.1.3" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes"><i class="fa fa-check"></i><b>2.1.3</b> OLS estimation controlling for multilateral resistance terms with remote indexes</a></li>
+<li class="chapter" data-level="2.1.4" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects"><i class="fa fa-check"></i><b>2.1.4</b> OLS estimation controlling for multilateral resistance terms with fixed effects</a></li>
+<li class="chapter" data-level="2.1.5" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects"><i class="fa fa-check"></i><b>2.1.5</b> PPML estimation controlling for multilateral resistance terms with fixed effects</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#the-distance-puzzle-resolved"><i class="fa fa-check"></i><b>2.2</b> The “distance puzzle” resolved</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data-1"><i class="fa fa-check"></i><b>2.2.1</b> Preparing the data</a></li>
+<li class="chapter" data-level="2.2.2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.2</b> OLS solution for the “distance puzzle”</a></li>
+<li class="chapter" data-level="2.2.3" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.3</b> PPML solution for the “distance puzzle”</a></li>
+<li class="chapter" data-level="2.2.4" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#internal-distance-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.4</b> Internal distance solution for the “distance puzzle”</a></li>
+<li class="chapter" data-level="2.2.5" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#internal-distance-and-home-bias-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.5</b> Internal distance and home bias solution for the “distance puzzle”</a></li>
+<li class="chapter" data-level="2.2.6" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#fixed-effects-solution-for-the-distance-puzzle"><i class="fa fa-check"></i><b>2.2.6</b> Fixed effects solution for the “distance puzzle”</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#regional-trade-agreements-effects"><i class="fa fa-check"></i><b>2.3</b> Regional trade agreements effects</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data-2"><i class="fa fa-check"></i><b>2.3.1</b> Preparing the data</a></li>
+<li class="chapter" data-level="2.3.2" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-standard-rta-estimates-with-international-trade-only"><i class="fa fa-check"></i><b>2.3.2</b> OLS standard RTA estimates with international trade only</a></li>
+<li class="chapter" data-level="2.3.3" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-standard-rta-estimates-with-international-trade-only"><i class="fa fa-check"></i><b>2.3.3</b> PPML standard RTA estimates with international trade only</a></li>
+<li class="chapter" data-level="2.3.4" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-domestic-trade-diversion"><i class="fa fa-check"></i><b>2.3.4</b> Addressing potential domestic trade diversion</a></li>
+<li class="chapter" data-level="2.3.5" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-endogeneity-of-rtas"><i class="fa fa-check"></i><b>2.3.5</b> Addressing potential endogeneity of RTAs</a></li>
+<li class="chapter" data-level="2.3.6" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#testing-for-potential-reverse-causality-between-trade-and-rtas"><i class="fa fa-check"></i><b>2.3.6</b> Testing for potential “reverse causality” between trade and RTAs</a></li>
+<li class="chapter" data-level="2.3.7" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-non-linear-and-phasing-in-effects-of-rtas"><i class="fa fa-check"></i><b>2.3.7</b> Addressing potential non-linear and phasing-in effects of RTAs</a></li>
+<li class="chapter" data-level="2.3.8" data-path="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-globalization-effects"><i class="fa fa-check"></i><b>2.3.8</b> Addressing globalization effects</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><i class="fa fa-check"></i><b>3</b> General equilibrium trade policy analysis with structural gravity</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#trade-without-borders"><i class="fa fa-check"></i><b>3.1</b> Trade without borders</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#initial-data"><i class="fa fa-check"></i><b>3.1.1</b> Initial data</a></li>
+<li class="chapter" data-level="3.1.2" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-i-solve-the-baseline-model"><i class="fa fa-check"></i><b>3.1.2</b> Step I: Solve the baseline model</a></li>
+<li class="chapter" data-level="3.1.3" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-ii-define-a-counterfactual-scenario"><i class="fa fa-check"></i><b>3.1.3</b> Step II: Define a counterfactual scenario</a></li>
+<li class="chapter" data-level="3.1.4" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-iii-solve-the-counterfactual-model"><i class="fa fa-check"></i><b>3.1.4</b> Step III: Solve the counterfactual model</a></li>
+<li class="chapter" data-level="3.1.5" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-iv-collect-construct-and-report-indexes-of-interest"><i class="fa fa-check"></i><b>3.1.5</b> Step IV: Collect, construct, and report indexes of interest</a></li>
+<li class="chapter" data-level="3.1.6" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#figures-replication"><i class="fa fa-check"></i><b>3.1.6</b> Figures replication</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#impact-of-regional-trade-agreements"><i class="fa fa-check"></i><b>3.2</b> Impact of regional trade agreements</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#initial-data-1"><i class="fa fa-check"></i><b>3.2.1</b> Initial data</a></li>
+<li class="chapter" data-level="3.2.2" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-1-solve-the-baseline-gravity-model"><i class="fa fa-check"></i><b>3.2.2</b> Step 1: Solve the baseline gravity model</a></li>
+<li class="chapter" data-level="3.2.3" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-ii-define-a-counterfactual-scenario-1"><i class="fa fa-check"></i><b>3.2.3</b> Step II: Define a counterfactual scenario</a></li>
+<li class="chapter" data-level="3.2.4" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-iii-solve-the-counterfactual-model-1"><i class="fa fa-check"></i><b>3.2.4</b> Step III: Solve the counterfactual model</a></li>
+<li class="chapter" data-level="3.2.5" data-path="general-equilibrium-trade-policy-analysis-with-structural-gravity.html"><a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html#step-iv-collect-construct-and-report-indexes-of-interest-1"><i class="fa fa-check"></i><b>3.2.5</b> Step IV: Collect, construct, and report indexes of interest</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>4</b> Appendix: Importing the original datasets</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="data.html"><a href="data.html#downloading-the-original-datasets"><i class="fa fa-check"></i><b>4.1</b> Downloading the original datasets</a></li>
+<li class="chapter" data-level="4.2" data-path="data.html"><a href="data.html#converting-the-original-datasets"><i class="fa fa-check"></i><b>4.2</b> Converting the original datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://www.unescap.org/" target="blank">UN ESCAP - Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Solutions Manual for An Advanced Guide to Trade Policy Analysis in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="partial-equilibrium-trade-policy-analysis-with-structural-gravity" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Partial equilibrium trade policy analysis with structural gravity<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#partial-equilibrium-trade-policy-analysis-with-structural-gravity" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="traditional-gravity-estimates" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Traditional Gravity Estimates<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#traditional-gravity-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="preparing-the-data" class="section level3 hasAnchor" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Preparing the data<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>If the reader has never used R before, please check chapters 1 to 25 from <span class="citation">Wickham and Grolemund (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>.</p>
+<p>If the reader has only fitted a few regressions in R, without much practice on transforming and cleaning data before, please check chapters 5 and 18 from <span class="citation">Wickham and Grolemund (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>.</p>
+<p>Please see the note from page 42 in <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. It is a really important note, which tells us that we need to:</p>
+<ol style="list-style-type: decimal">
+<li>Filter observations for a range of years (1986, 1990, 1994, 1998, 2002 and 2006)</li>
+<li>Transform some variables to logarithm scale (trade and dist) and create new variables from those in the original dataset</li>
+<li>Remove cases where both the exporter and the importer are the same</li>
+<li>Drop observations where the trade flow is zero</li>
+</ol>
+<p>Unlike <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>, here we shall use a single dataset for all the applications and subset its columns depending on what we need. This decision kept the <em>tradepolicy</em> R package as light as possible.</p>
+<p>Step 1, including subsetting columns for this application, is straightforward.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tradepolicy)</span>
+<span id="cb3-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb3-3" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>))</span></code></pre></div>
+<p>For step 2, this can be divided in parts, starting with the log transformation of trade and distance.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb4-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
+<span id="cb4-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist)</span>
+<span id="cb4-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb4-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Continuing step 2, we can now create the variables <span class="math inline">\(Y_{i,t}\)</span> and <span class="math inline">\(E_{i,t}\)</span> that appear on the OLS model equation in the book.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create Yit</span></span>
+<span id="cb5-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">sum</span>(trade),</span>
+<span id="cb5-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_y =</span> <span class="fu">log</span>(y)</span>
+<span id="cb5-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb5-8"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create Eit</span></span>
+<span id="cb5-10"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">%&gt;%</span></span>
+<span id="cb5-11"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-12"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">e =</span> <span class="fu">sum</span>(trade),</span>
+<span id="cb5-13"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_e =</span> <span class="fu">log</span>(e)</span>
+<span id="cb5-14"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb5-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>The OLS model with remoteness index needs both exporter and importer index, which grouping variables can create. We divide it into sub-steps: Replicate the computation of total exports, then the remoteness index for exporters, and finally the total imports with the corresponding remoteness index for importers.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate total_e</span></span>
+<span id="cb6-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_e =</span> <span class="fu">sum</span>(e)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_e =</span> <span class="fu">max</span>(total_e)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate rem_exp</span></span>
+<span id="cb6-9"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-11"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">remoteness_exp =</span> <span class="fu">sum</span>(dist <span class="sc">*</span>  total_e <span class="sc">/</span> e),</span>
+<span id="cb6-12"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_remoteness_exp =</span> <span class="fu">log</span>(remoteness_exp)</span>
+<span id="cb6-13"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-14"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate total_y</span></span>
+<span id="cb6-16"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">%&gt;%</span></span>
+<span id="cb6-17"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_y =</span> <span class="fu">sum</span>(y)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-18"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb6-19"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_y =</span> <span class="fu">max</span>(total_y)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-20"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate rem_imp</span></span>
+<span id="cb6-22"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">%&gt;%</span></span>
+<span id="cb6-23"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-24"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">remoteness_imp =</span> <span class="fu">sum</span>(dist <span class="sc">/</span> (y <span class="sc">/</span> total_y)),</span>
+<span id="cb6-25"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_remoteness_imp =</span> <span class="fu">log</span>(remoteness_imp)</span>
+<span id="cb6-26"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb6-26" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>To create the variables for the OLS with Fixed Effects Model, we followed box #1 on page 44 from <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. We combine both exporter and importer variables with the year to create the fixed effects variables.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb7-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># This merges the columns exporter/importer with year</span></span>
+<span id="cb7-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
+<span id="cb7-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year)</span>
+<span id="cb7-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb7-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>The addition of exporter/importer time fixed effects concludes step 2, and now we need to perform step 3.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb8-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(exporter <span class="sc">!=</span> importer)</span></code></pre></div>
+<p>Some cases require conducting step 4, and we will be explicit about it when needed.</p>
+</div>
+<div id="ols-estimation-ignoring-multilateral-resistance-terms" class="section level3 hasAnchor" number="2.1.2">
+<h3><span class="header-section-number">2.1.2</span> OLS estimation ignoring multilateral resistance terms<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-ignoring-multilateral-resistance-terms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The general equation for this model is
+<span class="math display">\[
+\begin{align}
+\log X_{ij,t} =&amp; \:\beta_0 + \beta_1 DIST_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \beta_5 \log Y_{i,t} +\\
+\text{ }&amp; \:\beta_6 \log E_{j,t} + \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>Please see page 41 in <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> for full detail of each variable.</p>
+<p>The model for this case is straightforward, and in this case, we need to apply step 4 from the previous section to drop cases where the trade is zero.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb9-1" aria-hidden="true" tabindex="-1"></a>fit_ols <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb9-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb9-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e,</span>
+<span id="cb9-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb9-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ols)</span></code></pre></div>
+<pre><code>## OLS estimation, Dep. Var.: log_trade
+## Observations: 25,689 
+## Standard-errors: IID 
+##               Estimate Std. Error   t value   Pr(&gt;|t|)    
+## (Intercept) -11.283080   0.151732 -74.36173  &lt; 2.2e-16 ***
+## log_dist     -1.001607   0.014159 -70.74094  &lt; 2.2e-16 ***
+## cntg          0.573805   0.074427   7.70961 1.3076e-14 ***
+## lang          0.801548   0.033748  23.75115  &lt; 2.2e-16 ***
+## clny          0.734853   0.070387  10.44025  &lt; 2.2e-16 ***
+## log_y         1.190236   0.005402 220.32012  &lt; 2.2e-16 ***
+## log_e         0.907588   0.005577 162.72688  &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## RMSE: 1.74274   Adj. R2: 0.758469</code></pre>
+<p>The employed function, <code>feols()</code>, does not carry a copy of its training data by default besides providing faster fitting for models with fixed effects. This is not the case in base R, where <code>glm()</code> outputs include this data, increasing the model’s size, but this does not affect the model’s predictions and can be changed as the user needs it <span class="citation">(<a href="#ref-trimmingfat" role="doc-biblioref">Zumel 2014</a>)</span>.</p>
+<p>The model is almost ready. We only need to stick to the methodology from <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> and cluster the standard errors by country pair (see the note on page 42, it is imperative).</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb11-1" aria-hidden="true" tabindex="-1"></a>fit_ols <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb11-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb11-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e,</span>
+<span id="cb11-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb11-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> <span class="sc">~</span>pair_id</span>
+<span id="cb11-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ols)</span></code></pre></div>
+<pre><code>## OLS estimation, Dep. Var.: log_trade
+## Observations: 25,689 
+## Standard-errors: Clustered (pair_id) 
+##               Estimate Std. Error   t value   Pr(&gt;|t|)    
+## (Intercept) -11.283080   0.295827 -38.14076  &lt; 2.2e-16 ***
+## log_dist     -1.001607   0.027340 -36.63526  &lt; 2.2e-16 ***
+## cntg          0.573805   0.184710   3.10652 1.9158e-03 ** 
+## lang          0.801548   0.082102   9.76286  &lt; 2.2e-16 ***
+## clny          0.734853   0.144193   5.09632 3.7405e-07 ***
+## log_y         1.190236   0.009456 125.87160  &lt; 2.2e-16 ***
+## log_e         0.907588   0.009910  91.58459  &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## RMSE: 1.74274   Adj. R2: 0.758469</code></pre>
+<p>The <em>tradepolicy</em> package provides functions to provide more informative summaries. Please read the documentation of the package and look for the <code>tp_summary_app_1()</code> function, it summarises the model in the exact way as reported in the book by providing:</p>
+<ul>
+<li>Clustered standard errors.</li>
+<li>Number of observations.</li>
+<li><span class="math inline">\(R^2\)</span> (if applicable).</li>
+<li>Presence (or absence) of exporter and exporter-time fixed effects.</li>
+<li>RESET test p-value.</li>
+</ul>
+<p>These statistical results are returned as a list to keep it simple, which we can see for the model in the same format as reported in the book.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_1</span>(</span>
+<span id="cb13-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;log_trade ~ log_dist + cntg + lang + clny + log_y + log_e&quot;</span>,</span>
+<span id="cb13-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb13-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ols&quot;</span></span>
+<span id="cb13-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb13-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 7 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)  -11.3       0.296    -38.1    0    
+## 2 log_dist      -1.00      0.027    -36.6    0    
+## 3 cntg           0.574     0.185      3.11   0.002
+## 4 lang           0.802     0.082      9.76   0    
+## 5 clny           0.735     0.144      5.10   0    
+## 6 log_y          1.19      0.009    126.     0    
+## 7 log_e          0.908     0.01      91.6    0    
+## 
+## $nobs
+## [1] 25689
+## 
+## $rsquared
+##    r2 
+## 0.759 
+## 
+## $etfe
+## [1] FALSE
+## 
+## $itfe
+## [1] FALSE
+## 
+## $reset_pval
+## [1] 0</code></pre>
+<p>Please notice that the summary hides the exporter/importer fixed effects.</p>
+</div>
+<div id="ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes" class="section level3 hasAnchor" number="2.1.3">
+<h3><span class="header-section-number">2.1.3</span> OLS estimation controlling for multilateral resistance terms with remote indexes<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The remoteness model adds variables to the OLS model. The general equation for this model is
+<span class="math display">\[
+\begin{align}
+\log X_{ij,t} =&amp; \:\beta_0 + \beta_1 DIST_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \beta_5 \log Y_{i,t} +\\
+\text{ }&amp; \beta_6 \log E_{j,t} + \beta_7 \log(REM\_EXP_i,t) + \beta_8 \log(REM\_IMP_i,t) + \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>In the equation above <span class="math inline">\(REM\_EXP\)</span> and <span class="math inline">\(REM\_IMP\)</span> are defined as
+<span class="math display">\[
+\begin{align}
+\log(REM\_EXP_{i,t}) &amp;= \log \left( \sum_j \frac{DIST_{i,j}}{E_{j,t} / Y_t} \right) \text{ and }\\
+\log(REM\_IMP_{j,t}) &amp;= \log \left( \sum_i \frac{DIST_{i,j}}{Y_{i,t} / Y_t} \right).
+\end{align}
+\]</span></p>
+<p>Please see page 43 in <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> for full detail of each variable.</p>
+<p>Our approach follows box #1 on page 43 from <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. Fitting the regression is straightforward. It is just about adding more regressors to what we did in the last section, and we can create a list with a summary for the model.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_1</span>(</span>
+<span id="cb15-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +</span></span>
+<span id="cb15-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_remoteness_exp + log_remoteness_imp&quot;</span>,</span>
+<span id="cb15-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb15-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ols&quot;</span></span>
+<span id="cb15-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb15-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 9 × 5
+##   term               estimate std.error statistic p.value
+##   &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)         -35.2       1.99     -17.7    0    
+## 2 log_dist             -1.18      0.031    -37.9    0    
+## 3 cntg                  0.247     0.177      1.39   0.164
+## 4 lang                  0.739     0.078      9.43   0    
+## 5 clny                  0.842     0.15       5.61   0    
+## 6 log_y                 1.16      0.009    123.     0    
+## 7 log_e                 0.903     0.01      91.1    0    
+## 8 log_remoteness_exp    0.972     0.068     14.3    0    
+## 9 log_remoteness_imp    0.274     0.06       4.58   0    
+## 
+## $nobs
+## [1] 25689
+## 
+## $rsquared
+##    r2 
+## 0.765 
+## 
+## $etfe
+## [1] FALSE
+## 
+## $itfe
+## [1] FALSE
+## 
+## $reset_pval
+## [1] 0</code></pre>
+</div>
+<div id="ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" class="section level3 hasAnchor" number="2.1.4">
+<h3><span class="header-section-number">2.1.4</span> OLS estimation controlling for multilateral resistance terms with fixed effects<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The general equation for this model is
+<span class="math display">\[
+\begin{align}
+\log X_{ij,t} =&amp; \: \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\\
+\text{ }&amp; \:\beta_4 CLNY_{i,j} + \pi_{i,t} + \chi_{i,t} + \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>Where the added terms, concerning the OLS model, are <span class="math inline">\(\pi_{i,t}\)</span> and <span class="math inline">\(\chi_{i,t}\)</span> that account for exporter-time and importer-time fixed effects, respectively. See page 44 in <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> for full detail of each variable.</p>
+<p>We can quickly generate a list as we did with the previous models. The only difference to the previous models is that in this case that the variables to the right of the “|” operator are the fixed effects, which are treated differently by the <em>fixest</em> package, which is used internally by the <em>tradepolicy</em> package, for faster model fitting.</p>
+<p>Please notice that the summaries intentionally do not show fixed effects, because there are cases where we have thousands of fixed effects.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_1</span>(</span>
+<span id="cb17-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year&quot;</span>,</span>
+<span id="cb17-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb17-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ols&quot;</span></span>
+<span id="cb17-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 4 × 5
+##   term     estimate std.error statistic p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 log_dist   -1.22      0.038    -31.8    0    
+## 2 cntg        0.223     0.203      1.1    0.271
+## 3 lang        0.661     0.082      8.05   0    
+## 4 clny        0.67      0.149      4.49   0    
+## 
+## $nobs
+## [1] 25689
+## 
+## $rsquared
+##    r2 
+## 0.843 
+## 
+## $etfe
+## [1] TRUE
+## 
+## $itfe
+## [1] TRUE
+## 
+## $reset_pval
+## [1] 0</code></pre>
+<p>There is another difference when we compare <code>feols()</code> or <code>fepois()</code> against <code>glm()</code> in the presence of fixed effects, which we can explain with an example.</p>
+<p>In the data used for the previous summary, we have <span class="math inline">\(T\)</span> years (1986, 1990, 1994, 1998, 2002 and 2006). We could be interested in filtering for a single exporter and a single importer to fit the fixed effects model
+<span class="math display">\[
+\log X_{t} = \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \sum_{u} \beta_u FE_u + \varepsilon_{ij,t},
+\]</span>
+where
+<span class="math display">\[
+\begin{align*}
+&amp;u \in \{1986, 1990, 1994, 1998, 2002, 2006\} \text{ and}\cr
+&amp;FE_u = \begin{cases}
+1 &amp; \text {if } t = u \cr
+0 &amp; \text{otherwise}.
+\end{cases}
+\end{align*}
+\]</span></p>
+<p>When we use <code>feols()</code>, or any of the functions in the <em>fixest</em> package, a formula of the form <span class="math inline">\(z \sim x_1 + x_2 \mid y\)</span> will estimate the model described in the previous equations.</p>
+<p>If we do the same in base R, with <code>glm()</code>, the equivalent formula would be of the form <span class="math inline">\(z \sim 0 + x_1 + x_2 + y\)</span>, otherwise base R estimates a model of the form <span class="math inline">\(y_t = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \sum_u y_{u}\)</span>, which means that not including a zero in the formula estimates an additional coefficient in the estimation which corresponds to a global intercept or the “grand mean”.</p>
+<p>On the <span class="math inline">\(\beta_0\)</span> constant, it is tough to interpret with many-way fixed effects, and it is advised against reporting it.</p>
+</div>
+<div id="ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" class="section level3 hasAnchor" number="2.1.5">
+<h3><span class="header-section-number">2.1.5</span> PPML estimation controlling for multilateral resistance terms with fixed effects<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The general equation for this model is
+<span class="math display">\[
+\begin{align}
+X_{ij,t} =&amp; \:\exp\left[\beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} +\right.\\
+\text{ }&amp; \:\left.\beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \pi_{i,t} + \chi_{i,t}\right] \times \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>The reason to compute this model, despite the lower speed compared to OLS, is that PPML is the only estimator perfectly consistent with the theoretical gravity model. By estimating with PPML, the fixed effects correspond precisely to the corresponding theoretical terms.</p>
+<p>The data for this model is the same as for the fixed effects model, and one option in R is to use the <code>fepois()</code> function.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-1" aria-hidden="true" tabindex="-1"></a>fit_ppml <span class="ot">&lt;-</span> <span class="fu">fepois</span>(trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year,</span>
+<span id="cb19-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1,</span>
+<span id="cb19-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> <span class="sc">~</span>pair_id</span>
+<span id="cb19-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>Exactly as it was mentioned for <code>feols()</code>, <code>fepois()</code> shares the same differences regarding <code>glm()</code> objects.</p>
+<p>If the reader decides to run this model and print the summary, they will notice that it does not report an <span class="math inline">\(R^2\)</span> and displays an extensive fixed effect list. For PPML models, the <span class="math inline">\(R^2\)</span> needs to be computed afterwards as Kendall’s correlation (or rank correlation) between the observed and predicted values. Please see <span class="citation">Silva and Tenreyro (<a href="#ref-silva2006log" role="doc-biblioref">2006</a>)</span> for the details and the RESET test for PPML (GLM) models.</p>
+<p>Beware that software such as Stata requires additional libraries such as <em>ppmlhdfe</em> to report a correct <span class="math inline">\(R^2\)</span> for the PPML model. What Stata shows is a reported pseudo-<span class="math inline">\(R^2\)</span>. To construct a proper <span class="math inline">\(R^2\)</span> in R, <code>tp_summary_app_1()</code> takes the rank correlation between actual and predicted trade flows.</p>
+<p>We can obtain a detailed list as in the previous examples.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_1</span>(</span>
+<span id="cb20-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ log_dist + cntg + lang + clny | exp_year + imp_year&quot;</span>,</span>
+<span id="cb20-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1,</span>
+<span id="cb20-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb20-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb20-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 4 × 5
+##   term     estimate std.error statistic p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 log_dist   -0.841     0.032    -26.2    0    
+## 2 cntg        0.437     0.084      5.18   0    
+## 3 lang        0.247     0.078      3.18   0.001
+## 4 clny       -0.222     0.118     -1.89   0.059
+## 
+## $nobs
+## [1] 28152
+## 
+## $rsquared
+## [1] 0.586
+## 
+## $etfe
+## [1] TRUE
+## 
+## $itfe
+## [1] TRUE
+## 
+## $reset_pval
+## [1] 0.647</code></pre>
+</div>
+</div>
+<div id="the-distance-puzzle-resolved" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> The “distance puzzle” resolved<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#the-distance-puzzle-resolved" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="preparing-the-data-1" class="section level3 hasAnchor" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> Preparing the data<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Please see the note from page 47 in <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. We need to proceed with similar steps as in the previous section.</p>
+<p>The distance puzzle proposes the gravity specification
+<span class="math display">\[
+\begin{align}
+X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j}\right]\times\\
+\text{ }&amp; \:\exp\left[\beta_4 CLNY_{i,j} + \beta_5 \log(DIST\_INTRA_{i,i})\right] \times \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>The difference concerning the last section is that now we need to separate the distance variable into multiple columns that account for discrete-time effects. The <span class="math inline">\(\beta_T\)</span> terms of the equation reflect this. Perhaps the easiest option is to transform the year into a text column and then use the <code>pivot_wider()</code> function.</p>
+<p>We need to remove cases where the exporter is the same as the importer and cases where trade is zero for the OLS model. For the PPML models, we need to mark rows where the exporter and the importer are the same, and we need to create the same country column, which is also required to transform the distance variables as shown in box #1 in page 48 from <span class="citation">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>.</p>
+<p>In order to avoid creating two very similar datasets, we shall create one dataset to cover both OLS and PPML.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-1" aria-hidden="true" tabindex="-1"></a>ch1_application2 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this filter covers both OLS and PPML</span></span>
+<span id="cb22-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb22-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># variables for both OLS and PPML</span></span>
+<span id="cb22-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
+<span id="cb22-8"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year),</span>
+<span id="cb22-9"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">paste0</span>(<span class="st">&quot;log_dist_&quot;</span>, year),</span>
+<span id="cb22-10"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
+<span id="cb22-11"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist),</span>
+<span id="cb22-12"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">smctry =</span> <span class="fu">ifelse</span>(importer <span class="sc">!=</span> exporter, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb22-13"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># PPML specific variables</span></span>
+<span id="cb22-15"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_intra =</span> log_dist <span class="sc">*</span> smctry,</span>
+<span id="cb22-16"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">intra_pair =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, exporter, <span class="st">&quot;inter&quot;</span>)</span>
+<span id="cb22-17"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb22-18"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> log_dist, <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-19"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(log_dist_1986<span class="sc">:</span>log_dist_2006, <span class="cf">function</span>(x) x <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry)))</span></code></pre></div>
+<p>The <code>across()</code> function is a shortcut to avoid repetition, as in the following example, we show it for reference without computation.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-1" aria-hidden="true" tabindex="-1"></a>ch1_application2 <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_1986 =</span>  log_dist_1986 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry),</span>
+<span id="cb23-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_1990 =</span>  log_dist_1990 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry),</span>
+<span id="cb23-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># repeat log_dist_T many_times for T = 1994, 1998, ...</span></span>
+<span id="cb23-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-8"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_2006 =</span>  log_dist_2006 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry)</span>
+<span id="cb23-9"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb23-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Note that the OLS model shall require filtering when we specify the model because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same. Because the solution for the “distance puzzle” implies different transformations and filters for the OLS and PPML cases, one possibility is to filter in the same summary functions.</p>
+</div>
+<div id="ols-solution-for-the-distance-puzzle" class="section level3 hasAnchor" number="2.2.2">
+<h3><span class="header-section-number">2.2.2</span> OLS solution for the “distance puzzle”<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-solution-for-the-distance-puzzle" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The gravity specification, which includes <span class="math inline">\(\pi_{i,t} + \chi_{i,t}\)</span>, means that we need to do something very similar to what we did in the last section.</p>
+<p>With the data from above, the model specification is straightforward.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb24-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;log_trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +</span></span>
+<span id="cb24-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny | </span></span>
+<span id="cb24-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="st">    exp_year + imp_year&quot;</span>,</span>
+<span id="cb24-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application2, importer <span class="sc">!=</span> exporter, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb24-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ols&quot;</span></span>
+<span id="cb24-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb24-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 9 × 5
+##   term          estimate std.error statistic p.value
+##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 log_dist_1986   -1.17      0.044    -26.8    0    
+## 2 log_dist_1990   -1.16      0.042    -27.3    0    
+## 3 log_dist_1994   -1.21      0.046    -26.5    0    
+## 4 log_dist_1998   -1.25      0.043    -29.2    0    
+## 5 log_dist_2002   -1.24      0.044    -28.1    0    
+## 6 log_dist_2006   -1.26      0.044    -28.9    0    
+## 7 cntg             0.223     0.203      1.1    0.271
+## 8 lang             0.661     0.082      8.06   0    
+## 9 clny             0.67      0.149      4.49   0    
+## 
+## $nobs
+## [1] 25689
+## 
+## $pct_chg_log_dist
+## [1] 7.95
+## 
+## $pcld_std_err
+## [1] 3.698
+## 
+## $pcld_std_err_pval
+## [1] 0.032
+## 
+## $intr
+## [1] FALSE
+## 
+## $csfe
+## [1] FALSE</code></pre>
+</div>
+<div id="ppml-solution-for-the-distance-puzzle" class="section level3 hasAnchor" number="2.2.3">
+<h3><span class="header-section-number">2.2.3</span> PPML solution for the “distance puzzle”<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-solution-for-the-distance-puzzle" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This model is very similar to the one specified in the PPML section from the last section. We can directly fit the model.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb26-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 + </span></span>
+<span id="cb26-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny | </span></span>
+<span id="cb26-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="st">    exp_year + imp_year&quot;</span>,</span>
+<span id="cb26-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application2, importer <span class="sc">!=</span> exporter),</span>
+<span id="cb26-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb26-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb26-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 9 × 5
+##   term          estimate std.error statistic p.value
+##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 log_dist_1986   -0.859     0.038    -22.8    0    
+## 2 log_dist_1990   -0.834     0.038    -21.8    0    
+## 3 log_dist_1994   -0.835     0.036    -23.4    0    
+## 4 log_dist_1998   -0.847     0.036    -23.6    0    
+## 5 log_dist_2002   -0.848     0.032    -26.4    0    
+## 6 log_dist_2006   -0.836     0.032    -26.3    0    
+## 7 cntg             0.437     0.084      5.18   0    
+## 8 lang             0.248     0.078      3.18   0.001
+## 9 clny            -0.222     0.118     -1.88   0.06 
+## 
+## $nobs
+## [1] 28152
+## 
+## $pct_chg_log_dist
+## [1] -2.75
+## 
+## $pcld_std_err
+## [1] 3.004
+## 
+## $pcld_std_err_pval
+## [1] 0.36
+## 
+## $intr
+## [1] FALSE
+## 
+## $csfe
+## [1] FALSE</code></pre>
+</div>
+<div id="internal-distance-solution-for-the-distance-puzzle" class="section level3 hasAnchor" number="2.2.4">
+<h3><span class="header-section-number">2.2.4</span> Internal distance solution for the “distance puzzle”<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#internal-distance-solution-for-the-distance-puzzle" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This model requires us to add the internal distance variable to the PPML model and not filter the rows where the exporter and the importer are the same.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb28-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 + </span></span>
+<span id="cb28-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny + </span></span>
+<span id="cb28-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_intra | exp_year + imp_year&quot;</span>,</span>
+<span id="cb28-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application2,</span>
+<span id="cb28-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb28-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb28-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 10 × 5
+##    term           estimate std.error statistic p.value
+##    &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+##  1 log_dist_1986    -0.98      0.073   -13.4     0    
+##  2 log_dist_1990    -0.94      0.074   -12.7     0    
+##  3 log_dist_1994    -0.915     0.073   -12.5     0    
+##  4 log_dist_1998    -0.887     0.072   -12.3     0    
+##  5 log_dist_2002    -0.884     0.072   -12.3     0    
+##  6 log_dist_2006    -0.872     0.072   -12.1     0    
+##  7 cntg              0.371     0.142     2.62    0.009
+##  8 lang              0.337     0.171     1.98    0.048
+##  9 clny              0.019     0.159     0.121   0.904
+## 10 log_dist_intra   -0.488     0.102    -4.78    0    
+## 
+## $nobs
+## [1] 28566
+## 
+## $pct_chg_log_dist
+## [1] -10.965
+## 
+## $pcld_std_err
+## [1] 1.058
+## 
+## $pcld_std_err_pval
+## [1] 0
+## 
+## $intr
+## [1] TRUE
+## 
+## $csfe
+## [1] FALSE</code></pre>
+</div>
+<div id="internal-distance-and-home-bias-solution-for-the-distance-puzzle" class="section level3 hasAnchor" number="2.2.5">
+<h3><span class="header-section-number">2.2.5</span> Internal distance and home bias solution for the “distance puzzle”<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#internal-distance-and-home-bias-solution-for-the-distance-puzzle" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This model requires us to add the same country variable to the internal distance model and repeat the rest of the steps from the last section.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb30-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 + </span></span>
+<span id="cb30-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny + </span></span>
+<span id="cb30-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_intra + smctry | exp_year + imp_year&quot;</span>,</span>
+<span id="cb30-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application2,</span>
+<span id="cb30-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb30-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb30-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 11 × 5
+##    term           estimate std.error statistic p.value
+##    &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+##  1 log_dist_1986    -0.857     0.064   -13.5     0    
+##  2 log_dist_1990    -0.819     0.064   -12.7     0    
+##  3 log_dist_1994    -0.796     0.064   -12.3     0    
+##  4 log_dist_1998    -0.77      0.064   -12.0     0    
+##  5 log_dist_2002    -0.767     0.064   -12.1     0    
+##  6 log_dist_2006    -0.754     0.063   -12.0     0    
+##  7 cntg              0.574     0.157     3.64    0    
+##  8 lang              0.352     0.139     2.53    0.011
+##  9 clny              0.027     0.127     0.212   0.832
+## 10 log_dist_intra   -0.602     0.111    -5.44    0    
+## 11 smctry            1.69      0.582     2.90    0.004
+## 
+## $nobs
+## [1] 28566
+## 
+## $pct_chg_log_dist
+## [1] -11.969
+## 
+## $pcld_std_err
+## [1] 1.173
+## 
+## $pcld_std_err_pval
+## [1] 0
+## 
+## $intr
+## [1] TRUE
+## 
+## $csfe
+## [1] FALSE</code></pre>
+</div>
+<div id="fixed-effects-solution-for-the-distance-puzzle" class="section level3 hasAnchor" number="2.2.6">
+<h3><span class="header-section-number">2.2.6</span> Fixed effects solution for the “distance puzzle”<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#fixed-effects-solution-for-the-distance-puzzle" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This model requires us to remove the internal distance and same country variables from the last model and include the internal pair variable to account for the intra-national fixed effects.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb32-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 + </span></span>
+<span id="cb32-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny + </span></span>
+<span id="cb32-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="st">    intra_pair | exp_year + imp_year&quot;</span>,</span>
+<span id="cb32-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application2,</span>
+<span id="cb32-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb32-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb32-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 78 × 5
+##    term          estimate std.error statistic p.value
+##    &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+##  1 log_dist_1986   -0.91      0.033   -27.7     0    
+##  2 log_dist_1990   -0.879     0.033   -27.0     0    
+##  3 log_dist_1994   -0.86      0.032   -26.6     0    
+##  4 log_dist_1998   -0.833     0.032   -25.9     0    
+##  5 log_dist_2002   -0.829     0.033   -25.5     0    
+##  6 log_dist_2006   -0.811     0.033   -24.9     0    
+##  7 cntg             0.442     0.083     5.33    0    
+##  8 lang             0.241     0.077     3.11    0.002
+##  9 clny            -0.22      0.118    -1.86    0.063
+## 10 intra_pairARG    0.384     0.577     0.666   0.505
+## # … with 68 more rows
+## # ℹ Use `print(n = ...)` to see more rows
+## 
+## $nobs
+## [1] 28566
+## 
+## $pct_chg_log_dist
+## [1] -10.931
+## 
+## $pcld_std_err
+## [1] 0.769
+## 
+## $pcld_std_err_pval
+## [1] 0
+## 
+## $intr
+## [1] TRUE
+## 
+## $csfe
+## [1] TRUE</code></pre>
+</div>
+</div>
+<div id="regional-trade-agreements-effects" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Regional trade agreements effects<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#regional-trade-agreements-effects" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="preparing-the-data-2" class="section level3 hasAnchor" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> Preparing the data<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#preparing-the-data-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This model specification includes gravity covariates, including importer-time and exporter-time fixed effects, as in the equation</p>
+<p><span class="math display">\[
+\begin{align}
+X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\right.\\
+\text{ }&amp; \:\left.\beta_4 CLNY_{i,j} + \beta_5 RTA_{ij,t}\right] \times \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>In comparison to the previous examples, we need to create additional variables to include fixed effects that account for the observations where the exporter and the importer are the same. These variables are internal border, internal dyad and internal borders for different years.</p>
+<p>The direct way of obtaining the desired variables is similar to what we did in the previous sections.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-1" aria-hidden="true" tabindex="-1"></a>ch1_application3 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">%&gt;%</span></span>
+<span id="cb34-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb34-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb34-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
+<span id="cb34-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year),</span>
+<span id="cb34-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">paste0</span>(<span class="st">&quot;intl_border_&quot;</span>, year),</span>
+<span id="cb34-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
+<span id="cb34-8"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist),</span>
+<span id="cb34-9"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">intl_brdr =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, pair_id, <span class="st">&quot;inter&quot;</span>),</span>
+<span id="cb34-10"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">intl_brdr_2 =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb34-11"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">pair_id_2 =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, <span class="st">&quot;0-intra&quot;</span>, pair_id)</span>
+<span id="cb34-12"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb34-13"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> intl_brdr_2, <span class="at">values_fill =</span> <span class="dv">0</span>)</span></code></pre></div>
+<p>Notice that we used “0-intra” and not just “intra” because the rest of the observations in the internal dyads are numbers 1, …, N, and R internals shall consider “0-intra” as the reference factor for being the first item when it orders the unique observations alphabetically. Also, observe the order of the resulting table, the pivoting of the table will put “0-intra” as the first row for the first exporter-importer dyad. This makes the difference between the expected or other behaviours in the next chapter.</p>
+<p>In addition, we need to create the variable containing the trade sum to filter the cases where the sum by dyad is zero.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb35-1" aria-hidden="true" tabindex="-1"></a>ch1_application3 <span class="ot">&lt;-</span> ch1_application3 <span class="sc">%&gt;%</span></span>
+<span id="cb35-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pair_id) <span class="sc">%&gt;%</span></span>
+<span id="cb35-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sum_trade =</span> <span class="fu">sum</span>(trade)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
+</div>
+<div id="ols-standard-rta-estimates-with-international-trade-only" class="section level3 hasAnchor" number="2.3.2">
+<h3><span class="header-section-number">2.3.2</span> OLS standard RTA estimates with international trade only<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ols-standard-rta-estimates-with-international-trade-only" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The gravity specification, which includes <span class="math inline">\(\pi_{i,t} + \chi_{i,t}\)</span>, means that we need to do something very similar to what we did in the last section.</p>
+<p>With the data from above, the model specification is straightforward.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb36-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;log_trade ~ log_dist + cntg + lang + clny + rta | exp_year + </span></span>
+<span id="cb36-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="st">    imp_year&quot;</span>,</span>
+<span id="cb36-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, trade <span class="sc">&gt;</span> <span class="dv">0</span>, importer <span class="sc">!=</span> exporter),</span>
+<span id="cb36-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ols&quot;</span></span>
+<span id="cb36-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb36-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 5 × 5
+##   term     estimate std.error statistic p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 log_dist   -1.22      0.039   -31.2     0    
+## 2 cntg        0.223     0.203     1.10    0.272
+## 3 lang        0.661     0.082     8.04    0    
+## 4 clny        0.67      0.149     4.49    0    
+## 5 rta        -0.004     0.054    -0.081   0.935
+## 
+## $nobs
+## [1] 25689
+## 
+## $total_rta_effect
+## [1] -0.004
+## 
+## $trta_std_err
+## [1] 0.053
+## 
+## $trta_std_err_pval
+## [1] 0.934
+## 
+## $intr
+## [1] FALSE</code></pre>
+</div>
+<div id="ppml-standard-rta-estimates-with-international-trade-only" class="section level3 hasAnchor" number="2.3.3">
+<h3><span class="header-section-number">2.3.3</span> PPML standard RTA estimates with international trade only<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#ppml-standard-rta-estimates-with-international-trade-only" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The model specification is very similar to OLS, and we only need to change the method specified in the function.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb38-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year&quot;</span>,</span>
+<span id="cb38-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, importer <span class="sc">!=</span> exporter),</span>
+<span id="cb38-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb38-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb38-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 5 × 5
+##   term     estimate std.error statistic p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 log_dist   -0.822     0.031    -26.1    0    
+## 2 cntg        0.416     0.084      4.94   0    
+## 3 lang        0.25      0.078      3.21   0.001
+## 4 clny       -0.205     0.116     -1.77   0.077
+## 5 rta         0.191     0.067      2.86   0.004
+## 
+## $nobs
+## [1] 28152
+## 
+## $total_rta_effect
+## [1] 0.191
+## 
+## $trta_std_err
+## [1] 0.066
+## 
+## $trta_std_err_pval
+## [1] 0.004
+## 
+## $intr
+## [1] FALSE</code></pre>
+</div>
+<div id="addressing-potential-domestic-trade-diversion" class="section level3 hasAnchor" number="2.3.4">
+<h3><span class="header-section-number">2.3.4</span> Addressing potential domestic trade diversion<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-domestic-trade-diversion" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The model specification is quite the same as PPML. We only need to add the international border variable but use the entire dataset instead of removing rows where the importer and the exporter are the same.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb40-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year +</span></span>
+<span id="cb40-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="st">    intl_brdr&quot;</span>,</span>
+<span id="cb40-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application3,</span>
+<span id="cb40-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb40-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb40-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 5 × 5
+##   term     estimate std.error statistic p.value
+##   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 log_dist   -0.8       0.031    -26.0    0    
+## 2 cntg        0.393     0.08       4.91   0    
+## 3 lang        0.244     0.078      3.11   0.002
+## 4 clny       -0.182     0.115     -1.58   0.114
+## 5 rta         0.409     0.07       5.84   0    
+## 
+## $nobs
+## [1] 28566
+## 
+## $total_rta_effect
+## [1] 0.409
+## 
+## $trta_std_err
+## [1] 0.069
+## 
+## $trta_std_err_pval
+## [1] 0
+## 
+## $intr
+## [1] FALSE</code></pre>
+</div>
+<div id="addressing-potential-endogeneity-of-rtas" class="section level3 hasAnchor" number="2.3.5">
+<h3><span class="header-section-number">2.3.5</span> Addressing potential endogeneity of RTAs<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-endogeneity-of-rtas" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The model specification includes the RTA variable and the exporter-time, importer-time and internal dyad fixed effects to account for domestic trade.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb42-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ rta | exp_year + imp_year + pair_id_2&quot;</span>,</span>
+<span id="cb42-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb42-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb42-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb42-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 1 × 5
+##   term  estimate std.error statistic p.value
+##   &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 rta      0.557     0.108      5.14       0
+## 
+## $nobs
+## [1] 28482
+## 
+## $total_rta_effect
+## [1] 0.557
+## 
+## $trta_std_err
+## [1] 0.102
+## 
+## $trta_std_err_pval
+## [1] 0
+## 
+## $intr
+## [1] FALSE</code></pre>
+</div>
+<div id="testing-for-potential-reverse-causality-between-trade-and-rtas" class="section level3 hasAnchor" number="2.3.6">
+<h3><span class="header-section-number">2.3.6</span> Testing for potential “reverse causality” between trade and RTAs<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#testing-for-potential-reverse-causality-between-trade-and-rtas" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We need to modify the previous model to include the forward lagged RTA variable (by four years) and consider where the trade sum is larger than zero.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb44-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ rta + rta_lead4 | exp_year + imp_year + pair_id_2&quot;</span>,</span>
+<span id="cb44-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb44-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb44-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb44-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 2 × 5
+##   term      estimate std.error statistic p.value
+##   &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 rta          0.52      0.091     5.71    0    
+## 2 rta_lead4    0.077     0.098     0.792   0.428
+## 
+## $nobs
+## [1] 28482
+## 
+## $total_rta_effect
+## [1] 0.597
+## 
+## $trta_std_err
+## [1] 0.138
+## 
+## $trta_std_err_pval
+## [1] 0
+## 
+## $intr
+## [1] FALSE</code></pre>
+</div>
+<div id="addressing-potential-non-linear-and-phasing-in-effects-of-rtas" class="section level3 hasAnchor" number="2.3.7">
+<h3><span class="header-section-number">2.3.7</span> Addressing potential non-linear and phasing-in effects of RTAs<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-potential-non-linear-and-phasing-in-effects-of-rtas" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Instead of future-lagged RTA variables, as in the previous model, we modify the previous model and include the RTA backwards lagged variables instead.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb46-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 | exp_year + </span></span>
+<span id="cb46-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="st">    imp_year + pair_id_2&quot;</span>,</span>
+<span id="cb46-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb46-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb46-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb46-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 4 × 5
+##   term      estimate std.error statistic p.value
+##   &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 rta          0.291     0.095      3.08   0.002
+## 2 rta_lag4     0.414     0.071      5.80   0    
+## 3 rta_lag8     0.169     0.046      3.69   0    
+## 4 rta_lag12    0.119     0.032      3.73   0    
+## 
+## $nobs
+## [1] 28482
+## 
+## $total_rta_effect
+## [1] 0.993
+## 
+## $trta_std_err
+## [1] 0.094
+## 
+## $trta_std_err_pval
+## [1] 0
+## 
+## $intr
+## [1] FALSE</code></pre>
+</div>
+<div id="addressing-globalization-effects" class="section level3 hasAnchor" number="2.3.8">
+<h3><span class="header-section-number">2.3.8</span> Addressing globalization effects<a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#addressing-globalization-effects" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In addition to the previous model, we include the international borders on different years besides the lagged RTAs.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb48-2"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">&quot;trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 + intl_border_1986 + </span></span>
+<span id="cb48-3"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="st">    intl_border_1990 + intl_border_1994 + intl_border_1998 + intl_border_2002 |</span></span>
+<span id="cb48-4"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="st">    exp_year + imp_year + pair_id_2&quot;</span>,</span>
+<span id="cb48-5"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb48-6"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;ppml&quot;</span></span>
+<span id="cb48-7"><a href="partial-equilibrium-trade-policy-analysis-with-structural-gravity.html#cb48-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## $tidy_coefficients
+## # A tibble: 9 × 5
+##   term             estimate std.error statistic p.value
+##   &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 rta                 0.116     0.092     1.26    0.209
+## 2 rta_lag4            0.288     0.065     4.40    0    
+## 3 rta_lag8            0.069     0.051     1.36    0.175
+## 4 rta_lag12           0.002     0.031     0.076   0.939
+## 5 intl_border_1986   -0.706     0.051   -13.9     0    
+## 6 intl_border_1990   -0.48      0.046   -10.5     0    
+## 7 intl_border_1994   -0.367     0.035   -10.3     0    
+## 8 intl_border_1998   -0.158     0.025    -6.40    0    
+## 9 intl_border_2002   -0.141     0.018    -7.87    0    
+## 
+## $nobs
+## [1] 28482
+## 
+## $total_rta_effect
+## [1] 0.475
+## 
+## $trta_std_err
+## [1] 0.109
+## 
+## $trta_std_err_pval
+## [1] 0
+## 
+## $intr
+## [1] FALSE</code></pre>
+
+</div>
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-silva2006log" class="csl-entry">
+Silva, JMC Santos, and Silvana Tenreyro. 2006. <span>“The Log of Gravity.”</span> <em>The Review of Economics and Statistics</em> 88 (4): 641–58.
+</div>
+<div id="ref-wickham2016r" class="csl-entry">
+Wickham, Hadley, and Garrett Grolemund. 2016. <em>R for Data Science: Import, Tidy, Transform, Visualize, and Model Data</em>. " O’Reilly Media, Inc.".
+</div>
+<div id="ref-yotov2016advanced" class="csl-entry">
+Yotov, Yoto V, Roberta Piermartini, José-Antonio Monteiro, and Mario Larch. 2016. <em>An Advanced Guide to Trade Policy Analysis: The Structural Gravity Model</em>. World Trade Organization Geneva.
+</div>
+<div id="ref-trimmingfat" class="csl-entry">
+Zumel, Nina. 2014. <span>“Trimming the Fat from Glm() Models in r.”</span> <a href="https://win-vector.com/2014/05/30/trimming-the-fat-from-glm-models-in-r/" class="uri">https://win-vector.com/2014/05/30/trimming-the-fat-from-glm-models-in-r/</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="general-equilibrium-trade-policy-analysis-with-structural-gravity.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

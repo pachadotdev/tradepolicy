@@ -7,6 +7,5 @@ _bookdown_files
 all-models-and-data/*.RData
 dev
 data-parquet
-docs
 test-bank
 test-bank.zip
