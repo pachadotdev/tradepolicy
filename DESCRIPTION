@@ -1,6 +1,6 @@
 Package: tradepolicy
 Title: Replication of 'An Advanced Guide To Trade Policy Analysis'
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: c( 
         person(given = "Mauricio",
                family = "Vargas",
@@ -28,10 +28,9 @@ BugReports: https://github.com/pachadotdev/tradepolicy/issues/
 License: CC BY 4.0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Imports:
     magrittr,
-    tibble,
     ggplot2,
     dplyr,
     tidyr,

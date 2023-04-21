@@ -8,6 +8,17 @@ Unlike the previous chapter, we shall proceed by alternating both data transform
 
 To do what is shown in box #1 from page 104 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU" so that the software sets it as the reference factor (i.e., "0-DEU" will be listed before any text string starting with a letter). The book uses "ZZZ," but in R, "ZZZ" will not be treated as the reference factor, for which case we could have used "AAA." It is important to mention that box #1 does not show a previous step to filter observations for 2006, which is mentioned on page 103.
 
+We start by defining some parameters to simplify the code. The value for the elasticity of substitution, $\sigma = 7$, used to set the convergence criteria is taken from the literature. There is an explanation in the original Stata code.
+
+```{r ch2_app1_params}
+ref_country <- "DEU"
+ref_country0 <- paste0("0-", ref_country)
+sigma <- 7
+max_dif <- 1
+sd_dif <- 1
+change_price_i_old <- 0
+```
+
 It is imperative to arrange the table by importers. Otherwise, there is a difference in the estimated fixed effects that changes the factory prices in the last figure from this section, and here the aim is to fully replicate the two figures from this section in the book. We mentioned this in the RTA effects section from the previous chapter.
 
 ```{r ch2_app1_data_1}
@@ -17,22 +28,22 @@ ch2_application1 <- agtpa_applications %>%
   mutate(
     log_dist = log(dist),
     intl = ifelse(exporter != importer, 1, 0),
-    exporter = ifelse(exporter == "DEU", "0-DEU", exporter),
-    importer = ifelse(importer == "DEU", "0-DEU", importer)
+    exporter = ifelse(exporter == ref_country, ref_country0, exporter),
+    importer = ifelse(importer == ref_country, ref_country0, importer)
   ) %>%
   arrange(importer) %>% 
 
   # Create Yit
   group_by(exporter) %>%
-  mutate(y = sum(trade)) %>%
+  mutate(y = sum(trade, na.rm = T)) %>%
 
   # Create Eit
   group_by(importer) %>%
-  mutate(e = sum(trade)) %>%
+  mutate(e = sum(trade, na.rm = T)) %>%
 
   # Create Er
   ungroup() %>%
-  mutate(e_r = max(ifelse(importer == "0-DEU", e, NA), na.rm = T))
+  mutate(e_r = max(ifelse(importer == ref_country0, e, NA), na.rm = T))
 ```
 
 ### Step I: Solve the baseline model
@@ -86,10 +97,9 @@ To complete this estimation stage, we need to create a column with the estimated
 
 ```{r ch2_app1_baseline_5}
 ch2_application1 <- ch2_application1 %>%
-  # mutate(tradehat_bln = predict(fit_baseline_app1, ch2_application1, "response")) %>%
   mutate(tradehat_bln = predict(fit_baseline_app1, ch2_application1)) %>%
   group_by(exporter) %>%
-  mutate(xi_bln = sum(tradehat_bln * (exporter != importer))) %>%
+  mutate(xi_bln = sum(tradehat_bln * (exporter != importer), na.rm = T)) %>%
   ungroup()
 ```
 
@@ -165,27 +175,24 @@ Box #2 also shows how to compute trade's conditional general equilibrium effects
 
 ```{r ch2_app1_counterfactual_6}
 ch2_application1 <- ch2_application1 %>%
-  # mutate(tradehat_cfl = predict(fit_counterfactual_app1, ch2_application1, "response")) %>%
   mutate(tradehat_cfl = predict(fit_counterfactual_app1, ch2_application1)) %>%
   group_by(exporter) %>%
-  mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer))) %>%
+  mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer), na.rm = T)) %>%
   ungroup()
 ```
 
 Box #1 from page 107 in @yotov2016advanced can be simplified with R code. To construct the iterative procedure to converge to full endowment general equilibrium effects, we start by creating the required columns and parameters so that we will deviate from the original approach.
 
-We start computing the change in bilateral trade costs (changes in $t_{ij}$) and trade deficit or surplus ($phi$). The value for the elasticity of substitution, $\sigma = 7$, used to set the convergence criteria is taken from the literature. There is an explanation in the original Stata code.
+We start computing the change in bilateral trade costs (changes in $t_{ij}$) and trade deficit or surplus ($phi$).
 
 ```{r ch2_app1_counterfactual_7}
-sigma <- 7
-
 ch2_application1 <- ch2_application1 %>%
   mutate(
     change_tij = tij_cfl / tij_bln,
     phi = ifelse(importer == exporter, e / y, 0)
   ) %>%
   group_by(exporter) %>%
-  mutate(phi = max(phi)) %>%
+  mutate(phi = max(phi, na.rm = T)) %>%
   ungroup()
 ```
 
@@ -194,13 +201,14 @@ We compute the change in prices for exporters (changes in $p_i$) and importers (
 ```{r ch2_app1_counterfactual_8}
 ch2_application1 <- ch2_application1 %>%
   group_by(exporter) %>%
-  mutate(change_p_i = ((exp(fe_exporter_cfl) / e_r) / (exp(fe_exporter_bln) / e_r))^(1 /(1 - sigma))) %>%
+  mutate(change_p_i = ((exp(fe_exporter_cfl) / e_r) / 
+                      (exp(fe_exporter_bln) / e_r))^(1 /(1 - sigma))) %>%
   ungroup() %>%
 
   group_by(importer) %>%
   mutate(
     change_p_j = ifelse(importer == exporter, change_p_i, 0),
-    change_p_j = max(change_p_j)
+    change_p_j = max(change_p_j, na.rm = T)
   ) %>%
   ungroup()
 ```
@@ -233,15 +241,11 @@ ch2_application1 <- ch2_application1 %>%
 We run the loop, which cannot be divided into smaller pieces because the step $N$ depends on the step $N-1$. As in the previous application, the idea is for the stopping criteria in this iteration is that the model converges when prices stop changing.
 
 ```{r ch2_app1_counterfactual_11}
-# set parameters
-max_dif <- 1
-sd_dif <- 1
-change_price_i_old <- 0
-
 i <- 1
 while(sd_dif > 1e-5 | max_dif > 1e-5) {
   ch2_application1 <- ch2_application1 %>%
-    mutate(trade_1 = tradehat_0 * change_p_i_0 * change_p_j_0 / (change_omr_full_0 * change_imr_full_0))
+    mutate(trade_1 = tradehat_0 * change_p_i_0 * change_p_j_0 / 
+                     (change_omr_full_0 * change_imr_full_0))
 
   # repeat the counterfactual model
   fit_counterfactual_app1_2 <- fepois(
@@ -261,17 +265,17 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
   ch2_application1 <- ch2_application1 %>%
     mutate(tradehat_1 = predict(fit_counterfactual_app1_2, ch2_application1)) %>%
     group_by(exporter) %>%
-    mutate(y_cfl_1 = sum(tradehat_1)) %>%
+    mutate(y_cfl_1 = sum(tradehat_1, na.rm = T)) %>%
     ungroup() %>%
 
     mutate(e_cfl_1 = ifelse(importer == exporter, phi * y_cfl_1, 0)) %>%
     group_by(importer) %>%
-    mutate(e_cfl_1 = max(e_cfl_1)) %>%
+    mutate(e_cfl_1 = max(e_cfl_1, na.rm = T)) %>%
     ungroup() %>%
 
     mutate(
-      e_r_cfl_1 = ifelse(importer == "0-DEU", e_cfl_1, 0),
-      e_r_cfl_1 = max(e_r_cfl_1)
+      e_r_cfl_1 = ifelse(importer == paste0("0-", ref_country), e_cfl_1, 0),
+      e_r_cfl_1 = max(e_r_cfl_1, na.rm = T)
     )
 
   # compute the change in prices for exporters and importers
@@ -284,7 +288,7 @@ while(sd_dif > 1e-5 | max_dif > 1e-5) {
     group_by(importer) %>%
     mutate(
       change_p_j_1 = ifelse(importer == exporter, change_p_i_1, 0),
-      change_p_j_1 = max(change_p_j_1)
+      change_p_j_1 = max(change_p_j_1, na.rm = T)
     ) %>%
     ungroup()
 
@@ -338,11 +342,11 @@ Box #1 from page 108 in @yotov2016advanced shows the steps to obtain different e
 ch2_application1 <- ch2_application1 %>%
   mutate(
     change_p_i_full = ((exp(fe_exporter_cfl_0) / e_r_cfl_0) /
-                         (exp(fe_exporter_bln) / e_r))^(1 / (1 - sigma)),
+                      (exp(fe_exporter_bln) / e_r))^(1 / (1 - sigma)),
     change_p_j_full = change_p_i_full * (exporter == importer)
   ) %>%
   group_by(importer) %>%
-  mutate(change_p_j_full = max(change_p_j_full)) %>%
+  mutate(change_p_j_full = max(change_p_j_full, na.rm = T)) %>%
   ungroup() %>%
   mutate(y_full = change_p_i_full * y)
 ```
@@ -356,8 +360,8 @@ ch2_application1 <- ch2_application1 %>%
   mutate(e_full = max(e_full, na.rm = TRUE)) %>%
   ungroup() %>%
   mutate(
-    e_full_r = e_full * (importer == "0-DEU"),
-    e_full_r = max(e_full_r)
+    e_full_r = e_full * (importer == ref_country0),
+    e_full_r = max(e_full_r, na.rm = T)
   )
 ```
 
@@ -377,7 +381,7 @@ Finally, we proceed to compute the full endowment general equilibrium of trade (
 ch2_application1 <- ch2_application1 %>%
   mutate(x_full = (y_full * e_full * tij_cfl) / (imr_full * omr_full)) %>%
   group_by(exporter) %>%
-  mutate(xi_full = sum(x_full * (importer != exporter))) %>%
+  mutate(xi_full = sum(x_full * (importer != exporter), na.rm = T)) %>%
   ungroup()
 ```
 
@@ -483,7 +487,20 @@ ggplot(data = data_figure_7) +
 
 As in the previous application, we shall proceed by alternating both data transforming and regressions. To replicate the results from box #1 on page 112 in @yotov2016advanced, we need to convert "DEU" in both exporter and importer columns to "0-DEU", as in the previous section. 
 
-However, in this case, we shall keep the panel dimension of the dataset to identify the effects of RTAs and comprehensively capture the impact of all time-invariant trade costs with the use of pair fixed effects.
+We start by defining some parameters to simplify the code.  As the notes in the original Stata code say, the criteria of convergence ($\sigma = 7$) was taken from the literature.
+
+```{r ch2_app2_params}
+ref_country <- "DEU"
+ref_country0 <- paste0("0-", ref_country)
+countries_rta <- c("MEX", "USA", "CAN")
+year_rta <- 1994
+sigma <- 7
+max_dif <- 1
+sd_dif <- 1
+change_price_i_old <- 0
+```
+
+In this case, we shall keep the panel dimension of the dataset to identify the effects of RTAs and comprehensively capture the impact of all time-invariant trade costs with the use of pair fixed effects.
 
 ```{r ch2_app2_data_1}
 ch2_application2 <- agtpa_applications %>%
@@ -492,21 +509,21 @@ ch2_application2 <- agtpa_applications %>%
   mutate(
     log_dist = log(dist),
     intl = ifelse(exporter != importer, 1, 0),
-    exporter = ifelse(exporter == "DEU", "0-DEU", exporter),
-    importer = ifelse(importer == "DEU", "0-DEU", importer)
+    exporter = ifelse(exporter == ref_country, ref_country0, exporter),
+    importer = ifelse(importer == ref_country, ref_country0, importer)
   ) %>%
 
   # Create Yit
   group_by(exporter, year) %>%
-  mutate(y = sum(trade)) %>%
+  mutate(y = sum(trade, na.rm = T)) %>%
 
   # Create Eit
   group_by(importer, year) %>%
-  mutate(e = sum(trade)) %>%
+  mutate(e = sum(trade, na.rm = T)) %>%
 
   # Create Er
   group_by(year) %>%
-  mutate(e_r = max(ifelse(importer == "0-DEU", e, NA), na.rm = T)) %>% 
+  mutate(e_r = max(ifelse(importer == ref_country0, e, NA), na.rm = T)) %>% 
   arrange(importer)
 ```
 
@@ -517,7 +534,7 @@ ch2_application2 <- ch2_application2 %>%
   mutate(
     exp_year = paste0(exporter, year),
     imp_year = paste0(importer, year),
-    pair_id_2 = ifelse(exporter == importer, "0-intra", pair_id)
+    pair_id_2 = ifelse(exporter == importer, "0-domestic", pair_id)
   )
 ```
 
@@ -526,7 +543,7 @@ In addition, we need to compute the trade sum to filter the cases where the sum 
 ```{r ch2_app2_data_3}
 ch2_application2 <- ch2_application2 %>%
   group_by(pair_id) %>%
-  mutate(sum_trade = sum(trade)) %>%
+  mutate(sum_trade = sum(trade, na.rm = T)) %>%
   ungroup()
 ```
 
@@ -568,20 +585,19 @@ ch2_application2 <- ch2_application2 %>%
   )
 ```
 
-We need to create a table for the year 1994, which we will use to predict the trade costs for the observations with zero trade flows. The reason to create a sub-table, instead of filtering observations in the regression function, is that it eases posterior work to predict the costs.
+We need to create a table for the year 1994 and international flows, which we will use to predict the trade costs for the observations with zero trade flows. The reason to create a sub-table, instead of filtering observations in the regression function, is that it eases posterior work to predict the costs.
 
 ```{r ch2_app2_costs_2}
-ch2_application2_1994 <- ch2_application2 %>%
-  filter(year == 1994, exporter != importer)
+ch2_application2_2 <- ch2_application2 %>%
+  filter(year == year_rta, exporter != importer)
 ```
 
-Now, unlike the book, which duplicates $\overline{t_{ij}}$ by creating $t_{ij}$, we can fit a regression to estimate the costs. This is something that emerges
-from the small differences between expressing an idea in Stata or R.
+Now, unlike the book, which duplicates $\overline{t_{ij}}$ by creating $t_{ij}$, we can fit a regression to estimate the costs. This is something that emerges from the small differences between expressing an idea in Stata or R.
 
 ```{r ch2_app2_costs_3}
 fit_costs_app2 <- fepois(
   tij_bar ~ log_dist + cntg + lang + clny | exporter + importer,
-  data = ch2_application2_1994,
+  data = ch2_application2_2,
   glm.iter = 500
 )
 ```
@@ -589,8 +605,8 @@ fit_costs_app2 <- fepois(
 With the regression, we add the fitted values to the sub-table.
 
 ```{r ch2_app2_costs_4}
-ch2_application2_1994 <- ch2_application2_1994 %>%
-  mutate(tij_no_rta = predict(fit_costs_app2, ch2_application2_1994)) %>%
+ch2_application2_2 <- ch2_application2_2 %>%
+  mutate(tij_no_rta = predict(fit_costs_app2, ch2_application2_2)) %>%
   select(exporter, importer, tij_no_rta)
 ```
 
@@ -598,8 +614,8 @@ The final step is to keep the observations for the year 1994 in the original tab
 
 ```{r ch2_app2_costs_5}
 ch2_application2 <- ch2_application2 %>%
-  filter(year == 1994) %>%
-  left_join(ch2_application2_1994, by = c("exporter", "importer")) %>%
+  filter(year == year_rta) %>%
+  left_join(ch2_application2_2, by = c("exporter", "importer")) %>%
   mutate(
     tij_bar = ifelse(is.na(tij_bar), tij_no_rta, tij_bar),
     tij_bln = ifelse(is.na(tij_bln), tij_bar * exp(fit_baseline_app2$coefficients["rta"] * rta), tij_bln)
@@ -624,7 +640,7 @@ With the fitted model, we can add the prediction and the $\xi^{BLN}$ column.
 ch2_application2 <- ch2_application2 %>%
   mutate(tradehat_bln = predict(fit_constrained_app2, ch2_application2)) %>%
   group_by(exporter) %>%
-  mutate(xi_bln = sum(tradehat_bln * (exporter != importer))) %>%
+  mutate(xi_bln = sum(tradehat_bln * (exporter != importer), na.rm = T)) %>%
   ungroup()
 ```
 
@@ -649,11 +665,9 @@ ch2_application2 <- ch2_application2 %>%
 Box #1 from page 114 in @yotov2016advanced is direct and consists in replacing the RTA values by zero if the pairs of countries are NAFTA members.
 
 ```{r ch2_app2_counterfactual_1}
-nafta <- c("MEX", "USA", "CAN")
-
 ch2_application2 <- ch2_application2 %>%
   mutate(
-    rta_no_nafta = ifelse(exporter %in% nafta & importer %in% nafta, 0, rta),
+    rta_no_nafta = ifelse(exporter %in% countries_rta & importer %in% countries_rta, 0, rta),
     tij_cfl = tij_bar * exp(fit_baseline_app2$coefficients["rta"] * rta_no_nafta)
   )
 ```
@@ -697,22 +711,20 @@ Up to this point, we are ready to compute the conditional general equilibrium ef
 ch2_application2 <- ch2_application2 %>%
   mutate(tradehat_cfl = predict(fit_counterfactual_app2, ch2_application2)) %>%
   group_by(exporter) %>%
-  mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer))) %>%
+  mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer), na.rm = T)) %>%
   ungroup()
 ```
 
-Now we are going to compute the full endowment general equilibrium effects. We start by repeating the steps to obtain changes in $t_{ij}$ $\phi$ from the last section. As the notes in the original Stata code say, the criteria of convergence ($\sigma = 7$) was taken from the literature.
+Now we are going to compute the full endowment general equilibrium effects. We start by repeating the steps to obtain changes in $t_{ij}$ $\phi$ from the last section.
 
 ```{r ch2_app2_counterfactual_6}
-sigma <- 7
-
 ch2_application2 <- ch2_application2 %>%
   mutate(
     change_tij = tij_cfl / tij_bln,
     phi = ifelse(importer == exporter, e / y, 0)
   ) %>%
   group_by(exporter) %>%
-  mutate(phi = max(phi)) %>%
+  mutate(phi = max(phi, na.rm = T)) %>%
   ungroup()
 ```
 
@@ -727,7 +739,7 @@ ch2_application2 <- ch2_application2 %>%
   group_by(importer) %>%
   mutate(
     change_p_j = ifelse(importer == exporter, change_p_i, 0),
-    change_p_j = max(change_p_j)
+    change_p_j = max(change_p_j, na.rm = T)
   ) %>%
   ungroup()
 
@@ -756,11 +768,6 @@ ch2_application2 <- ch2_application2 %>%
 Furthermore, now we run the loop, where the step $N$ depends on the step $N-1$ as in the previous section.
 
 ```{r ch2_app2_counterfactual_9}
-# set parameters
-max_dif <- 1
-sd_dif <- 1
-change_price_i_old <- 0
-
 i2 <- 1
 while(sd_dif > 1e-3 | max_dif > 1e-3) {
   ch2_application2 <- ch2_application2 %>%
@@ -784,17 +791,17 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
   ch2_application2 <- ch2_application2 %>%
     mutate(tradehat_1 = predict(fit_counterfactual_app2_2, ch2_application2)) %>%
     group_by(exporter) %>%
-    mutate(y_cfl_1 = sum(tradehat_1)) %>%
+    mutate(y_cfl_1 = sum(tradehat_1, na.rm = T)) %>%
     ungroup() %>%
 
     mutate(e_cfl_1 = ifelse(importer == exporter, phi * y_cfl_1, 0)) %>%
     group_by(importer) %>%
-    mutate(e_cfl_1 = max(e_cfl_1)) %>%
+    mutate(e_cfl_1 = max(e_cfl_1, na.rm = T)) %>%
     ungroup() %>%
 
     mutate(
-      e_r_cfl_1 = ifelse(importer == "0-DEU", e_cfl_1, 0),
-      e_r_cfl_1 = max(e_r_cfl_1)
+      e_r_cfl_1 = ifelse(importer == ref_country0, e_cfl_1, 0),
+      e_r_cfl_1 = max(e_r_cfl_1, na.rm = T)
     )
 
   # compute the change in prices for exporters and importers
@@ -807,7 +814,7 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
     group_by(importer) %>%
     mutate(
       change_p_j_1 = ifelse(importer == exporter, change_p_i_1, 0),
-      change_p_j_1 = max(change_p_j_1)
+      change_p_j_1 = max(change_p_j_1, na.rm = T)
     ) %>%
     ungroup()
 
@@ -819,7 +826,7 @@ while(sd_dif > 1e-3 | max_dif > 1e-3) {
     )
 
   # update the differences
-  max_dif <- abs(max(ch2_application2$change_p_i_0 - change_price_i_old))
+  max_dif <- abs(max(ch2_application2$change_p_i_0 - change_price_i_old, na.rm = T))
   sd_dif <- sd(ch2_application2$change_p_i_0 - change_price_i_old)
   change_price_i_old <- ch2_application2$change_p_i_0
 
@@ -851,11 +858,11 @@ The last loop allows us to obtain changes in $p_i^{full}$, $p_j^{full}$ and $y^{
 ch2_application2 <- ch2_application2 %>%
   mutate(
     change_p_i_full = ((exp(fe_exporter_cfl_0) / e_r_cfl_0) /
-                         (exp(fe_exporter_cns) / e_r))^(1 / (1 - sigma)),
+                      (exp(fe_exporter_cns) / e_r))^(1 / (1 - sigma)),
     change_p_j_full = change_p_i_full * (exporter == importer)
   ) %>%
   group_by(importer) %>%
-  mutate(change_p_j_full = max(change_p_j_full)) %>%
+  mutate(change_p_j_full = max(change_p_j_full, na.rm = T)) %>%
   ungroup() %>%
   mutate(y_full = change_p_i_full * y)
 ```
@@ -866,11 +873,11 @@ Now we compute $e^{full} and $e_r^{full}$.
 ch2_application2 <- ch2_application2 %>%
   mutate(e_full = change_p_j_full * e * (exporter == importer)) %>%
   group_by(importer) %>%
-  mutate(e_full = max(e_full, na.rm = TRUE)) %>%
+  mutate(e_full = max(e_full, na.rm = T)) %>%
   ungroup() %>%
   mutate(
-    e_full_r = e_full * (importer == "0-DEU"),
-    e_full_r = max(e_full_r)
+    e_full_r = e_full * (importer == ref_country0),
+    e_full_r = max(e_full_r, na.rm = T)
   )
 ```
 
@@ -890,7 +897,7 @@ To complete this step, we compute $\xi^{full}$.
 ch2_application2 <- ch2_application2 %>%
   mutate(x_full = (y_full * e_full * tij_cfl) / (imr_full * omr_full)) %>%
   group_by(exporter) %>%
-  mutate(xi_full = sum(x_full * (importer != exporter))) %>%
+  mutate(xi_full = sum(x_full * (importer != exporter), na.rm = T)) %>%
   ungroup()
 ```
 
@@ -907,7 +914,7 @@ exporter_indexes <- ch2_application2 %>%
     starts_with("xi_"), y, y_full
   ) %>%
   distinct() %>%
-  mutate(exporter = ifelse(exporter == "0-DEU", "DEU", exporter)) %>%
+  mutate(exporter = ifelse(exporter == ref_country0, ref_country, exporter)) %>%
   arrange(exporter) %>%
   mutate(
     change_p_i_full = (1 - change_p_i_full) * 100,
@@ -921,7 +928,7 @@ exporter_indexes <- ch2_application2 %>%
 importer_indexes <- ch2_application2 %>%
   select(importer, imr_bln, imr_cfl, imr_full) %>%
   distinct() %>%
-  mutate(importer = ifelse(importer == "0-DEU", "DEU", importer)) %>%
+  mutate(importer = ifelse(importer == ref_country0, ref_country, importer)) %>%
   arrange(importer) %>%
   mutate(
     change_imr_cfl = ((imr_bln / imr_cfl)^(1 / (1 - sigma)) - 1) * 100,
@@ -944,8 +951,6 @@ indexes_final <- exporter_indexes %>%
 
 indexes_final <- indexes_final %>%
   mutate_if(is.numeric, function(x) round(x, 2))
-
-indexes_final
 ```
 
 <!-- Here we don't print the raw table, we format it as HTML in a separate block -->

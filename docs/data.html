@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 4 Appendix: Importing the original datasets | Solutions Manual for An Advanced Guide to Trade Policy Analysis in R</title>
   <meta name="description" content="Chapter 4 Appendix: Importing the original datasets | Solutions Manual for An Advanced Guide to Trade Policy Analysis in R" />
-  <meta name="generator" content="bookdown 0.28 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.33 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 4 Appendix: Importing the original datasets | Solutions Manual for An Advanced Guide to Trade Policy Analysis in R" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Mauricio “Pachá” Vargas Sepúlveda" />
 
 
-<meta name="date" content="2022-09-02" />
+<meta name="date" content="2023-04-21" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,12 +52,12 @@
 <link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
 <link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
-<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
 <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="libs/datatables-binding-0.24/datatables.js"></script>
-<link href="libs/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="libs/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
-<script src="libs/dt-core-1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="libs/datatables-binding-0.27/datatables.js"></script>
+<link href="libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
 <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
 <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
 
@@ -100,7 +100,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -113,7 +113,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -259,70 +259,29 @@ div.csl-indent {
 <p>The decision to use Arrow instead of CSV/TSV is that Arrow files are always read with the correct column specification (i.e., a column with values such as “00123” is always read as a string and is never confused as a numeric).</p>
 <div id="downloading-the-original-datasets" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Downloading the original datasets<a href="data.html#downloading-the-original-datasets" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="data.html#cb103-1" aria-hidden="true" tabindex="-1"></a>appfiles_url <span class="ot">&lt;-</span> <span class="st">&quot;https://vi.unctad.org/tpa/web/zips/vol2/Advanced%20Guide%20to%20TPA.zip&quot;</span></span>
-<span id="cb103-2"><a href="data.html#cb103-2" aria-hidden="true" tabindex="-1"></a>appfiles_zip <span class="ot">&lt;-</span> <span class="st">&quot;00-application-files.zip&quot;</span></span>
-<span id="cb103-3"><a href="data.html#cb103-3" aria-hidden="true" tabindex="-1"></a>appfiles_dir <span class="ot">&lt;-</span> <span class="st">&quot;00-application-files&quot;</span></span>
-<span id="cb103-4"><a href="data.html#cb103-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb103-5"><a href="data.html#cb103-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(appfiles_zip)) {</span>
-<span id="cb103-6"><a href="data.html#cb103-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">download.file</span>(appfiles_url, appfiles_zip)</span>
-<span id="cb103-7"><a href="data.html#cb103-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb103-8"><a href="data.html#cb103-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb103-9"><a href="data.html#cb103-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(appfiles_dir)) {</span>
-<span id="cb103-10"><a href="data.html#cb103-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unzip</span>(appfiles_zip)</span>
-<span id="cb103-11"><a href="data.html#cb103-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.rename</span>(<span class="st">&quot;Advanced Guide to TPA&quot;</span>, appfiles_dir)</span>
-<span id="cb103-12"><a href="data.html#cb103-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="data.html#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># updated link 2022-04-20</span></span>
+<span id="cb104-2"><a href="data.html#cb104-2" aria-hidden="true" tabindex="-1"></a>appfiles_url <span class="ot">&lt;-</span> <span class="st">&quot;https://www.wto.org/english/res_e/reser_e/AdvancedGuideFiles.zip&quot;</span></span>
+<span id="cb104-3"><a href="data.html#cb104-3" aria-hidden="true" tabindex="-1"></a>appfiles_zip <span class="ot">&lt;-</span> <span class="st">&quot;00-application-files.zip&quot;</span></span>
+<span id="cb104-4"><a href="data.html#cb104-4" aria-hidden="true" tabindex="-1"></a>appfiles_dir <span class="ot">&lt;-</span> <span class="st">&quot;00-application-files&quot;</span></span>
+<span id="cb104-5"><a href="data.html#cb104-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-6"><a href="data.html#cb104-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(appfiles_zip)) {</span>
+<span id="cb104-7"><a href="data.html#cb104-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">download.file</span>(appfiles_url, appfiles_zip)</span>
+<span id="cb104-8"><a href="data.html#cb104-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb104-9"><a href="data.html#cb104-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-10"><a href="data.html#cb104-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(appfiles_dir)) {</span>
+<span id="cb104-11"><a href="data.html#cb104-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unzip</span>(appfiles_zip)</span>
+<span id="cb104-12"><a href="data.html#cb104-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.rename</span>(<span class="st">&quot;Advanced Guide to TPA&quot;</span>, appfiles_dir)</span>
+<span id="cb104-13"><a href="data.html#cb104-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="converting-the-original-datasets" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Converting the original datasets<a href="data.html#converting-the-original-datasets" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="data.html#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># these packages are only used to import the data</span></span>
-<span id="cb104-2"><a href="data.html#cb104-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
-<span id="cb104-3"><a href="data.html#cb104-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
-<span id="cb104-4"><a href="data.html#cb104-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb104-5"><a href="data.html#cb104-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb104-6"><a href="data.html#cb104-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb104-7"><a href="data.html#cb104-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-8"><a href="data.html#cb104-8" aria-hidden="true" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">dir.create</span>(<span class="st">&quot;data-parquet&quot;</span>, <span class="at">showWarnings =</span> F))</span>
-<span id="cb104-9"><a href="data.html#cb104-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-10"><a href="data.html#cb104-10" aria-hidden="true" tabindex="-1"></a>dta_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;00-application-files&quot;</span>,</span>
-<span id="cb104-11"><a href="data.html#cb104-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pattern =</span> <span class="st">&quot;dta&quot;</span>,</span>
-<span id="cb104-12"><a href="data.html#cb104-12" aria-hidden="true" tabindex="-1"></a>                        <span class="at">full.names =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb104-13"><a href="data.html#cb104-13" aria-hidden="true" tabindex="-1"></a>                        <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb104-14"><a href="data.html#cb104-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-15"><a href="data.html#cb104-15" aria-hidden="true" tabindex="-1"></a>read_and_clean <span class="ot">&lt;-</span> <span class="cf">function</span>(finp) {</span>
-<span id="cb104-16"><a href="data.html#cb104-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(finp)</span>
-<span id="cb104-17"><a href="data.html#cb104-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb104-18"><a href="data.html#cb104-18" aria-hidden="true" tabindex="-1"></a>  fout <span class="ot">&lt;-</span> finp <span class="sc">%&gt;%</span> </span>
-<span id="cb104-19"><a href="data.html#cb104-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace</span>(appfiles_dir, <span class="st">&quot;&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb104-20"><a href="data.html#cb104-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace</span>(<span class="st">&quot;Chapter&quot;</span>, <span class="st">&quot;ch&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb104-21"><a href="data.html#cb104-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">&quot;Chapter[0-9]|</span><span class="sc">\\</span><span class="st">.dta&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
-<span id="cb104-22"><a href="data.html#cb104-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb104-23"><a href="data.html#cb104-23" aria-hidden="true" tabindex="-1"></a>  fout <span class="ot">&lt;-</span> fout <span class="sc">%&gt;%</span> </span>
-<span id="cb104-24"><a href="data.html#cb104-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">&quot;(/)&quot;</span>, <span class="st">&quot;_&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb104-25"><a href="data.html#cb104-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">make_clean_names</span>()</span>
-<span id="cb104-26"><a href="data.html#cb104-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb104-27"><a href="data.html#cb104-27" aria-hidden="true" tabindex="-1"></a>  long_names <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb104-28"><a href="data.html#cb104-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;datasets_&quot;</span>,</span>
-<span id="cb104-29"><a href="data.html#cb104-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;applications_&quot;</span>,</span>
-<span id="cb104-30"><a href="data.html#cb104-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;exercises_&quot;</span>,</span>
-<span id="cb104-31"><a href="data.html#cb104-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;1_trade_without_border_results_1&quot;</span>,</span>
-<span id="cb104-32"><a href="data.html#cb104-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;2_rt_as_effects_results_2_&quot;</span></span>
-<span id="cb104-33"><a href="data.html#cb104-33" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb104-34"><a href="data.html#cb104-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb104-35"><a href="data.html#cb104-35" aria-hidden="true" tabindex="-1"></a>  fout <span class="ot">&lt;-</span> fout <span class="sc">%&gt;%</span> </span>
-<span id="cb104-36"><a href="data.html#cb104-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="fu">paste</span>(long_names, <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>), <span class="st">&quot;&quot;</span>)</span>
-<span id="cb104-37"><a href="data.html#cb104-37" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb104-38"><a href="data.html#cb104-38" aria-hidden="true" tabindex="-1"></a>  fout <span class="ot">&lt;-</span> <span class="fu">str_replace</span>(fout, <span class="st">&quot;_([0-9])_|__&quot;</span>, <span class="st">&quot;_&quot;</span>)</span>
-<span id="cb104-39"><a href="data.html#cb104-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-40"><a href="data.html#cb104-40" aria-hidden="true" tabindex="-1"></a>  fout2 <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">&quot;data-parquet/%s.parquet&quot;</span>, fout)</span>
-<span id="cb104-41"><a href="data.html#cb104-41" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb104-42"><a href="data.html#cb104-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(fout2)) {</span>
-<span id="cb104-43"><a href="data.html#cb104-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">read_dta</span>(finp) <span class="sc">%&gt;%</span> </span>
-<span id="cb104-44"><a href="data.html#cb104-44" aria-hidden="true" tabindex="-1"></a>      <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb104-45"><a href="data.html#cb104-45" aria-hidden="true" tabindex="-1"></a>      <span class="fu">write_parquet</span>(fout2)</span>
-<span id="cb104-46"><a href="data.html#cb104-46" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb104-47"><a href="data.html#cb104-47" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb104-48"><a href="data.html#cb104-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-49"><a href="data.html#cb104-49" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(dta_files, read_and_clean)</span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="data.html#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co"># these packages are only used to import the data</span></span>
+<span id="cb105-2"><a href="data.html#cb105-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb105-3"><a href="data.html#cb105-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(usethis)</span>
+<span id="cb105-4"><a href="data.html#cb105-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb105-5"><a href="data.html#cb105-5" aria-hidden="true" tabindex="-1"></a><span class="co"># we only need the dataset for the 3rd application for all the exercises in the book</span></span>
+<span id="cb105-6"><a href="data.html#cb105-6" aria-hidden="true" tabindex="-1"></a>agtpa_applications <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">&quot;00-application-files/Chapter1/Datasets/Chapter1Application3.dta&quot;</span>)</span>
+<span id="cb105-7"><a href="data.html#cb105-7" aria-hidden="true" tabindex="-1"></a><span class="fu">use_data</span>(agtpa_applications, <span class="at">overwrite =</span> T)</span></code></pre></div>
 
 </div>
 </div>

@@ -1,0 +1,1174 @@
+---------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\Olivares_s\Desktop\tpa\Advanced Guide to TPA\Chapter2\Appli
+> cations/1_TradeWithoutBorder/Results/TradeWithoutBorder.log
+  log type:  text
+ opened on:   6 Nov 2016, 08:38:57
+
+. 
+. * Install or update the ppml command if necessary       
+.         * ssc install ppml
+. 
+. * Install or update the esttab command if necessary
+.         * findit esstab
+.         
+.         
+. ************************* OPEN AND MANAGE THE DATABASE ************************
+> *
+. * Open the database according to the Stata version you are using
+.         use "Datasets/Chapter2Application1.dta", clear
+
+. 
+. * Consider data only for the year == 2006
+.                 keep if year == 2006
+(95220 observations deleted)
+
+. 
+. * Create the log of distance variable
+.                 generate ln_DIST = ln(DIST)
+
+.         
+. * Create the international border dummy variable
+.                 generate INTL_BRDR = 1
+
+.                         replace INTL_BRDR = 0 if exporter == importer
+(69 real changes made)
+
+.                         
+. * Create aggregate output
+.                 bysort exporter: egen Y = sum(trade)
+
+. 
+. * Create aggregate expenditure
+.                 bysort importer: egen E = sum(trade)
+
+. 
+. * Chose a country for reference group: GERMANY
+. * The country code of the reference country is set to "ZZZ" so that the exporte
+> r
+. * and exporter fixed effects of the reference country are always the last ones
+. * created
+.                 gen E_R_BLN = E if importer == "DEU"
+(4692 missing values generated)
+
+.                         replace exporter = "ZZZ" if exporter == "DEU"
+(69 real changes made)
+
+.                         replace importer = "ZZZ" if importer == "DEU"
+(69 real changes made)
+
+.                 egen E_R = mean(E_R_BLN)
+
+.                 
+. * Create exporter fixed effects
+.                 quietly tabulate exporter, gen(EXPORTER_FE)
+
+. 
+. * Create importer fixed effects
+.                 quietly tabulate importer, gen(IMPORTER_FE)
+
+. 
+. * Set the number of exporter fixed effects variables
+.                 quietly ds EXPORTER_FE*
+
+.                 global N = `: word count `r(varlist)'' 
+
+.                 global N_1 = $N - 1
+
+. 
+. * Save data
+.         save "Datasets/1_TradeWithoutBorder.dta", replace
+(note: file Datasets/1_TradeWithoutBorder.dta not found)
+file Datasets/1_TradeWithoutBorder.dta saved
+
+. 
+. ************************* GENERAL EQUILIBRIUM ANALYSIS ************************
+> *
+. 
+. * Step I: Solve the baseline gravity model
+. 
+.         * Step I.a. Obtain estimates of trade costs and trade elasticities base
+> line 
+.         *                       indexes
+.                 * Estimate the gravity model in the "baseline" scenario with th
+> e PPML estimator:
+.                 ppml trade EXPORTER_FE* IMPORTER_FE1-IMPORTER_FE$N_1 ln_DIST CN
+> TG INTL_BRDR, iter(30) noconst
+
+note: checking the existence of the estimates
+WARNING: trade has very large values, consider rescaling
+
+Number of regressors excluded to ensure that the estimates exist: 0
+Number of observations excluded: 0
+
+note: starting ppml estimation
+note: trade has noninteger values
+
+Iteration 1:   deviance =  1.78e+07
+Iteration 2:   deviance =   7913079
+Iteration 3:   deviance =   5301891
+Iteration 4:   deviance =   4693310
+Iteration 5:   deviance =   4566430
+Iteration 6:   deviance =   4544764
+Iteration 7:   deviance =   4542391
+Iteration 8:   deviance =   4542209
+Iteration 9:   deviance =   4542202
+Iteration 10:  deviance =   4542202
+Iteration 11:  deviance =   4542202
+
+Number of parameters: 140
+Number of observations: 4761
+Pseudo log-likelihood: -2284121.5
+R-squared: .99450921
+Option strict is: off
+-------------------------------------------------------------------------------
+              |             Semirobust
+        trade |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------+----------------------------------------------------------------
+ EXPORTER_FE1 |   16.60491   .3493025    47.54   0.000     15.92029    17.28953
+ EXPORTER_FE2 |   17.83091     .36177    49.29   0.000     17.12185    18.53996
+ EXPORTER_FE3 |   16.66352   .3251375    51.25   0.000     16.02627    17.30078
+ EXPORTER_FE4 |   17.37391   .2703218    64.27   0.000     16.84409    17.90373
+ EXPORTER_FE5 |   15.30641   .4508218    33.95   0.000     14.42281       16.19
+ EXPORTER_FE6 |   14.28203   .7465285    19.13   0.000     12.81886     15.7452
+ EXPORTER_FE7 |   18.33749   .3586955    51.12   0.000     17.63446    19.04052
+ EXPORTER_FE8 |   17.97164   .3566482    50.39   0.000     17.27263    18.67066
+ EXPORTER_FE9 |   17.10287   .3142596    54.42   0.000     16.48694    17.71881
+EXPORTER_FE10 |   17.08444   .3450405    49.51   0.000     16.40817    17.76071
+EXPORTER_FE11 |   19.70242   .3734998    52.75   0.000     18.97037    20.43447
+EXPORTER_FE12 |    14.0853   .7232015    19.48   0.000     12.66785    15.50274
+EXPORTER_FE13 |   16.22317   .4432229    36.60   0.000     15.35447    17.09187
+EXPORTER_FE14 |    15.0739   .3086675    48.84   0.000     14.46892    15.67888
+EXPORTER_FE15 |    14.6152   .4749875    30.77   0.000     13.68424    15.54616
+EXPORTER_FE16 |   16.35408   .2966391    55.13   0.000     15.77268    16.93548
+EXPORTER_FE17 |   15.07311   .4827429    31.22   0.000     14.12695    16.01926
+EXPORTER_FE18 |   15.66195   .4375672    35.79   0.000     14.80433    16.51956
+EXPORTER_FE19 |   17.81386   .3191922    55.81   0.000     17.18825    18.43946
+EXPORTER_FE20 |   16.83303    .318389    52.87   0.000       16.209    17.45706
+EXPORTER_FE21 |   18.14915     .30707    59.10   0.000      17.5473    18.75099
+EXPORTER_FE22 |   17.80401   .3156436    56.41   0.000     17.18536    18.42266
+EXPORTER_FE23 |   16.15001   .3786785    42.65   0.000     15.40782    16.89221
+EXPORTER_FE24 |    13.9315   .4789954    29.08   0.000     12.99269    14.87031
+EXPORTER_FE25 |    16.3734   .3511761    46.62   0.000     15.68511    17.06169
+EXPORTER_FE26 |   17.70986   .3774273    46.92   0.000     16.97012    18.44961
+EXPORTER_FE27 |   18.24981   .3997167    45.66   0.000     17.46638    19.03324
+EXPORTER_FE28 |   16.83779   .3463683    48.61   0.000     16.15892    17.51666
+EXPORTER_FE29 |   16.60016   .5265954    31.52   0.000     15.56805    17.63227
+EXPORTER_FE30 |   14.56011   .5506977    26.44   0.000     13.48077    15.63946
+EXPORTER_FE31 |   16.30981   .3439283    47.42   0.000     15.63573     16.9839
+EXPORTER_FE32 |   18.27444   .3132267    58.34   0.000     17.66052    18.88835
+EXPORTER_FE33 |   15.24496    .474175    32.15   0.000     14.31559    16.17432
+EXPORTER_FE34 |   19.22102   .3470882    55.38   0.000     18.54074     19.9013
+EXPORTER_FE35 |   14.86346   .6509878    22.83   0.000     13.58754    16.13937
+EXPORTER_FE36 |   18.33801   .3416151    53.68   0.000     17.66845    19.00756
+EXPORTER_FE37 |   14.71105   .2926852    50.26   0.000      14.1374    15.28471
+EXPORTER_FE38 |   15.95794   .4318769    36.95   0.000     15.11147     16.8044
+EXPORTER_FE39 |   12.80838    .402993    31.78   0.000     12.01853    13.59823
+EXPORTER_FE40 |   15.70681   .4704749    33.39   0.000     14.78469    16.62892
+EXPORTER_FE41 |   17.65423   .3913745    45.11   0.000     16.88715    18.42131
+EXPORTER_FE42 |   13.61976   .2752868    49.47   0.000      13.0802    14.15931
+EXPORTER_FE43 |   15.90924   .7625362    20.86   0.000      14.4147    17.40378
+EXPORTER_FE44 |   13.78759   .3751277    36.75   0.000     13.05236    14.52283
+EXPORTER_FE45 |   13.49052   .7585371    17.78   0.000     12.00381    14.97722
+EXPORTER_FE46 |   17.87364   .3677878    48.60   0.000     17.15279    18.59449
+EXPORTER_FE47 |   11.80212   .5479175    21.54   0.000     10.72822    12.87602
+EXPORTER_FE48 |   16.80369   .4545298    36.97   0.000     15.91283    17.69455
+EXPORTER_FE49 |   17.13411   .3316833    51.66   0.000     16.48403     17.7842
+EXPORTER_FE50 |   16.51128   .3743444    44.11   0.000     15.77758    17.24498
+EXPORTER_FE51 |   14.07617   .8759933    16.07   0.000     12.35925    15.79309
+EXPORTER_FE52 |   13.99772   .4516941    30.99   0.000     13.11242    14.88302
+EXPORTER_FE53 |   16.94477   .3445521    49.18   0.000     16.26946    17.62008
+EXPORTER_FE54 |   17.04844    .325791    52.33   0.000      16.4099    17.68698
+EXPORTER_FE55 |   16.36691   .3332745    49.11   0.000      15.7137    17.02011
+EXPORTER_FE56 |     14.513   .2838859    51.12   0.000     13.95659     15.0694
+EXPORTER_FE57 |   16.17411   .3732897    43.33   0.000     15.44247    16.90574
+EXPORTER_FE58 |   13.83473   .7577192    18.26   0.000     12.34963    15.31984
+EXPORTER_FE59 |   16.71723   .9654007    17.32   0.000     14.82508    18.60938
+EXPORTER_FE60 |   17.26953   .3051264    56.60   0.000     16.67149    17.86757
+EXPORTER_FE61 |   17.40599   .3496508    49.78   0.000     16.72069    18.09129
+EXPORTER_FE62 |   15.02977   .3144761    47.79   0.000     14.41341    15.64613
+EXPORTER_FE63 |   15.31083   .4495869    34.06   0.000     14.42966    16.19201
+EXPORTER_FE64 |    17.3897   .3533766    49.21   0.000      16.6971    18.08231
+EXPORTER_FE65 |   13.69583   .5954839    23.00   0.000     12.52871    14.86296
+EXPORTER_FE66 |   14.92209   .4884463    30.55   0.000     13.96475    15.87943
+EXPORTER_FE67 |   19.38116   .3430338    56.50   0.000     18.70883    20.05349
+EXPORTER_FE68 |   17.44773   .3444917    50.65   0.000     16.77254    18.12292
+EXPORTER_FE69 |   18.59357   .3084987    60.27   0.000     17.98892    19.19821
+ IMPORTER_FE1 |  -1.514718   .1802421    -8.40   0.000    -1.867986    -1.16145
+ IMPORTER_FE2 |   .0643156    .157542     0.41   0.683    -.2444611    .3730924
+ IMPORTER_FE3 |  -1.569417   .2253161    -6.97   0.000    -2.011029   -1.127806
+ IMPORTER_FE4 |  -.9040841   .1145337    -7.89   0.000    -1.128566   -.6796021
+ IMPORTER_FE5 |  -2.674132   .3016715    -8.86   0.000    -3.265397   -2.082866
+ IMPORTER_FE6 |  -3.441229   .4672289    -7.37   0.000     -4.35698   -2.525477
+ IMPORTER_FE7 |   .1088941   .1703536     0.64   0.523    -.2249928     .442781
+ IMPORTER_FE8 |   .1298355   .2026253     0.64   0.522    -.2673027    .5269737
+ IMPORTER_FE9 |  -1.188351    .166685    -7.13   0.000    -1.515048   -.8616546
+IMPORTER_FE10 |  -1.188892   .1672461    -7.11   0.000    -1.516689   -.8610961
+IMPORTER_FE11 |   .6295692   .1608039     3.92   0.000     .3143993    .9447391
+IMPORTER_FE12 |   -3.80912   .5131393    -7.42   0.000    -4.814855   -2.803386
+IMPORTER_FE13 |  -1.458422   .2474264    -5.89   0.000    -1.943369   -.9734756
+IMPORTER_FE14 |  -2.815454   .1914405   -14.71   0.000     -3.19067   -2.440237
+IMPORTER_FE15 |  -2.990089   .2571143   -11.63   0.000    -3.494023   -2.486154
+IMPORTER_FE16 |  -1.832701   .1409367   -13.00   0.000    -2.108932    -1.55647
+IMPORTER_FE17 |  -2.349947   .2349395   -10.00   0.000     -2.81042   -1.889474
+IMPORTER_FE18 |  -2.182975   .2497422    -8.74   0.000     -2.67246   -1.693489
+IMPORTER_FE19 |  -.0698733   .1356114    -0.52   0.606    -.3356667    .1959202
+IMPORTER_FE20 |  -1.528946   .1540683    -9.92   0.000    -1.830915   -1.226978
+IMPORTER_FE21 |  -.0341986   .1125898    -0.30   0.761    -.2548705    .1864733
+IMPORTER_FE22 |  -.0969452   .1551978    -0.62   0.532    -.4011273    .2072369
+IMPORTER_FE23 |  -1.445561   .1878479    -7.70   0.000    -1.813736   -1.077386
+IMPORTER_FE24 |  -.3235312   .1831638    -1.77   0.077    -.6825257    .0354632
+IMPORTER_FE25 |  -1.820646   .1981327    -9.19   0.000    -2.208979   -1.432313
+IMPORTER_FE26 |  -.7554282   .2254822    -3.35   0.001    -1.197365   -.3134912
+IMPORTER_FE27 |  -.1310058   .2474574    -0.53   0.597    -.6160134    .3540018
+IMPORTER_FE28 |    -1.9753   .2457309    -8.04   0.000    -2.456924   -1.493676
+IMPORTER_FE29 |   -1.25844   .3131459    -4.02   0.000    -1.872195   -.6446855
+IMPORTER_FE30 |  -3.235263   .3360226    -9.63   0.000    -3.893855   -2.576671
+IMPORTER_FE31 |  -1.963442    .209735    -9.36   0.000    -2.374515   -1.552369
+IMPORTER_FE32 |  -.0099205   .1370849    -0.07   0.942     -.278602     .258761
+IMPORTER_FE33 |  -2.697078   .3222447    -8.37   0.000    -3.328666    -2.06549
+IMPORTER_FE34 |   .0935945   .1623147     0.58   0.564    -.2245365    .4117254
+IMPORTER_FE35 |  -2.803825   .3529878    -7.94   0.000    -3.495668   -2.111982
+IMPORTER_FE36 |   -.750206   .1697857    -4.42   0.000     -1.08298   -.4174321
+IMPORTER_FE37 |  -2.926986   .1725786   -16.96   0.000    -3.265233   -2.588738
+IMPORTER_FE38 |  -2.246515   .2947642    -7.62   0.000    -2.824242   -1.668788
+IMPORTER_FE39 |   -4.62332     .21987   -21.03   0.000    -5.054257   -4.192383
+IMPORTER_FE40 |  -2.157259   .2925557    -7.37   0.000    -2.730657    -1.58386
+IMPORTER_FE41 |  -.2038591   .2248556    -0.91   0.365    -.6445678    .2368497
+IMPORTER_FE42 |  -4.064258   .1677648   -24.23   0.000    -4.393071   -3.735446
+IMPORTER_FE43 |  -2.487271   .6433249    -3.87   0.000    -3.748165   -1.226378
+IMPORTER_FE44 |   -3.96605   .2247117   -17.65   0.000    -4.406477   -3.525624
+IMPORTER_FE45 |  -4.492891   .5763724    -7.80   0.000     -5.62256   -3.363222
+IMPORTER_FE46 |  -.8556499   .1846403    -4.63   0.000    -1.217538   -.4937617
+IMPORTER_FE47 |   -5.57594   .2564402   -21.74   0.000    -6.078554   -5.073326
+IMPORTER_FE48 |  -1.087498    .268516    -4.05   0.000    -1.613779    -.561216
+IMPORTER_FE49 |  -1.163682   .2051026    -5.67   0.000    -1.565675   -.7616879
+IMPORTER_FE50 |  -1.442383   .2081308    -6.93   0.000    -1.850312   -1.034455
+IMPORTER_FE51 |  -4.206933   .7250273    -5.80   0.000     -5.62796   -2.785905
+IMPORTER_FE52 |  -2.360625   .2675013    -8.82   0.000    -2.884918   -1.836332
+IMPORTER_FE53 |  -1.687268   .1967981    -8.57   0.000    -2.072985   -1.301551
+IMPORTER_FE54 |  -1.090798    .165991    -6.57   0.000    -1.416135   -.7654618
+IMPORTER_FE55 |  -1.502891   .1738132    -8.65   0.000    -1.843558   -1.162223
+IMPORTER_FE56 |  -2.716405   .1689223   -16.08   0.000    -3.047486   -2.385323
+IMPORTER_FE57 |  -1.730165   .2054888    -8.42   0.000    -2.132916   -1.327414
+IMPORTER_FE58 |  -3.573326   .3736887    -9.56   0.000    -4.305742   -2.840909
+IMPORTER_FE59 |  -2.379168   .9824421    -2.42   0.015    -4.304719   -.4536171
+IMPORTER_FE60 |  -1.152133    .133472    -8.63   0.000    -1.413733   -.8905327
+IMPORTER_FE61 |  -1.289584   .2152479    -5.99   0.000    -1.711462   -.8677058
+IMPORTER_FE62 |  -3.222779   .2031012   -15.87   0.000     -3.62085   -2.824707
+IMPORTER_FE63 |  -2.687256   .3038144    -8.85   0.000    -3.282721   -2.091791
+IMPORTER_FE64 |  -.5950676   .1795679    -3.31   0.001    -.9470142   -.2431209
+IMPORTER_FE65 |  -3.807465   .2726858   -13.96   0.000     -4.34192   -3.273011
+IMPORTER_FE66 |  -3.102945   .3429514    -9.05   0.000    -3.775117   -2.430773
+IMPORTER_FE67 |   1.891485   .1720149    11.00   0.000     1.554342    2.228628
+IMPORTER_FE68 |  -.6430001   .1536825    -4.18   0.000    -.9442124   -.3417879
+      ln_DIST |  -.7912879   .0501494   -15.78   0.000     -.889579   -.6929968
+         CNTG |   .6736456   .1073719     6.27   0.000     .4632006    .8840906
+    INTL_BRDR |   -2.47445   .1193816   -20.73   0.000    -2.708434   -2.240467
+-------------------------------------------------------------------------------
+
+.                         predict tradehat_BLN, mu
+
+.         
+.         * Step I.b. Construct baseline indexes  
+.                 * Based on the estimated exporter and importer fixed effects, c
+> reate
+.                 * the actual set of fixed effects
+.                         forvalues i = 1 (1) $N_1 {
+  2.                                 quietly replace EXPORTER_FE`i' = EXPORTER_FE
+> `i' * exp(_b[EXPORTER_FE`i'])
+  3.                                 quietly replace IMPORTER_FE`i' = IMPORTER_FE
+> `i' * exp(_b[IMPORTER_FE`i'])
+  4.                         }
+
+.                         
+.                 * Create the exporter and importer fixed effects for the countr
+> y of 
+.                 * reference (Germany)
+.                         quietly replace EXPORTER_FE$N = EXPORTER_FE$N * exp(_b[
+> EXPORTER_FE$N ])
+
+.                         quietly replace IMPORTER_FE$N = IMPORTER_FE$N * exp(0)
+
+.                         
+.                 * Create the variables stacking all the non-zero exporter and i
+> mporter 
+.                 * fixed effects, respectively           
+.                         egen exp_pi_BLN = rowtotal(EXPORTER_FE1-EXPORTER_FE$N )
+
+.                         egen exp_chi_BLN = rowtotal(IMPORTER_FE1-IMPORTER_FE$N 
+> ) 
+
+. 
+.                 * Compute the variable of bilateral trade costs         
+.                         generate tij_BLN = exp(_b[ln_DIST]*ln_DIST + _b[CNTG]*C
+> NTG + _b[INTL_BRDR]*INTL_BRDR)
+
+. 
+.                 * Compute the outward and inward multilateral resistances using
+>  the 
+.                 * additive property of the PPML estimator that links the export
+> er and  
+.                 * importer fixed effects with their respective multilateral res
+> istances
+.                 * taking into account the normalisation imposed
+.                         generate OMR_BLN = Y * E_R / exp_pi_BLN
+
+.                         generate IMR_BLN = E / (exp_chi_BLN * E_R)      
+
+.                         
+.                 * Compute the estimated level of international trade in the bas
+> eline for
+.                 * the given level of ouptput and expenditures                  
+>  
+.                         generate tempXi_BLN = tradehat_BLN if exporter != impor
+> ter
+(69 missing values generated)
+
+.                                 bysort exporter: egen Xi_BLN = sum(tempXi_BLN)
+
+.                                         drop tempXi_BLN
+
+.                         generate Y_BLN = Y
+
+.                         generate E_BLN = E
+
+. 
+.                         
+. * Step II: Define a conterfactual scenario
+.         * The counterfactual scenario consists in removing the international bo
+> rders
+.         * by constraining the parameter associated with the variable INTL_BRDR 
+> to be
+.         * zero and assuming the effects of geographic variables (DIST and CNTG)
+>  
+.         * remain the same.
+.         
+.                 * Constructing the counterfactual bilateral trade costs by impo
+> sing the
+.                 * constraints associated with the counterfactual scenario
+.                 * Option 1:
+.                 generate INTL_BRDR_CFL = 0
+
+.                 generate tij_CFL = exp(_b[ln_DIST]*ln_DIST + _b[CNTG]*CNTG + _b
+> [INTL_BRDR]*INTL_BRDR_CFL)
+
+. 
+.                 * Option 2:
+.                 *       generate tij_CFL = exp(_b[ln_DIST]*ln_DIST + _b[CNTG]*C
+> NTG + _b[INTL_BRDR]*INTL_BRDR*0)
+. 
+.                         
+. * Step III: Solve the counterfactual model
+. 
+.         * Step III.a.: Obtain conditional general equilibrium effects
+.         
+.         * (i):  Estimate the gravity model by imposing the constraints associat
+> ed 
+.         *               with the counterfactual scenario. The constraint is def
+> ined  
+.         *               separately by taking the log of the counterfactual bila
+> teral trade 
+.         *               costs. The parameter of thisexpression will be constrai
+> nted to be 
+.         *               equal to 1 in the ppml estimator        
+.         
+.                 * Specify the constraint in log
+.                         generate ln_tij_CFL = log(tij_CFL)      
+
+.                 
+.                 * Re-create the exporters and imports fixed effects
+.                                 drop EXPORTER_FE* IMPORTER_FE*
+
+.                         quietly tabulate exporter, generate(EXPORTER_FE)
+
+.                         quietly tabulate importer, generate(IMPORTER_FE)
+
+. 
+.                 * Estimate the constrained gravity model and generate predicted
+>  trade
+.                 * value
+.                 ppml trade EXPORTER_FE* IMPORTER_FE1-IMPORTER_FE$N_1 , iter(30)
+>  noconst offset(ln_tij_CFL)
+
+note: checking the existence of the estimates
+WARNING: trade has very large values, consider rescaling
+
+Number of regressors excluded to ensure that the estimates exist: 0
+Number of observations excluded: 0
+
+note: starting ppml estimation
+note: trade has noninteger values
+
+Iteration 1:   deviance =  5.40e+07
+Iteration 2:   deviance =  3.79e+07
+Iteration 3:   deviance =  3.49e+07
+Iteration 4:   deviance =  3.42e+07
+Iteration 5:   deviance =  3.40e+07
+Iteration 6:   deviance =  3.40e+07
+Iteration 7:   deviance =  3.40e+07
+Iteration 8:   deviance =  3.40e+07
+Iteration 9:   deviance =  3.40e+07
+Iteration 10:  deviance =  3.40e+07
+Iteration 11:  deviance =  3.40e+07
+
+Number of parameters: 137
+Number of observations: 4761
+Pseudo log-likelihood: -1.679e+10
+R-squared: .3698923
+Option strict is: off
+-------------------------------------------------------------------------------
+              |             Semirobust
+        trade |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------+----------------------------------------------------------------
+ EXPORTER_FE1 |   14.86926   .6930862    21.45   0.000     13.51084    16.22768
+ EXPORTER_FE2 |   16.68806   .7733137    21.58   0.000      15.1724    18.20373
+ EXPORTER_FE3 |   14.89462   .5360841    27.78   0.000     13.84391    15.94533
+ EXPORTER_FE4 |   16.09275   .5819531    27.65   0.000     14.95215    17.23336
+ EXPORTER_FE5 |   13.36662   .7144773    18.71   0.000     11.96627    14.76697
+ EXPORTER_FE6 |   12.16732   .9542523    12.75   0.000     10.29702    14.03762
+ EXPORTER_FE7 |   17.12342   .7432077    23.04   0.000     15.66676    18.58008
+ EXPORTER_FE8 |   16.18262   .6548012    24.71   0.000     14.89923    17.46601
+ EXPORTER_FE9 |   15.52998   .6990737    22.22   0.000     14.15982    16.90014
+EXPORTER_FE10 |   15.57194   .7444766    20.92   0.000     14.11279    17.03108
+EXPORTER_FE11 |   18.45407   .5337558    34.57   0.000     17.40792    19.50021
+EXPORTER_FE12 |   11.95347   .8617478    13.87   0.000     10.26448    13.64247
+EXPORTER_FE13 |   14.58662   .9455925    15.43   0.000     12.73329    16.43995
+EXPORTER_FE14 |   13.45279   .7204065    18.67   0.000     12.04082    14.86476
+EXPORTER_FE15 |   12.87895   .8996196    14.32   0.000     11.11573    14.64217
+EXPORTER_FE16 |   14.60742   .5636823    25.91   0.000     13.50262    15.71221
+EXPORTER_FE17 |   13.34613   .9567846    13.95   0.000     11.47086    15.22139
+EXPORTER_FE18 |   13.92798   .8633162    16.13   0.000     12.23591    15.62005
+EXPORTER_FE19 |   16.53758   .7130165    23.19   0.000     15.14009    17.93506
+EXPORTER_FE20 |   15.19963   .6713782    22.64   0.000     13.88375    16.51551
+EXPORTER_FE21 |   16.69337   .6463593    25.83   0.000     15.42653    17.96022
+EXPORTER_FE22 |   16.73898   .5549843    30.16   0.000     15.65123    17.82673
+EXPORTER_FE23 |   14.71651   .8719665    16.88   0.000     13.00748    16.42553
+EXPORTER_FE24 |   14.13518   .4850034    29.14   0.000     13.18459    15.08577
+EXPORTER_FE25 |   14.70681   .6056004    24.28   0.000     13.51985    15.89376
+EXPORTER_FE26 |   16.10801   .7676114    20.98   0.000     14.60352     17.6125
+EXPORTER_FE27 |   16.77399   .8468186    19.81   0.000     15.11425    18.43372
+EXPORTER_FE28 |   15.10398   .5166373    29.24   0.000     14.09139    16.11657
+EXPORTER_FE29 |   14.89021   .9960873    14.95   0.000     12.93791     16.8425
+EXPORTER_FE30 |    12.6407   .9218518    13.71   0.000      10.8339    14.44749
+EXPORTER_FE31 |   15.02413   .6226881    24.13   0.000     13.80369    16.24458
+EXPORTER_FE32 |   16.99925   .6517744    26.08   0.000      15.7218    18.27671
+EXPORTER_FE33 |   13.59231   .9788835    13.89   0.000     11.67373    15.51088
+EXPORTER_FE34 |   18.00221   .5291071    34.02   0.000     16.96518    19.03924
+EXPORTER_FE35 |   12.92078   .9937071    13.00   0.000     10.97315    14.86841
+EXPORTER_FE36 |   16.96049   .6122607    27.70   0.000     15.76048     18.1605
+EXPORTER_FE37 |   13.51241   .6734852    20.06   0.000     12.19241    14.83242
+EXPORTER_FE38 |   14.28912   .9203766    15.53   0.000     12.48521    16.09302
+EXPORTER_FE39 |   11.37194   .7332421    15.51   0.000     9.934809    12.80906
+EXPORTER_FE40 |   13.85436   .8402066    16.49   0.000     12.20758    15.50113
+EXPORTER_FE41 |   16.04842   .6504672    24.67   0.000     14.77353    17.32331
+EXPORTER_FE42 |   11.99462   .6067294    19.77   0.000     10.80545    13.18378
+EXPORTER_FE43 |   13.75369   1.109592    12.40   0.000     11.57893    15.92845
+EXPORTER_FE44 |   12.18175    .698263    17.45   0.000     10.81318    13.55032
+EXPORTER_FE45 |   11.32413   .9052675    12.51   0.000     9.549842    13.09842
+EXPORTER_FE46 |   16.20847   .6172579    26.26   0.000     14.99867    17.41827
+EXPORTER_FE47 |   9.613044    .617212    15.57   0.000     8.403331    10.82276
+EXPORTER_FE48 |   15.31117   .9688399    15.80   0.000     13.41228    17.21007
+EXPORTER_FE49 |   15.65289   .4683366    33.42   0.000     14.73496    16.57081
+EXPORTER_FE50 |   14.76262   .7616473    19.38   0.000     13.26982    16.25542
+EXPORTER_FE51 |   11.76916   1.033339    11.39   0.000     9.743852    13.79447
+EXPORTER_FE52 |   12.33115   .9194719    13.41   0.000     10.52902    14.13329
+EXPORTER_FE53 |   15.15655   .6073756    24.95   0.000     13.96611    16.34698
+EXPORTER_FE54 |   15.40751   .7072682    21.78   0.000     14.02129    16.79373
+EXPORTER_FE55 |   14.71666   .7183289    20.49   0.000     13.30877    16.12456
+EXPORTER_FE56 |   13.26096   .7907944    16.77   0.000     11.71103    14.81089
+EXPORTER_FE57 |   14.41046   .7327233    19.67   0.000     12.97434    15.84657
+EXPORTER_FE58 |   11.81855   1.041079    11.35   0.000      9.77807    13.85902
+EXPORTER_FE59 |   15.62025   .4377397    35.68   0.000      14.7623     16.4782
+EXPORTER_FE60 |   15.64038   .5967794    26.21   0.000     14.47071    16.81004
+EXPORTER_FE61 |   15.96173   .5879141    27.15   0.000     14.80944    17.11402
+EXPORTER_FE62 |   13.43671   .7579581    17.73   0.000     11.95114    14.92228
+EXPORTER_FE63 |   13.37736   .7561104    17.69   0.000     11.89541    14.85931
+EXPORTER_FE64 |   15.95486   .7984911    19.98   0.000     14.38984    17.51987
+EXPORTER_FE65 |   11.53985   .7238503    15.94   0.000     10.12113    12.95857
+EXPORTER_FE66 |   12.99271     .82712    15.71   0.000     11.37159    14.61384
+EXPORTER_FE67 |   18.84653     .48816    38.61   0.000     17.88976    19.80331
+EXPORTER_FE68 |   16.16191   .7380365    21.90   0.000     14.71538    17.60843
+EXPORTER_FE69 |   17.29433   .7544612    22.92   0.000     15.81561    18.77304
+ IMPORTER_FE1 |  -2.245176   .6757853    -3.32   0.001    -3.569691   -.9206617
+ IMPORTER_FE2 |  -.2987735   .6841851    -0.44   0.662    -1.639752    1.042205
+ IMPORTER_FE3 |  -2.257874   .6303492    -3.58   0.000    -3.493335   -1.022412
+ IMPORTER_FE4 |   -1.08693   .6804114    -1.60   0.110    -2.420512    .2466516
+ IMPORTER_FE5 |   -3.61536   .6669084    -5.42   0.000    -4.922477   -2.308244
+ IMPORTER_FE6 |  -4.596268   .7519452    -6.11   0.000    -6.070053   -3.122482
+ IMPORTER_FE7 |  -.0333975   .7642518    -0.04   0.965    -1.531304    1.464508
+ IMPORTER_FE8 |  -.8428771   .6635909    -1.27   0.204    -2.143491    .4577373
+ IMPORTER_FE9 |  -1.658544   .7800137    -2.13   0.033    -3.187342   -.1297449
+IMPORTER_FE10 |  -1.619869   .7744045    -2.09   0.036    -3.137674   -.1020644
+IMPORTER_FE11 |   1.065915   .5944442     1.79   0.073    -.0991738    2.231005
+IMPORTER_FE12 |  -4.928303   .7380912    -6.68   0.000    -6.374935   -3.481671
+IMPORTER_FE13 |  -2.297767   .8080935    -2.84   0.004    -3.881601   -.7139327
+IMPORTER_FE14 |  -3.568554   .6696396    -5.33   0.000    -4.881023   -2.256084
+IMPORTER_FE15 |  -3.856263   .6906309    -5.58   0.000    -5.209874   -2.502651
+IMPORTER_FE16 |  -2.514674   .6598522    -3.81   0.000    -3.807961   -1.221388
+IMPORTER_FE17 |  -3.331731   .7100481    -4.69   0.000      -4.7234   -1.940063
+IMPORTER_FE18 |   -2.98367   .7370008    -4.05   0.000    -4.428165   -1.539175
+IMPORTER_FE19 |  -.4722582   .6700798    -0.70   0.481     -1.78559     .841074
+IMPORTER_FE20 |    -2.0312   .7208711    -2.82   0.005    -3.444081   -.6183182
+IMPORTER_FE21 |  -.4447765    .728829    -0.61   0.542    -1.873255    .9837021
+IMPORTER_FE22 |  -.3044179   .5610535    -0.54   0.587    -1.404063    .7952268
+IMPORTER_FE23 |  -2.101817   .7094698    -2.96   0.003    -3.492352   -.7112819
+IMPORTER_FE24 |  -1.349227   .4437969    -3.04   0.002    -2.219053   -.4794012
+IMPORTER_FE25 |  -2.433296   .6276944    -3.88   0.000    -3.663554   -1.203037
+IMPORTER_FE26 |  -1.140616   .7962003    -1.43   0.152    -2.701139    .4199084
+IMPORTER_FE27 |  -.4342198   .8573359    -0.51   0.613    -2.114567    1.246128
+IMPORTER_FE28 |  -2.374214   .5772718    -4.11   0.000    -3.505646   -1.242782
+IMPORTER_FE29 |  -2.030286   .8370141    -2.43   0.015    -3.670803   -.3897682
+IMPORTER_FE30 |  -4.210641   .7586494    -5.55   0.000    -5.697566   -2.723715
+IMPORTER_FE31 |  -2.150289   .6454705    -3.33   0.001    -3.415387   -.8851897
+IMPORTER_FE32 |  -.1808134   .6929273    -0.26   0.794    -1.538926    1.177299
+IMPORTER_FE33 |  -3.396909   .8745469    -3.88   0.000    -5.110989   -1.682828
+IMPORTER_FE34 |   .6111784   .5678485     1.08   0.282    -.5017842    1.724141
+IMPORTER_FE35 |  -3.797123   .7310427    -5.19   0.000     -5.22994   -2.364306
+IMPORTER_FE36 |  -.4456618   .6611336    -0.67   0.500     -1.74146    .8501363
+IMPORTER_FE37 |  -3.391621   .5839947    -5.81   0.000     -4.53623   -2.247013
+IMPORTER_FE38 |   -2.83458    .881031    -3.22   0.001    -4.561369   -1.107791
+IMPORTER_FE39 |   -5.38167    .568992    -9.46   0.000    -6.496874   -4.266466
+IMPORTER_FE40 |  -3.063211   .7333087    -4.18   0.000     -4.50047   -1.625953
+IMPORTER_FE41 |  -.9897918   .6850982    -1.44   0.149     -2.33256     .352976
+IMPORTER_FE42 |   -4.83346   .5455538    -8.86   0.000    -5.902725   -3.764194
+IMPORTER_FE43 |  -3.420344   1.052949    -3.25   0.001    -5.484086   -1.356602
+IMPORTER_FE44 |  -4.694737   .6003076    -7.82   0.000    -5.871318   -3.518156
+IMPORTER_FE45 |  -5.613017   .7965347    -7.05   0.000    -7.174196   -4.051838
+IMPORTER_FE46 |  -1.158913   .6724899    -1.72   0.085    -2.476969    .1591433
+IMPORTER_FE47 |  -6.746276   .4898402   -13.77   0.000    -7.706345   -5.786207
+IMPORTER_FE48 |   -1.67985    .869932    -1.93   0.053    -3.384885    .0251858
+IMPORTER_FE49 |  -1.535507   .5929571    -2.59   0.010    -2.697681   -.3733322
+IMPORTER_FE50 |   -2.21167    .698191    -3.17   0.002    -3.580099    -.843241
+IMPORTER_FE51 |  -5.312552   .9314122    -5.70   0.000    -7.138087   -3.487018
+IMPORTER_FE52 |  -3.522656   .5737531    -6.14   0.000    -4.647191    -2.39812
+IMPORTER_FE53 |  -2.182287    .666615    -3.27   0.001    -3.488829   -.8757459
+IMPORTER_FE54 |  -1.693935    .771854    -2.19   0.028    -3.206741   -.1811286
+IMPORTER_FE55 |  -2.243734   .6634025    -3.38   0.001    -3.543979   -.9434887
+IMPORTER_FE56 |   -3.39936   .5974418    -5.69   0.000    -4.570325   -2.228396
+IMPORTER_FE57 |   -2.53085   .6628672    -3.82   0.000    -3.830046   -1.231654
+IMPORTER_FE58 |  -4.677528   .6918182    -6.76   0.000    -6.033467   -3.321589
+IMPORTER_FE59 |  -1.767656   .4349446    -4.06   0.000    -2.620131   -.9151799
+IMPORTER_FE60 |  -1.624119   .6697751    -2.42   0.015    -2.936854   -.3113838
+IMPORTER_FE61 |  -1.367713   .6285355    -2.18   0.030     -2.59962    -.135806
+IMPORTER_FE62 |  -3.756735   .8226293    -4.57   0.000    -5.369059   -2.144411
+IMPORTER_FE63 |  -3.617282   .6991036    -5.17   0.000      -4.9875   -2.247064
+IMPORTER_FE64 |  -1.085403   .7596724    -1.43   0.153    -2.574333     .403528
+IMPORTER_FE65 |  -4.941256   .5313754    -9.30   0.000    -5.982732   -3.899779
+IMPORTER_FE66 |  -4.047376    .779115    -5.19   0.000    -5.574413   -2.520339
+IMPORTER_FE67 |   1.878813   .4773859     3.94   0.000     .9431536    2.814472
+IMPORTER_FE68 |   -.941252   .7209124    -1.31   0.192    -2.354214    .4717102
+   ln_tij_CFL |          1  (offset)
+-------------------------------------------------------------------------------
+
+.                         predict tradehat_CDL, mu
+
+.         
+.         * (ii): Construct conditional general equilibrium multilateral resistan
+> ces
+.         
+.                 * Based on the estimated exporter and importer fixed effects, c
+> reate
+.                 * the actual set of counterfactual fixed effects        
+.                         forvalues i = 1(1)$N_1 {
+  2.                                 quietly replace EXPORTER_FE`i' = EXPORTER_FE
+> `i' * exp(_b[EXPORTER_FE`i'])
+  3.                                 quietly replace IMPORTER_FE`i' = IMPORTER_FE
+> `i' * exp(_b[IMPORTER_FE`i'])
+  4.                         }
+
+.                 
+.                 * Create the exporter and importer fixed effects for the countr
+> y of 
+.                 * reference (Germany)
+.                         quietly replace EXPORTER_FE$N = EXPORTER_FE$N * exp(_b[
+> EXPORTER_FE$N ])
+
+.                         quietly replace IMPORTER_FE$N = IMPORTER_FE$N * exp(0)
+
+.                         
+.                 * Create the variables stacking all the non-zero exporter and i
+> mporter 
+.                 * fixed effects, respectively           
+.                         egen exp_pi_CDL = rowtotal( EXPORTER_FE1-EXPORTER_FE$N 
+> )
+
+.                         egen exp_chi_CDL = rowtotal( IMPORTER_FE1-IMPORTER_FE$N
+>  )
+
+.                         
+.                 * Compute the outward and inward multilateral resistances      
+>                          
+.                         generate OMR_CDL = Y * E_R / exp_pi_CDL
+
+.                         generate IMR_CDL = E / (exp_chi_CDL * E_R)
+
+.                         
+.                 * Compute the estimated level of conditional general equilibriu
+> m 
+.                 * international trade for the given level of ouptput and expend
+> itures           
+.                         generate tempXi_CDL = tradehat_CDL if exporter != impor
+> ter
+(69 missing values generated)
+
+.                                 bysort exporter: egen Xi_CDL = sum(tempXi_CDL)
+
+.                                         drop tempXi_CDL
+
+. 
+.                                         
+.         * Step III.b: Obtain full endowment general equilibrium effects
+. 
+.                 * Create the iterative procedure by specifying the initial vari
+> ables, 
+.                 * where s = 0 stands for the baseline (BLN) value and s = 1 sta
+> nds for  
+.                 * the conditional general equilibrium (CD) value
+.                 
+.                         * The constant elasticity of substitutin is taken from 
+> the literature
+.                         scalar sigma = 7
+
+.                 
+.                         * The parameter phi links the value of output with expe
+> nditures
+.                         generate  phi = E/Y if exporter == importer
+(4692 missing values generated)
+
+.                         
+.                         * Compute the change in bilateral trade costs resulting
+>  from the 
+.                         * counterfactual
+.                         generate change_tij = tij_CFL / tij_BLN 
+
+. 
+.                         * Re-specify the variables in the baseline and conditio
+> nal scenarios
+.                                 * Output 
+.                                 generate Y_0 = Y
+
+.                                 generate Y_1 = Y
+
+.                                 
+.                                 * Expenditures, including with respect to the r
+> eference country   
+.                                 generate E_0 = E
+
+.                                 generate E_R_0 = E_R
+
+.                                 generate E_1 = E
+
+.                                 generate E_R_1 = E_R                    
+
+.                         
+.                                 * Predicted level of trade 
+.                                 generate tradehat_1 = tradehat_CDL
+
+. 
+.                                 
+.                 * (i)   Allow for endogenous factory-gate prices
+.         
+.                         * Re-specify the factory-gate prices under the baseline
+>  and 
+.                         * conditional scenarios                         
+.                         generate exp_pi_0 = exp_pi_BLN
+
+.                         generate tempexp_pi_ii_0 = exp_pi_0 if exporter == impo
+> rter
+(4692 missing values generated)
+
+.                                 bysort importer: egen exp_pi_j_0 = mean(tempexp
+> _pi_ii_0)
+
+.                         generate exp_pi_1 = exp_pi_CDL
+
+.                         generate tempexp_pi_ii_1 = exp_pi_1 if exporter == impo
+> rter
+(4692 missing values generated)
+
+.                                 bysort importer: egen exp_pi_j_1 = mean(tempexp
+> _pi_ii_1)
+
+.                                 drop tempexp_pi_ii_*
+
+.                         generate exp_chi_0 = exp_chi_BLN        
+
+.                         generate exp_chi_1 = exp_chi_CDL        
+
+.                         
+.                         * Compute the first order change in factory-gate prices
+>  in the 
+.                         * baseline and conditional scenarios
+.                         generate change_pricei_0 = 0                           
+>  
+
+.                         generate change_pricei_1 = ((exp_pi_1 / exp_pi_0) / (E_
+> R_1 / E_R_0))^(1/(1-sigma))
+
+.                         generate change_pricej_1 = ((exp_pi_j_1 / exp_pi_j_0) /
+>  (E_R_1 / E_R_0))^(1/(1-sigma))
+
+.                 
+.                         * Re-specify the outward and inward multilateral resist
+> ances in the
+.                         * baseline and conditional scenarios
+.                         generate OMR_FULL_0 = Y_0 * E_R_0 / exp_pi_0
+
+.                         generate IMR_FULL_0 = E_0 / (exp_chi_0 * E_R_0)        
+>  
+
+.                         generate IMR_FULL_1 = E_1 / (exp_chi_1 * E_R_1)
+
+.                         generate OMR_FULL_1 = Y_1 * E_R_1 / exp_pi_1
+
+.                         
+.                 * Compute initial change in outward and multilateral resitances
+> , which 
+.                 * are set to zero               
+.                         generate change_IMR_FULL_1 = exp(0)             
+
+.                         generate change_OMR_FULL_1 = exp(0)
+
+.                 
+. 
+.         ***********************************************************************
+> *****
+.         ******************** Start of the Iterative Procedure  ****************
+> *****
+.         
+.         * Set the criteria of convergence, namely that either the standard erro
+> rs or
+.         * maximum of the difference between two iterations of the factory-gate 
+.         * prices are smaller than 0.01, where s is the number of iterations    
+>  
+.                 local s = 3     
+
+.                 local sd_dif_change_pi = 1
+
+.                 local max_dif_change_pi = 1
+
+.         while (`sd_dif_change_pi' > 0.01) | (`max_dif_change_pi' > 0.01) {
+  2.                 local s_1 = `s' - 1
+  3.                 local s_2 = `s' - 2
+  4.                 local s_3 = `s' - 3
+  5.                 
+.                 * (ii)  Allow for endogenous income, expenditures and trade    
+>  
+.                         generate trade_`s_1' =  tradehat_`s_2' * change_pricei_
+> `s_2' * change_pricej_`s_2' / (change_OMR_FULL_`s_2'*change_IMR_FULL_`s_2')
+  6. 
+.                         
+.                 * (iii) Estimation of the structural gravity model
+.                                 drop EXPORTER_FE* IMPORTER_FE*
+  7.                                 quietly tabulate exporter, generate (EXPORTE
+> R_FE)
+  8.                                 quietly tabulate importer, generate (IMPORTE
+> R_FE)
+  9.                         capture ppml trade_`s_1' EXPORTER_FE* IMPORTER_FE*, 
+> offset(ln_tij_CFL) noconst iter(30) 
+ 10.                                 predict tradehat_`s_1', mu
+ 11.                                         
+.                         * Update output & expenditure                   
+.                                 bysort exporter: egen Y_`s_1' = total(tradehat_
+> `s_1')
+ 12.                                 quietly generate tempE_`s_1' = phi * Y_`s_1'
+>  if exporter == importer
+ 13.                                         bysort importer: egen E_`s_1' = mean
+> (tempE_`s_1')
+ 14.                                 quietly generate tempE_R_`s_1' = E_`s_1' if 
+> importer == "ZZZ"
+ 15.                                         egen E_R_`s_1' = mean(tempE_R_`s_1')
+ 16.                                 
+.                         * Update factory-gate prices 
+.                                 forvalues i = 1(1)$N_1 {
+ 17.                                         quietly replace EXPORTER_FE`i' = EXP
+> ORTER_FE`i' * exp(_b[EXPORTER_FE`i'])
+ 18.                                         quietly replace IMPORTER_FE`i' = IMP
+> ORTER_FE`i' * exp(_b[IMPORTER_FE`i'])
+ 19.                                 }
+ 20.                                 quietly replace EXPORTER_FE$N = EXPORTER_FE$
+> N * exp(_b[EXPORTER_FE$N ])
+ 21.                                 egen exp_pi_`s_1' = rowtotal(EXPORTER_FE1-EX
+> PORTER_FE$N ) 
+ 22.                                 quietly generate tempvar1 = exp_pi_`s_1' if 
+> exporter == importer
+ 23.                                         bysort importer: egen exp_pi_j_`s_1'
+>  = mean(tempvar1)           
+ 24.                                         
+.                         * Update multilateral resistances
+.                                 generate change_pricei_`s_1' = ((exp_pi_`s_1' /
+>  exp_pi_`s_2') / (E_R_`s_1' / E_R_`s_2'))^(1/(1-sigma))
+ 25.                                 generate change_pricej_`s_1' = ((exp_pi_j_`s
+> _1' / exp_pi_j_`s_2') / (E_R_`s_1' / E_R_`s_2'))^(1/(1-sigma))
+ 26.                                 generate OMR_FULL_`s_1' = (Y_`s_1' * E_R_`s_
+> 1') / exp_pi_`s_1' 
+ 27.                                         generate change_OMR_FULL_`s_1' = OMR
+> _FULL_`s_1' / OMR_FULL_`s_2'                                        
+ 28.                                 egen exp_chi_`s_1' = rowtotal(IMPORTER_FE1-I
+> MPORTER_FE$N )      
+ 29.                                 generate IMR_FULL_`s_1' = E_`s_1' / (exp_chi
+> _`s_1' * E_R_`s_1')
+ 30.                                         generate change_IMR_FULL_`s_1' = IMR
+> _FULL_`s_1' / IMR_FULL_`s_2'
+ 31.                                 
+.                         * Iteration until the change in factory-gate prices con
+> verges to zero
+.                                 generate dif_change_pi_`s_1' = change_pricei_`s
+> _2' - change_pricei_`s_3'
+ 32.                                         display "************************* i
+> teration number " `s_2' " *************************"
+ 33.                                                 summarize dif_change_pi_`s_1
+> ', format
+ 34.                                         display "***************************
+> *******************************************"
+ 35.                                         display " "
+ 36.                                                 local sd_dif_change_pi = r(s
+> d)
+ 37.                                                 local max_dif_change_pi = ab
+> s(r(max))   
+ 38.                                                 
+.                         local s = `s' + 1
+ 39.                         drop temp* 
+ 40.         }
+************************* iteration number 1 *************************
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+dif_change~2 |      4761    1.305293    .0796225   .9666225   1.468882
+**********************************************************************
+ 
+************************* iteration number 2 *************************
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+dif_change~3 |      4761   -.3126514    .0902139  -.4959582   .0765771
+**********************************************************************
+ 
+************************* iteration number 3 *************************
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+dif_change~4 |      4761    .0074778    .0139545  -.0659928   .0318213
+**********************************************************************
+ 
+************************* iteration number 4 *************************
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+dif_change~5 |      4761    .0009588    .0067648   -.005722   .0355494
+**********************************************************************
+ 
+************************* iteration number 5 *************************
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+dif_change~6 |      4761   -.0022108    .0044307  -.0200164   .0032467
+**********************************************************************
+ 
+
+.         
+.         ********************* End of the Iterative Procedure  *****************
+> *****
+.         ***********************************************************************
+> *****
+.                 
+.                 * (iv)  Construction of the "full endowment general equilibrium
+> " 
+.                 *               effects indexes
+.                         * Use the result of the latest iteration S
+.                         local S = `s' - 2
+
+. 
+.                 * Compute the full endowment general equilibrium of factory-gat
+> e price
+.                         generate change_pricei_FULL = ((exp_pi_`S' / exp_pi_0) 
+> / (E_R_`S' / E_R_0))^(1/(1-sigma))               
+
+. 
+.                 * Compute the full endowment general equilibrium of the value o
+> utput
+.                         generate Y_FULL = change_pricei_FULL  * Y_BLN
+
+. 
+.                 * Compute the full endowment general equilibrium of the value o
+> f 
+.                 * aggregate expenditures
+.                         generate tempE_FULL = phi * Y_FULL if exporter == impor
+> ter
+(4692 missing values generated)
+
+.                                 bysort importer: egen E_FULL = mean(tempE_FULL)
+
+.                                         drop tempE_FULL
+
+.                         
+.                 * Compute the full endowment general equilibrium of the outward
+>  and 
+.                 * inward multilateral resistances 
+.                         generate OMR_FULL = Y_FULL * E_R_`S' / exp_pi_`S'
+
+.                         generate IMR_FULL = E_`S' / (exp_chi_`S' * E_R_`S')    
+>  
+
+.                         
+.                 * Compute the full endowment general equilibrium of the value o
+> f 
+.                 * bilateral trade 
+.                         generate X_FULL = (Y_FULL * E_FULL * tij_CFL) /(IMR_FUL
+> L * OMR_FULL)                    
+
+.                 
+.                 * Compute the full endowment general equilibrium of the value o
+> f 
+.                 * total international trade 
+.                         generate tempXi_FULL = X_FULL if exporter != importer
+(69 missing values generated)
+
+.                                 bysort exporter: egen Xi_FULL = sum(tempXi_FULL
+> )
+
+.                                         drop tempXi_FULL
+
+.                                         
+.         * Save the conditional and general equilibrium effects results         
+>  
+.         save "Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FU
+> LLGE.dta", replace
+(note: file Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FULLGE
+> .dta not found)
+file Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FULLGE.dta sa
+> ved
+
+. 
+. 
+. * Step IV: Collect, construct, and report indexes of interest
+.         use "Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FUL
+> LGE.dta", clear
+
+.                 collapse(mean) OMR_FULL OMR_CDL OMR_BLN change_pricei_FULL Xi_*
+>  Y_BLN Y_FULL, by(exporter)
+
+.                         rename exporter country
+
+.                         replace country = "DEU" if country == "ZZZ"
+(1 real change made)
+
+.                         sort country
+
+.                 
+.                 * Percent change in full endowment general equilibrium of facto
+> ry-gate prices
+.                         generate change_price_FULL = (change_pricei_FULL - 1) /
+>  1 * 100
+
+.                         
+.                 * Percent change in full endowment general equilibirum of outwa
+> rd multilateral resistances
+.                         generate change_OMR_CDL = (OMR_CDL^(1/(1-sigma)) - OMR_
+> BLN^(1/(1-sigma))) / OMR_BLN^(1/(1-sigma)) * 100
+
+.                 
+.                 * Percent change in full endowment general equilibrium of outwa
+> rd multilateral resistances                      
+.                         generate change_OMR_FULL = (OMR_FULL^(1/(1-sigma)) - OM
+> R_BLN^(1/(1-sigma))) / OMR_BLN^(1/(1-sigma)) * 100
+
+. 
+.                 * Percent change in conditional general equilibrium of bilatera
+> l trade
+.                         generate change_Xi_CDL = (Xi_CDL - Xi_BLN) / Xi_BLN * 1
+> 00       
+
+.                         
+.                 * Percent change in full endowment general equilibrium of bilat
+> eral trade               
+.                         generate change_Xi_FULL = (Xi_FULL - Xi_BLN) / Xi_BLN *
+>  100
+
+.                         
+.         save "Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FU
+> LL_PROD.dta", replace
+(note: file Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FULL_P
+> ROD.dta not found)
+file Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FULL_PROD.dta
+>  saved
+
+. 
+. 
+.         * Construct the percentage changes on import/consumption side
+.         use "Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FUL
+> LGE.dta", clear
+
+.                 collapse(mean) IMR_FULL IMR_CDL IMR_BLN, by(importer)
+
+.                         rename importer country
+
+.                         replace country = "DEU" if country == "ZZZ"
+(1 real change made)
+
+.                         sort country            
+
+. 
+.                 * Conditional general equilibrium of inward multilateral resist
+> ances
+.                         generate change_IMR_CDL = (IMR_CDL^(1/(1-sigma)) - IMR_
+> BLN^(1/(1-sigma))) / IMR_BLN^(1/(1-sigma)) * 100
+
+.                         
+.                 * Full endowment general equilibrium of inward multilateral res
+> istances
+.                         generate change_IMR_FULL = (IMR_FULL^(1/(1-sigma)) - IM
+> R_BLN^(1/(1-sigma))) / IMR_BLN^(1/(1-sigma)) * 100
+
+.                         
+.         save "Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FU
+> LL_CONS.dta", replace
+(note: file Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FULL_C
+> ONS.dta not found)
+file Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FULL_CONS.dta
+>  saved
+
+. 
+.         * Merge the general equilibrium results from the production and consump
+> tion
+.         * sides
+.         use "Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FUL
+> L_PROD.dta", clear
+
+.                 joinby country using "Applications/1_TradeWithoutBorder/Results
+> /1_TradeWithoutBorder_FULL_CONS.dta"
+
+.                 
+.                 * Full endowment general equilibrium of real GDP
+.                         generate rGDP_BLN = Y_BLN / (IMR_BLN ^(1 / (1 -sigma)))
+
+.                         generate rGDP_FULL = Y_FULL / (IMR_FULL ^(1 / (1 -sigma
+> )))
+
+.                                 generate change_rGDP_FULL = (rGDP_FULL - rGDP_B
+> LN) / rGDP_BLN * 100
+
+.                         
+.                 * Keep indexes of interest      
+.                         keep country change_Xi_CDL change_Xi_FULL change_price_
+> FULL change_IMR_FULL change_rGDP_FULL Y_BLN
+
+.                         order country change_Xi_CDL change_Xi_FULL change_price
+> _FULL change_IMR_FULL change_rGDP_FULL Y_BLN
+
+.                                 
+.         * Export the results in Excel
+.                 export excel using "Applications/1_TradeWithoutBorder/Results/1
+> _TradeWithoutBorder_FULL.xls     ", firstrow(variables) replace
+file Applications/1_TradeWithoutBorder/Results/1_TradeWithoutBorder_FULL.xls     
+>  saved
+
+. 
+.         * Create a graphic showing the conditional and full endowment general
+.         * equilibrium on exports 
+.                         generate ln_Y = log(Y_BLN)
+
+.                         twoway (scatter change_Xi_CDL ln_Y if country~="HKG") (
+> scatter change_Xi_FULL ln_Y if country~="HKG"), xtitle("Log value of output") y
+> title("Percentage change of exports") legend(lab(1 "Conditional general equilib
+> rium")  lab(2 "Full endowment general equilibrium")) graphr(color(white)) plotr
+> (color(white)) saving("Applications/1_TradeWithoutBorder/Results/scatter_trade_
+> output", replace)
+(note: file Applications/1_TradeWithoutBorder/Results/scatter_trade_output.gph no
+> t found)
+(file Applications/1_TradeWithoutBorder/Results/scatter_trade_output.gph saved)
+
+.                 
+.         * Create a graphic showing the impact on real GDP, factory-gate prices 
+> and
+.         * -1* inward multilateral resistances
+.                         generate _change_IMR_FULL = -1 * change_IMR_FULL
+
+.                         twoway (scatter change_rGDP_FULL ln_Y) (scatter change_
+> price_FULL ln_Y) (scatter _change_IMR_FULL ln_Y) , xtitle("Log value of output"
+> ) ytitle("Percentage changes") legend(lab(1 "real GDP")  lab(2 "Factory-gate pr
+> ice") lab(3 "-(inward multilateral resistances)")) graphr(color(white)) plotr(c
+> olor(white)) saving("Applications/1_TradeWithoutBorder/Results/scatter_rGDP_out
+> put", replace)
+(note: file Applications/1_TradeWithoutBorder/Results/scatter_rGDP_output.gph not
+>  found)
+(file Applications/1_TradeWithoutBorder/Results/scatter_rGDP_output.gph saved)
+
+.         
+. 
+. *******************************************************************************
+> *        
+.         
+. 
+end of do-file
+
+. do "C:\Users\Olivares_s\Desktop\tpa\Advanced Guide to TPA\Chapter2\Applications
+> \2_RTAsEffects\RTAsEffects.do"
+
+. *******************************************************************************
+> *
+. ****************  CHAPTER 2 - GENERAL EQUILIBRIUM TRADE POLICY  ***************
+> * 
+. ****************                      ANALYSIS WITH STRUCTURAL GRAVITY  *******
+> ********* 
+. *******************************************************************************
+> *
+. 
+. *************  APPLICATION 2: IMPACT OF REGIONAL TRADE AGREEMENTS  ************
+> * 
+. 
+. * This application applies the methods developed by Anderson et al. (2015) in 
+. * order to investigates the potential effects of removing the North American
+. * Free Trade Agreement (NAFTA).
+. 
+. * Data source: The database reports bilateral trade, including international an
+> d
+. *              intra-national trade, at the aggregated manufacturing level for 
+. *              69 countries for the period 1986-2006, provided by Thomas Zylkin
+> ,
+. *              based on UN COMTRADE, CEPII TradeProd and UN UNIDO INDSTAT 
+. *              databases. Information on RTAs come from Mario Larch's Regional
+. *              Trade Agreements Database (http://www.ewf.uni-bayreuth.de/en/
+. *              research/RTA-data/index.html). Standard gravity variables such 
+. *              as distance, continuous borders, and common language, are taken
+. *              from the CEPII GeoDist database.
+. 
+. 
+. ******************************* PRELIMINARY STEP ******************************
+> *
+. 
+. * IMPORTANT: The "directory_definition.do" do-files has to be executed before
+. *            running this do-file.
+. *            do "directory_definition.do"
+. 
+. 
+. * Clear memory and set parameters
+.         clear all
+
+.         set more off
+
+.         clear matrix
+
+.         set memory 500m
+set memory ignored.
+    Memory no longer needs to be set in modern Statas; memory adjustments are
+    performed on the fly automatically.
+
+.         set matsize 8000
+
+.         set maxvar 30000
+
+
+.         set type double, permanently
+(set type preference recorded)
+
+.         
+. * Set directory path, where "$input" refers to the path of the main folder 
+. * "Practical Guide to Gravity"  
+.         cd "$input/Chapter2"    
+C:\Users\Olivares_s\Desktop\tpa\Advanced Guide to TPA\Chapter2
+
+.                 
+. * Close and create log  
+.         capture log close

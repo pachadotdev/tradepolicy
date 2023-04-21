@@ -6,8 +6,9 @@ The decision to use Arrow instead of CSV/TSV is that Arrow files are always read
 
 ## Downloading the original datasets
 
-```{r download, message=FALSE, warning=FALSE, results='hide'}
-appfiles_url <- "https://vi.unctad.org/tpa/web/zips/vol2/Advanced%20Guide%20to%20TPA.zip"
+```{r download, eval=FALSE, message=FALSE, warning=FALSE, results='hide'}
+# updated link 2022-04-20
+appfiles_url <- "https://www.wto.org/english/res_e/reser_e/AdvancedGuideFiles.zip"
 appfiles_zip <- "00-application-files.zip"
 appfiles_dir <- "00-application-files"
 
@@ -23,54 +24,12 @@ if (!dir.exists(appfiles_dir)) {
 
 ## Converting the original datasets
 
-```{r covert, message=FALSE, warning=FALSE, results='hide'}
+```{r covert, eval=FALSE, message=FALSE, warning=FALSE, results='hide'}
 # these packages are only used to import the data
 library(haven)
-library(arrow)
-library(stringr)
-library(janitor)
-library(purrr)
+library(usethis)
 
-try(dir.create("data-parquet", showWarnings = F))
-
-dta_files <- list.files("00-application-files",
-                        pattern = "dta",
-                        full.names = TRUE,
-                        recursive = TRUE)
-
-read_and_clean <- function(finp) {
-  message(finp)
-  
-  fout <- finp %>% 
-    str_replace(appfiles_dir, "") %>% 
-    str_replace("Chapter", "ch") %>% 
-    str_replace_all("Chapter[0-9]|\\.dta", "")
-  
-  fout <- fout %>% 
-    str_replace_all("(/)", "_") %>% 
-    make_clean_names()
-  
-  long_names <- c(
-    "datasets_",
-    "applications_",
-    "exercises_",
-    "1_trade_without_border_results_1",
-    "2_rt_as_effects_results_2_"
-  )
-  
-  fout <- fout %>% 
-    str_replace_all(paste(long_names, collapse = "|"), "")
-  
-  fout <- str_replace(fout, "_([0-9])_|__", "_")
-
-  fout2 <- sprintf("data-parquet/%s.parquet", fout)
-  
-  if (!file.exists(fout2)) {
-    read_dta(finp) %>% 
-      clean_names() %>% 
-      write_parquet(fout2)
-  }
-}
-
-map(dta_files, read_and_clean)
+# we only need the dataset for the 3rd application for all the exercises in the book
+agtpa_applications <- read_dta("00-application-files/Chapter1/Datasets/Chapter1Application3.dta")
+use_data(agtpa_applications, overwrite = T)
 ```

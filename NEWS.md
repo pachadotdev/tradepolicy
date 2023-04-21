@@ -1,4 +1,10 @@
-# tradepolicu 0.6.0
+# tradepolicy 0.6.1
+
+Improvements
+* Moves general equilibrium parameters to the start of the examples. This is helps to write clearer code.
+* I added dta files to repository
+
+# tradepolicy 0.6.0
 
 Breaking changes
 * Uses fixest estimation as default
