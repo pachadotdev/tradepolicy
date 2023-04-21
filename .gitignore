@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 *.zip
-00-application-files
 _bookdown_files
 all-models-and-data/*.RData
 dev
