@@ -9,6 +9,7 @@
 ^docs$
 ^00-application-files$
 .*.rmd
+.*.qmd
 .*zip
 .*tex
 .*bib
@@ -24,3 +25,5 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
+^\.quarto$
+^_freeze$

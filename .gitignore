@@ -8,3 +8,5 @@ dev
 data-parquet
 test-bank
 test-bank.zip
+
+/.quarto/

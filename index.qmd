@@ -1,0 +1,97 @@
+---
+bibliography: 00-references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, warning = FALSE, message = FALSE)
+library(DT)
+```
+
+# Introduction {#intro}
+
+## Welcome
+
+<center>
+<img src="cover.png" height="500" alt="Cover image" />
+</center>
+
+</br>
+
+Welcome to the online solutions manual for for An Advanced Guide to Trade Policy Analysis (AGTPA).
+
+This material provides a comprehensive explanation to reproduce the book's results from @yotov2016advanced in R. We do not attempt to discuss the theory behind gravity models. The book thoroughly and the references cited through the chapters shall fill those details.
+
+This manual points at two audiences:
+
+* People who know R and are interested in learning about gravity models.
+* People with no R knowledge who know gravity models theory.
+
+We only assume that readers are familiar with linear regression and that they shall read @yotov2016advanced and @wickham2016r alongside this material.
+
+We replicated all the results from the book, obtained initially with Stata, in R as a way to contribute to Reproducible Research. R is free and available on almost every operating system. It is a beautiful tool for all statistical analyses.
+
+## Disclaimer
+
+The views and opinions expressed in this thesis project are solely those of the author. They do not necessarily reflect the official position of the United Nations Economic and Social Commission for Asia and the Pacific or the Pontifical Catholic University of Chile.
+
+## Reproducing AGTPA results yourself
+
+We created *tradepolicy*, an R package explicitly created to reproduce the results from AGTPA. It features its own functions to obtain the summary tables from the book, besides the datasets in R format.
+
+The reader can get all the functions and datasets by running this line from RStudio:
+
+```{r install_r_package, eval=FALSE}
+install.packages("tradepolicy")
+```
+
+Another way to install the package is by using the *remotes* package and install it from GitHub:
+
+```{r install_devtools, eval=FALSE}
+remotes::install_github("pachadotdev/tradepolicy")
+```
+
+## Getting the most out of this material
+
+The reader can clone the GitHub repository to obtain the editable RMarkdown files:
+
+```
+git clone https://github.com/pachadotdev/tradepolicy.git
+```
+
+Please read @happygitwithr in case of questions about *git* or *GitHub*.
+
+There's a separate resource, [ESCAP Online Training on Using R for Trade Analysis](https://r.tiid.org/), which gives you a certificate if you finish 
+the online training.
+
+## Acknowledgments
+
+This ebook improved noticeably from its early drafts thanks to valuable comments and corrections from:
+
+* Yoto Yotov (Drexel University).
+* Luis Gutiérrez, Leonardo Jofré, Jessica Pavani, Constanza Prado, Vanessa Reinoso (Pontificia Universidad Católica de Chile).
+* Jinbo Hao, Alexey Kravchenko, Chence Sun (United Nations).
+
+For the second (present) edition of the ebook, the communication and contributions to other projects by Laurent Berge (Université Bordeaux), Paulo F. Olivera (Ministério da Economia), Oliver Reiter (Wiener Institut für Internationale Wirtschaftsvergleiche), Hernan Robledo (P. U. Católica de Chile), and Matthieu Stigler (ETH Zurich) were crucial to improving the computation time results. The comments from Maria Semenova (United Nations) largely improved this second edition 
+and helped to clarify different parts of the second chapter.
+
+Earlier versions of these solutions started during the development of the [gravity](https://cran.r-project.org/package=gravity) R package, where Hrisyana Doytchinova's comments and feedback were precious.
+
+## Changes concerning the second edition
+
+The first edition was very conservative in avoiding external libraries (or packages). It only used the strict minimal packages such as *dplyr* for data cleaning and *sandwich* for clustered standard errors. We fitted all the models using base R, which was considerably slower than Stata, with a computation time around five to twenty times larger depending on the model link (or family) used.
+
+The current edition uses *fixest* reduced the fitting for all the models by around 95%. The book's first edition takes around three hours to fit all the models and produce the final HTML. The same process now takes around ten minutes, and we hope these time efficiencies benefit the readers. An additional improvement was to add additional explanations to the codes and review all the text grammar based on the feedback received after publishing the first edition.
+
+While writing this second edition, a critical bug was detected and reported to improve *fixest*, which gave problems when having more than two fixed effects columns. The details for this are available on [GitHub](https://github.com/lrberge/fixest/issues/286). The possibility of comparing with base R, reporting and getting fixes from the packages' authors with transparent communication is a tremendous advantage from Open Source.
+
+As Professor Yotov told this author once while writing his master's thesis and the first edition: We should focus on the correctness of our results, then think about computational efficiency. He was right!
+
+## Changes concerning the third edition
+
+The second edition provided multiple internal enhancements to simplify package loading for the end user. Now we use a more direct approach to load the package and its datasets, as CRAN policies changes since we created this, and we also reflect some changes in the Tidyverse (i.e., such as the new `pivot_` functions) and the *fixest* package.
+
+On the technical side, now we use Quarto to streamline the ebook creation process.
+
+## Contact
+
+Please send me an email to *m.sepulveda* _[at]_ *mail.utoronto.ca* if you have any questions.

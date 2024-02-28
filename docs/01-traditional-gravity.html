@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Solutions Manual for An Advanced Guide to Trade Policy Analysis in R (3rd Edition) - 2&nbsp; Partial equilibrium trade policy analysis with structural gravity</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./02-general-equilibrium.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-traditional-gravity.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Partial equilibrium trade policy analysis with structural gravity</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Solutions Manual for An Advanced Guide to Trade Policy Analysis in R (3rd Edition)</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-traditional-gravity.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Partial equilibrium trade policy analysis with structural gravity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-general-equilibrium.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">General equilibrium trade policy analysis with structural gravity</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#traditional-gravity-estimates" id="toc-traditional-gravity-estimates" class="nav-link active" data-scroll-target="#traditional-gravity-estimates"><span class="header-section-number">2.1</span> Traditional Gravity Estimates</a>
+  <ul class="collapse">
+  <li><a href="#preparing-the-data" id="toc-preparing-the-data" class="nav-link" data-scroll-target="#preparing-the-data"><span class="header-section-number">2.1.1</span> Preparing the data</a></li>
+  <li><a href="#ols-estimation-ignoring-multilateral-resistance-terms" id="toc-ols-estimation-ignoring-multilateral-resistance-terms" class="nav-link" data-scroll-target="#ols-estimation-ignoring-multilateral-resistance-terms"><span class="header-section-number">2.1.2</span> OLS estimation ignoring multilateral resistance terms</a></li>
+  <li><a href="#ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes" id="toc-ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes" class="nav-link" data-scroll-target="#ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes"><span class="header-section-number">2.1.3</span> OLS estimation controlling for multilateral resistance terms with remote indexes</a></li>
+  <li><a href="#ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" id="toc-ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" class="nav-link" data-scroll-target="#ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects"><span class="header-section-number">2.1.4</span> OLS estimation controlling for multilateral resistance terms with fixed effects</a></li>
+  <li><a href="#ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" id="toc-ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" class="nav-link" data-scroll-target="#ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects"><span class="header-section-number">2.1.5</span> PPML estimation controlling for multilateral resistance terms with fixed effects</a></li>
+  </ul></li>
+  <li><a href="#the-distance-puzzle-resolved" id="toc-the-distance-puzzle-resolved" class="nav-link" data-scroll-target="#the-distance-puzzle-resolved"><span class="header-section-number">2.2</span> The “distance puzzle” resolved</a>
+  <ul class="collapse">
+  <li><a href="#preparing-the-data-1" id="toc-preparing-the-data-1" class="nav-link" data-scroll-target="#preparing-the-data-1"><span class="header-section-number">2.2.1</span> Preparing the data</a></li>
+  <li><a href="#ols-solution-for-the-distance-puzzle" id="toc-ols-solution-for-the-distance-puzzle" class="nav-link" data-scroll-target="#ols-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.2</span> OLS solution for the “distance puzzle”</a></li>
+  <li><a href="#ppml-solution-for-the-distance-puzzle" id="toc-ppml-solution-for-the-distance-puzzle" class="nav-link" data-scroll-target="#ppml-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.3</span> PPML solution for the “distance puzzle”</a></li>
+  <li><a href="#internal-distance-solution-for-the-distance-puzzle" id="toc-internal-distance-solution-for-the-distance-puzzle" class="nav-link" data-scroll-target="#internal-distance-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.4</span> Internal distance solution for the “distance puzzle”</a></li>
+  <li><a href="#internal-distance-and-home-bias-solution-for-the-distance-puzzle" id="toc-internal-distance-and-home-bias-solution-for-the-distance-puzzle" class="nav-link" data-scroll-target="#internal-distance-and-home-bias-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.5</span> Internal distance and home bias solution for the “distance puzzle”</a></li>
+  <li><a href="#fixed-effects-solution-for-the-distance-puzzle" id="toc-fixed-effects-solution-for-the-distance-puzzle" class="nav-link" data-scroll-target="#fixed-effects-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.6</span> Fixed effects solution for the “distance puzzle”</a></li>
+  </ul></li>
+  <li><a href="#regional-trade-agreements-effects" id="toc-regional-trade-agreements-effects" class="nav-link" data-scroll-target="#regional-trade-agreements-effects"><span class="header-section-number">2.3</span> Regional trade agreements effects</a>
+  <ul class="collapse">
+  <li><a href="#preparing-the-data-2" id="toc-preparing-the-data-2" class="nav-link" data-scroll-target="#preparing-the-data-2"><span class="header-section-number">2.3.1</span> Preparing the data</a></li>
+  <li><a href="#ols-standard-rta-estimates-with-international-trade-only" id="toc-ols-standard-rta-estimates-with-international-trade-only" class="nav-link" data-scroll-target="#ols-standard-rta-estimates-with-international-trade-only"><span class="header-section-number">2.3.2</span> OLS standard RTA estimates with international trade only</a></li>
+  <li><a href="#ppml-standard-rta-estimates-with-international-trade-only" id="toc-ppml-standard-rta-estimates-with-international-trade-only" class="nav-link" data-scroll-target="#ppml-standard-rta-estimates-with-international-trade-only"><span class="header-section-number">2.3.3</span> PPML standard RTA estimates with international trade only</a></li>
+  <li><a href="#addressing-potential-domestic-trade-diversion" id="toc-addressing-potential-domestic-trade-diversion" class="nav-link" data-scroll-target="#addressing-potential-domestic-trade-diversion"><span class="header-section-number">2.3.4</span> Addressing potential domestic trade diversion</a></li>
+  <li><a href="#addressing-potential-endogeneity-of-rtas" id="toc-addressing-potential-endogeneity-of-rtas" class="nav-link" data-scroll-target="#addressing-potential-endogeneity-of-rtas"><span class="header-section-number">2.3.5</span> Addressing potential endogeneity of RTAs</a></li>
+  <li><a href="#testing-for-potential-reverse-causality-between-trade-and-rtas" id="toc-testing-for-potential-reverse-causality-between-trade-and-rtas" class="nav-link" data-scroll-target="#testing-for-potential-reverse-causality-between-trade-and-rtas"><span class="header-section-number">2.3.6</span> Testing for potential “reverse causality” between trade and RTAs</a></li>
+  <li><a href="#addressing-potential-non-linear-and-phasing-in-effects-of-rtas" id="toc-addressing-potential-non-linear-and-phasing-in-effects-of-rtas" class="nav-link" data-scroll-target="#addressing-potential-non-linear-and-phasing-in-effects-of-rtas"><span class="header-section-number">2.3.7</span> Addressing potential non-linear and phasing-in effects of RTAs</a></li>
+  <li><a href="#addressing-globalization-effects" id="toc-addressing-globalization-effects" class="nav-link" data-scroll-target="#addressing-globalization-effects"><span class="header-section-number">2.3.8</span> Addressing globalization effects</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Partial equilibrium trade policy analysis with structural gravity</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="traditional-gravity-estimates" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="traditional-gravity-estimates"><span class="header-section-number">2.1</span> Traditional Gravity Estimates</h2>
+<section id="preparing-the-data" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="preparing-the-data"><span class="header-section-number">2.1.1</span> Preparing the data</h3>
+<p>If the reader has never used R before, please check chapters 1 to 25 from <span class="citation" data-cites="wickham2016r">Wickham and Grolemund (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>.</p>
+<p>If the reader has only fitted a few regressions in R, without much practice on transforming and cleaning data before, please check chapters 5 and 18 from <span class="citation" data-cites="wickham2016r">Wickham and Grolemund (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span>.</p>
+<p>Please see the note from page 42 in <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. It is a really important note, which tells us that we need to:</p>
+<ol type="1">
+<li>Filter observations for a range of years (1986, 1990, 1994, 1998, 2002 and 2006)</li>
+<li>Transform some variables to logarithm scale (trade and dist) and create new variables from those in the original dataset</li>
+<li>Remove cases where both the exporter and the importer are the same</li>
+<li>Drop observations where the trade flow is zero</li>
+</ol>
+<p>Unlike <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>, here we shall use a single dataset for all the applications and subset its columns depending on what we need. This decision kept the <em>tradepolicy</em> R package as light as possible.</p>
+<p>Before conducting any data filtering or regression, we need to load the required packages.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset and summaries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tradepolicy)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># data transformation</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># regression</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Step 1, including subsetting columns for this application, is straightforward.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For step 2, this can be divided in parts, starting with the log transformation of trade and distance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Continuing step 2, we can now create the variables <span class="math inline">\(Y_{i,t}\)</span> and <span class="math inline">\(E_{i,t}\)</span> that appear on the OLS model equation in the book.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create Yit</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">sum</span>(trade),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_y =</span> <span class="fu">log</span>(y)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create Eit</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">%&gt;%</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">e =</span> <span class="fu">sum</span>(trade),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_e =</span> <span class="fu">log</span>(e)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The OLS model with remoteness index needs both exporter and importer index, which grouping variables can create. We divide it into sub-steps: Replicate the computation of total exports, then the remoteness index for exporters, and finally the total imports with the corresponding remoteness index for importers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate total_e</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_e =</span> <span class="fu">sum</span>(e)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_e =</span> <span class="fu">max</span>(total_e)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate rem_exp</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">%&gt;%</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">remoteness_exp =</span> <span class="fu">sum</span>(dist <span class="sc">*</span> total_e <span class="sc">/</span> e),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_remoteness_exp =</span> <span class="fu">log</span>(remoteness_exp)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate total_y</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">%&gt;%</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_y =</span> <span class="fu">sum</span>(y)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_y =</span> <span class="fu">max</span>(total_y)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate rem_imp</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">%&gt;%</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">remoteness_imp =</span> <span class="fu">sum</span>(dist <span class="sc">/</span> (y <span class="sc">/</span> total_y)),</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_remoteness_imp =</span> <span class="fu">log</span>(remoteness_imp)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To create the variables for the OLS with Fixed Effects Model, we followed box #1 on page 44 from <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. We combine both exporter and importer variables with the year to create the fixed effects variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># This merges the columns exporter/importer with year</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The addition of exporter/importer time fixed effects concludes step 2, and now we need to perform step 3.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(exporter <span class="sc">!=</span> importer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Some cases require conducting step 4, and we will be explicit about it when needed.</p>
+</section>
+<section id="ols-estimation-ignoring-multilateral-resistance-terms" class="level3" data-number="2.1.2">
+<h3 data-number="2.1.2" class="anchored" data-anchor-id="ols-estimation-ignoring-multilateral-resistance-terms"><span class="header-section-number">2.1.2</span> OLS estimation ignoring multilateral resistance terms</h3>
+<p>The general equation for this model is <span class="math display">\[
+\begin{align}
+\log X_{ij,t} =&amp; \:\beta_0 + \beta_1 DIST_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \beta_5 \log Y_{i,t} +\\
+\text{ }&amp; \:\beta_6 \log E_{j,t} + \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>Please see page 41 in <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> for full detail of each variable.</p>
+<p>The model for this case is straightforward, and in this case, we need to apply step 4 from the previous section to drop cases where the trade is zero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_ols <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OLS estimation, Dep. Var.: log_trade
+Observations: 25,689
+Standard-errors: IID 
+              Estimate Std. Error   t value   Pr(&gt;|t|)    
+(Intercept) -11.283080   0.151732 -74.36173  &lt; 2.2e-16 ***
+log_dist     -1.001607   0.014159 -70.74094  &lt; 2.2e-16 ***
+cntg          0.573805   0.074427   7.70961 1.3076e-14 ***
+lang          0.801548   0.033748  23.75115  &lt; 2.2e-16 ***
+clny          0.734853   0.070387  10.44025  &lt; 2.2e-16 ***
+log_y         1.190236   0.005402 220.32012  &lt; 2.2e-16 ***
+log_e         0.907588   0.005577 162.72688  &lt; 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.74274   Adj. R2: 0.758469</code></pre>
+</div>
+</div>
+<p>The employed function, <code>feols()</code>, does not carry a copy of its training data by default besides providing faster fitting for models with fixed effects. This is not the case in base R, where <code>glm()</code> outputs include this data, increasing the model’s size, but this does not affect the model’s predictions and can be changed as the user needs it <span class="citation" data-cites="trimmingfat">(<a href="#ref-trimmingfat" role="doc-biblioref">Zumel 2014</a>)</span>.</p>
+<p>The model is almost ready. We only need to stick to the methodology from <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> and cluster the standard errors by country pair (see the note on page 42, it is imperative).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fit_ols <span class="ot">&lt;-</span> <span class="fu">feols</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> <span class="sc">~</span>pair_id</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OLS estimation, Dep. Var.: log_trade
+Observations: 25,689
+Standard-errors: Clustered (pair_id) 
+              Estimate Std. Error   t value   Pr(&gt;|t|)    
+(Intercept) -11.283080   0.295827 -38.14076  &lt; 2.2e-16 ***
+log_dist     -1.001607   0.027340 -36.63526  &lt; 2.2e-16 ***
+cntg          0.573805   0.184710   3.10652 1.9158e-03 ** 
+lang          0.801548   0.082102   9.76286  &lt; 2.2e-16 ***
+clny          0.734853   0.144193   5.09632 3.7405e-07 ***
+log_y         1.190236   0.009456 125.87160  &lt; 2.2e-16 ***
+log_e         0.907588   0.009910  91.58459  &lt; 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.74274   Adj. R2: 0.758469</code></pre>
+</div>
+</div>
+<p>The <em>tradepolicy</em> package provides functions to provide more informative summaries. Please read the documentation of the package and look for the <code>tp_summary_app_1()</code> function, it summarises the model in the exact way as reported in the book by providing:</p>
+<ul>
+<li>Clustered standard errors.</li>
+<li>Number of observations.</li>
+<li><span class="math inline">\(R^2\)</span> (if applicable).</li>
+<li>Presence (or absence) of exporter and exporter-time fixed effects.</li>
+<li>RESET test p-value.</li>
+</ul>
+<p>These statistical results are returned as a list to keep it simple, which we can see for the model in the same format as reported in the book.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_1</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"log_trade ~ log_dist + cntg + lang + clny + log_y + log_e"</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ols"</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term        | estimate| std.error| statistic| p.value|
+|:-----------|--------:|---------:|---------:|-------:|
+|(Intercept) |  -11.283|     0.296|   -38.141|   0.000|
+|log_dist    |   -1.002|     0.027|   -36.635|   0.000|
+|cntg        |    0.574|     0.185|     3.107|   0.002|
+|lang        |    0.802|     0.082|     9.763|   0.000|
+|clny        |    0.735|     0.144|     5.096|   0.000|
+|log_y       |    1.190|     0.009|   125.872|   0.000|
+|log_e       |    0.908|     0.010|    91.585|   0.000|
+
+
+|  nobs| rsquared|etfe  |itfe  | reset_pval|
+|-----:|--------:|:-----|:-----|----------:|
+| 25689|    0.759|FALSE |FALSE |          0|</code></pre>
+</div>
+</div>
+<p>Please notice that the summary hides the exporter/importer fixed effects.</p>
+</section>
+<section id="ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes" class="level3" data-number="2.1.3">
+<h3 data-number="2.1.3" class="anchored" data-anchor-id="ols-estimation-controlling-for-multilateral-resistance-terms-with-remote-indexes"><span class="header-section-number">2.1.3</span> OLS estimation controlling for multilateral resistance terms with remote indexes</h3>
+<p>The remoteness model adds variables to the OLS model. The general equation for this model is <span class="math display">\[
+\begin{align}
+\log X_{ij,t} =&amp; \:\beta_0 + \beta_1 DIST_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \beta_5 \log Y_{i,t} +\\
+\text{ }&amp; \beta_6 \log E_{j,t} + \beta_7 \log(REM\_EXP_i,t) + \beta_8 \log(REM\_IMP_i,t) + \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>In the equation above <span class="math inline">\(REM\_EXP\)</span> and <span class="math inline">\(REM\_IMP\)</span> are defined as <span class="math display">\[
+\begin{align}
+\log(REM\_EXP_{i,t}) &amp;= \log \left( \sum_j \frac{DIST_{i,j}}{E_{j,t} / Y_t} \right) \text{ and }\\
+\log(REM\_IMP_{j,t}) &amp;= \log \left( \sum_i \frac{DIST_{i,j}}{Y_{i,t} / Y_t} \right).
+\end{align}
+\]</span></p>
+<p>Please see page 43 in <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> for full detail of each variable.</p>
+<p>Our approach follows box #1 on page 43 from <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. Fitting the regression is straightforward. It is just about adding more regressors to what we did in the last section, and we can create a list with a summary for the model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_1</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_remoteness_exp + log_remoteness_imp"</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ols"</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term               | estimate| std.error| statistic| p.value|
+|:------------------|--------:|---------:|---------:|-------:|
+|(Intercept)        |  -35.219|     1.986|   -17.731|   0.000|
+|log_dist           |   -1.185|     0.031|   -37.892|   0.000|
+|cntg               |    0.247|     0.177|     1.394|   0.164|
+|lang               |    0.739|     0.078|     9.429|   0.000|
+|clny               |    0.842|     0.150|     5.607|   0.000|
+|log_y              |    1.164|     0.009|   122.819|   0.000|
+|log_e              |    0.903|     0.010|    91.102|   0.000|
+|log_remoteness_exp |    0.972|     0.068|    14.251|   0.000|
+|log_remoteness_imp |    0.274|     0.060|     4.578|   0.000|
+
+
+|  nobs| rsquared|etfe  |itfe  | reset_pval|
+|-----:|--------:|:-----|:-----|----------:|
+| 25689|    0.765|FALSE |FALSE |          0|</code></pre>
+</div>
+</div>
+</section>
+<section id="ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" class="level3" data-number="2.1.4">
+<h3 data-number="2.1.4" class="anchored" data-anchor-id="ols-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects"><span class="header-section-number">2.1.4</span> OLS estimation controlling for multilateral resistance terms with fixed effects</h3>
+<p>The general equation for this model is <span class="math display">\[
+\begin{align}
+\log X_{ij,t} =&amp; \: \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\\
+\text{ }&amp; \:\beta_4 CLNY_{i,j} + \pi_{i,t} + \chi_{i,t} + \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>Where the added terms, concerning the OLS model, are <span class="math inline">\(\pi_{i,t}\)</span> and <span class="math inline">\(\chi_{i,t}\)</span> that account for exporter-time and importer-time fixed effects, respectively. See page 44 in <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span> for full detail of each variable.</p>
+<p>We can quickly generate a list as we did with the previous models. The only difference to the previous models is that in this case that the variables to the right of the “|” operator are the fixed effects, which are treated differently by the <em>fixest</em> package, which is used internally by the <em>tradepolicy</em> package, for faster model fitting.</p>
+<p>Please notice that the summaries intentionally do not show fixed effects, because there are cases where we have thousands of fixed effects.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_1</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year"</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application1, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ols"</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term     | estimate| std.error| statistic| p.value|
+|:--------|--------:|---------:|---------:|-------:|
+|log_dist |   -1.216|     0.038|   -31.841|   0.000|
+|cntg     |    0.223|     0.203|     1.100|   0.271|
+|lang     |    0.661|     0.082|     8.053|   0.000|
+|clny     |    0.670|     0.149|     4.487|   0.000|
+
+
+|  nobs| rsquared|etfe |itfe | reset_pval|
+|-----:|--------:|:----|:----|----------:|
+| 25689|    0.843|TRUE |TRUE |          0|</code></pre>
+</div>
+</div>
+<p>There is another difference when we compare <code>feols()</code> or <code>fepois()</code> against <code>glm()</code> in the presence of fixed effects, which we can explain with an example.</p>
+<p>In the data used for the previous summary, we have <span class="math inline">\(T\)</span> years (1986, 1990, 1994, 1998, 2002 and 2006). We could be interested in filtering for a single exporter and a single importer to fit the fixed effects model <span class="math display">\[
+\log X_{t} = \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \sum_{u} \beta_u FE_u + \varepsilon_{ij,t},
+\]</span> where <span class="math display">\[
+\begin{align*}
+&amp;u \in \{1986, 1990, 1994, 1998, 2002, 2006\} \text{ and}\cr
+&amp;FE_u = \begin{cases}
+1 &amp; \text {if } t = u \cr
+0 &amp; \text{otherwise}.
+\end{cases}
+\end{align*}
+\]</span></p>
+<p>When we use <code>feols()</code>, or any of the functions in the <em>fixest</em> package, a formula of the form <span class="math inline">\(z \sim x_1 + x_2 \mid y\)</span> will estimate the model described in the previous equations.</p>
+<p>If we do the same in base R, with <code>glm()</code>, the equivalent formula would be of the form <span class="math inline">\(z \sim 0 + x_1 + x_2 + y\)</span>, otherwise base R estimates a model of the form <span class="math inline">\(y_t = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \sum_u y_{u}\)</span>, which means that not including a zero in the formula estimates an additional coefficient in the estimation which corresponds to a global intercept or the “grand mean”.</p>
+<p>On the <span class="math inline">\(\beta_0\)</span> constant, it is tough to interpret with many-way fixed effects, and it is advised against reporting it.</p>
+</section>
+<section id="ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects" class="level3" data-number="2.1.5">
+<h3 data-number="2.1.5" class="anchored" data-anchor-id="ppml-estimation-controlling-for-multilateral-resistance-terms-with-fixed-effects"><span class="header-section-number">2.1.5</span> PPML estimation controlling for multilateral resistance terms with fixed effects</h3>
+<p>The general equation for this model is <span class="math display">\[
+\begin{align}
+X_{ij,t} =&amp; \:\exp\left[\beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} +\right.\\
+\text{ }&amp; \:\left.\beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \pi_{i,t} + \chi_{i,t}\right] \times \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>The reason to compute this model, despite the lower speed compared to OLS, is that PPML is the only estimator perfectly consistent with the theoretical gravity model. By estimating with PPML, the fixed effects correspond precisely to the corresponding theoretical terms.</p>
+<p>The data for this model is the same as for the fixed effects model, and one option in R is to use the <code>fepois()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fit_ppml <span class="ot">&lt;-</span> <span class="fu">fepois</span>(trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> <span class="sc">~</span>pair_id</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Exactly as it was mentioned for <code>feols()</code>, <code>fepois()</code> shares the same differences regarding <code>glm()</code> objects.</p>
+<p>If the reader decides to run this model and print the summary, they will notice that it does not report an <span class="math inline">\(R^2\)</span> and displays an extensive fixed effect list. For PPML models, the <span class="math inline">\(R^2\)</span> needs to be computed afterwards as Kendall’s correlation (or rank correlation) between the observed and predicted values. Please see <span class="citation" data-cites="silva2006log">Silva and Tenreyro (<a href="#ref-silva2006log" role="doc-biblioref">2006</a>)</span> for the details and the RESET test for PPML (GLM) models.</p>
+<p>Beware that software such as Stata requires additional libraries such as <em>ppmlhdfe</em> to report a correct <span class="math inline">\(R^2\)</span> for the PPML model. What Stata shows is a reported pseudo-<span class="math inline">\(R^2\)</span>. To construct a proper <span class="math inline">\(R^2\)</span> in R, <code>tp_summary_app_1()</code> takes the rank correlation between actual and predicted trade flows.</p>
+<p>We can obtain a detailed list as in the previous examples.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_1</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ log_dist + cntg + lang + clny | exp_year + imp_year"</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term     | estimate| std.error| statistic| p.value|
+|:--------|--------:|---------:|---------:|-------:|
+|log_dist |   -0.841|     0.032|   -26.169|   0.000|
+|cntg     |    0.437|     0.084|     5.182|   0.000|
+|lang     |    0.247|     0.078|     3.185|   0.001|
+|clny     |   -0.222|     0.118|    -1.886|   0.059|
+
+
+|  nobs| rsquared|etfe |itfe | reset_pval|
+|-----:|--------:|:----|:----|----------:|
+| 28152|    0.586|TRUE |TRUE |      0.647|</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="the-distance-puzzle-resolved" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="the-distance-puzzle-resolved"><span class="header-section-number">2.2</span> The “distance puzzle” resolved</h2>
+<section id="preparing-the-data-1" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="preparing-the-data-1"><span class="header-section-number">2.2.1</span> Preparing the data</h3>
+<p>Please see the note from page 47 in <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. We need to proceed with similar steps as in the previous section.</p>
+<p>The distance puzzle proposes the gravity specification <span class="math display">\[
+\begin{align}
+X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j}\right]\times\\
+\text{ }&amp; \:\exp\left[\beta_4 CLNY_{i,j} + \beta_5 \log(DIST\_INTRA_{i,i})\right] \times \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>The difference concerning the last section is that now we need to separate the distance variable into multiple columns that account for discrete-time effects. The <span class="math inline">\(\beta_T\)</span> terms of the equation reflect this. Perhaps the easiest option is to transform the year into a text column and then use the <code>pivot_wider()</code> function.</p>
+<p>We need to remove cases where the exporter is the same as the importer and cases where trade is zero for the OLS model. For the PPML models, we need to mark rows where the exporter and the importer are the same, and we need to create the same country column, which is also required to transform the distance variables as shown in box #1 in page 48 from <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>.</p>
+<p>In order to avoid creating two very similar datasets, we shall create one dataset to cover both OLS and PPML.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ch1_application2 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this filter covers both OLS and PPML</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># variables for both OLS and PPML</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year),</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">paste0</span>(<span class="st">"log_dist_"</span>, year),</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist),</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">smctry =</span> <span class="fu">ifelse</span>(importer <span class="sc">!=</span> exporter, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># PPML specific variables</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_intra =</span> log_dist <span class="sc">*</span> smctry,</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">intra_pair =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, exporter, <span class="st">"inter"</span>)</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> log_dist, <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(log_dist_1986<span class="sc">:</span>log_dist_2006, <span class="cf">function</span>(x) x <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>across()</code> function is a shortcut to avoid repetition, as in the following example, we show it for reference without computation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ch1_application2 <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_1986 =</span>  log_dist_1986 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_1990 =</span>  log_dist_1990 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># repeat log_dist_T many_times for T = 1994, 1998, ...</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_2006 =</span>  log_dist_2006 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note that the OLS model shall require filtering when we specify the model because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same. Because the solution for the “distance puzzle” implies different transformations and filters for the OLS and PPML cases, one possibility is to filter in the same summary functions.</p>
+</section>
+<section id="ols-solution-for-the-distance-puzzle" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="ols-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.2</span> OLS solution for the “distance puzzle”</h3>
+<p>The gravity specification, which includes <span class="math inline">\(\pi_{i,t} + \chi_{i,t}\)</span>, means that we need to do something very similar to what we did in the last section.</p>
+<p>With the data from above, the model specification is straightforward.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"log_trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny |</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="st">    exp_year + imp_year"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application2, importer <span class="sc">!=</span> exporter, trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ols"</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term          | estimate| std.error| statistic| p.value|
+|:-------------|--------:|---------:|---------:|-------:|
+|log_dist_1986 |   -1.168|     0.044|   -26.776|   0.000|
+|log_dist_1990 |   -1.155|     0.042|   -27.295|   0.000|
+|log_dist_1994 |   -1.211|     0.046|   -26.504|   0.000|
+|log_dist_1998 |   -1.248|     0.043|   -29.179|   0.000|
+|log_dist_2002 |   -1.241|     0.044|   -28.143|   0.000|
+|log_dist_2006 |   -1.261|     0.044|   -28.853|   0.000|
+|cntg          |    0.223|     0.203|     1.100|   0.271|
+|lang          |    0.661|     0.082|     8.056|   0.000|
+|clny          |    0.670|     0.149|     4.487|   0.000|
+
+
+|  nobs| pct_chg_log_dist| pcld_std_err| pcld_std_err_pval|intr  |csfe  |
+|-----:|----------------:|------------:|-----------------:|:-----|:-----|
+| 25689|             7.95|        3.698|             0.032|FALSE |FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="ppml-solution-for-the-distance-puzzle" class="level3" data-number="2.2.3">
+<h3 data-number="2.2.3" class="anchored" data-anchor-id="ppml-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.3</span> PPML solution for the “distance puzzle”</h3>
+<p>This model is very similar to the one specified in the PPML section from the last section. We can directly fit the model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny |</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="st">    exp_year + imp_year"</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application2, importer <span class="sc">!=</span> exporter),</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term          | estimate| std.error| statistic| p.value|
+|:-------------|--------:|---------:|---------:|-------:|
+|log_dist_1986 |   -0.859|     0.038|   -22.849|   0.000|
+|log_dist_1990 |   -0.834|     0.038|   -21.805|   0.000|
+|log_dist_1994 |   -0.835|     0.036|   -23.436|   0.000|
+|log_dist_1998 |   -0.847|     0.036|   -23.591|   0.000|
+|log_dist_2002 |   -0.848|     0.032|   -26.407|   0.000|
+|log_dist_2006 |   -0.836|     0.032|   -26.342|   0.000|
+|cntg          |    0.437|     0.084|     5.179|   0.000|
+|lang          |    0.248|     0.078|     3.185|   0.001|
+|clny          |   -0.222|     0.118|    -1.883|   0.060|
+
+
+|  nobs| pct_chg_log_dist| pcld_std_err| pcld_std_err_pval|intr  |csfe  |
+|-----:|----------------:|------------:|-----------------:|:-----|:-----|
+| 28152|            -2.75|        3.004|              0.36|FALSE |FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="internal-distance-solution-for-the-distance-puzzle" class="level3" data-number="2.2.4">
+<h3 data-number="2.2.4" class="anchored" data-anchor-id="internal-distance-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.4</span> Internal distance solution for the “distance puzzle”</h3>
+<p>This model requires us to add the internal distance variable to the PPML model and not filter the rows where the exporter and the importer are the same.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_intra | exp_year + imp_year"</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application2,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term           | estimate| std.error| statistic| p.value|
+|:--------------|--------:|---------:|---------:|-------:|
+|log_dist_1986  |   -0.980|     0.073|   -13.404|   0.000|
+|log_dist_1990  |   -0.940|     0.074|   -12.666|   0.000|
+|log_dist_1994  |   -0.915|     0.073|   -12.515|   0.000|
+|log_dist_1998  |   -0.887|     0.072|   -12.298|   0.000|
+|log_dist_2002  |   -0.884|     0.072|   -12.330|   0.000|
+|log_dist_2006  |   -0.872|     0.072|   -12.053|   0.000|
+|cntg           |    0.371|     0.142|     2.621|   0.009|
+|lang           |    0.337|     0.171|     1.976|   0.048|
+|clny           |    0.019|     0.159|     0.121|   0.904|
+|log_dist_intra |   -0.488|     0.102|    -4.779|   0.000|
+
+
+|  nobs| pct_chg_log_dist| pcld_std_err| pcld_std_err_pval|intr |csfe  |
+|-----:|----------------:|------------:|-----------------:|:----|:-----|
+| 28566|          -10.965|        1.058|                 0|TRUE |FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="internal-distance-and-home-bias-solution-for-the-distance-puzzle" class="level3" data-number="2.2.5">
+<h3 data-number="2.2.5" class="anchored" data-anchor-id="internal-distance-and-home-bias-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.5</span> Internal distance and home bias solution for the “distance puzzle”</h3>
+<p>This model requires us to add the same country variable to the internal distance model and repeat the rest of the steps from the last section.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_intra + smctry | exp_year + imp_year"</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application2,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term           | estimate| std.error| statistic| p.value|
+|:--------------|--------:|---------:|---------:|-------:|
+|log_dist_1986  |   -0.857|     0.064|   -13.476|   0.000|
+|log_dist_1990  |   -0.819|     0.064|   -12.748|   0.000|
+|log_dist_1994  |   -0.796|     0.064|   -12.349|   0.000|
+|log_dist_1998  |   -0.770|     0.064|   -12.040|   0.000|
+|log_dist_2002  |   -0.767|     0.064|   -12.060|   0.000|
+|log_dist_2006  |   -0.754|     0.063|   -11.950|   0.000|
+|cntg           |    0.574|     0.157|     3.645|   0.000|
+|lang           |    0.352|     0.139|     2.534|   0.011|
+|clny           |    0.027|     0.127|     0.212|   0.832|
+|log_dist_intra |   -0.602|     0.111|    -5.437|   0.000|
+|smctry         |    1.689|     0.582|     2.901|   0.004|
+
+
+|  nobs| pct_chg_log_dist| pcld_std_err| pcld_std_err_pval|intr |csfe  |
+|-----:|----------------:|------------:|-----------------:|:----|:-----|
+| 28566|          -11.969|        1.173|                 0|TRUE |FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="fixed-effects-solution-for-the-distance-puzzle" class="level3" data-number="2.2.6">
+<h3 data-number="2.2.6" class="anchored" data-anchor-id="fixed-effects-solution-for-the-distance-puzzle"><span class="header-section-number">2.2.6</span> Fixed effects solution for the “distance puzzle”</h3>
+<p>This model requires us to remove the internal distance and same country variables from the last model and include the internal pair variable to account for the intra-national fixed effects.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_2</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="st">    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="st">    intra_pair | exp_year + imp_year"</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application2,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Absence of convergence: Maximum number of iterations reached (25).
+Final deviance: 4,983,518.2.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term          | estimate| std.error| statistic| p.value|
+|:-------------|--------:|---------:|---------:|-------:|
+|log_dist_1986 |   -0.910|     0.034|   -26.960|   0.000|
+|log_dist_1990 |   -0.879|     0.034|   -26.151|   0.000|
+|log_dist_1994 |   -0.860|     0.033|   -25.826|   0.000|
+|log_dist_1998 |   -0.833|     0.033|   -25.145|   0.000|
+|log_dist_2002 |   -0.829|     0.033|   -24.788|   0.000|
+|log_dist_2006 |   -0.811|     0.033|   -24.210|   0.000|
+|cntg          |    0.442|     0.086|     5.124|   0.000|
+|lang          |    0.241|     0.079|     3.034|   0.002|
+|clny          |   -0.220|     0.117|    -1.882|   0.060|
+
+
+|  nobs| pct_chg_log_dist| pcld_std_err| pcld_std_err_pval|intr |csfe |
+|-----:|----------------:|------------:|-----------------:|:----|:----|
+| 28566|          -10.931|        0.775|                 0|TRUE |TRUE |</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="regional-trade-agreements-effects" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="regional-trade-agreements-effects"><span class="header-section-number">2.3</span> Regional trade agreements effects</h2>
+<section id="preparing-the-data-2" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="preparing-the-data-2"><span class="header-section-number">2.3.1</span> Preparing the data</h3>
+<p>This model specification includes gravity covariates, including importer-time and exporter-time fixed effects, as in the equation</p>
+<p><span class="math display">\[
+\begin{align}
+X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} +\right.\\
+\text{ }&amp; \:\left.\beta_4 CLNY_{i,j} + \beta_5 RTA_{ij,t}\right] \times \varepsilon_{ij,t}.
+\end{align}
+\]</span></p>
+<p>In comparison to the previous examples, we need to create additional variables to include fixed effects that account for the observations where the exporter and the importer are the same. These variables are internal border, internal dyad and internal borders for different years.</p>
+<p>The direct way of obtaining the desired variables is similar to what we did in the previous sections.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>ch1_application3 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year),</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">paste0</span>(<span class="st">"intl_border_"</span>, year),</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist),</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">intl_brdr =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, pair_id, <span class="st">"inter"</span>),</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">intl_brdr_2 =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">pair_id_2 =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, <span class="st">"0-intra"</span>, pair_id)</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> intl_brdr_2, <span class="at">values_fill =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice that we used “0-intra” and not just “intra” because the rest of the observations in the internal dyads are numbers 1, …, N, and R internals shall consider “0-intra” as the reference factor for being the first item when it orders the unique observations alphabetically. Also, observe the order of the resulting table, the pivoting of the table will put “0-intra” as the first row for the first exporter-importer dyad. This makes the difference between the expected or other behaviours in the next chapter.</p>
+<p>In addition, we need to create the variable containing the trade sum to filter the cases where the sum by dyad is zero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>ch1_application3 <span class="ot">&lt;-</span> ch1_application3 <span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pair_id) <span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sum_trade =</span> <span class="fu">sum</span>(trade)) <span class="sc">%&gt;%</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ols-standard-rta-estimates-with-international-trade-only" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="ols-standard-rta-estimates-with-international-trade-only"><span class="header-section-number">2.3.2</span> OLS standard RTA estimates with international trade only</h3>
+<p>The gravity specification, which includes <span class="math inline">\(\pi_{i,t} + \chi_{i,t}\)</span>, means that we need to do something very similar to what we did in the last section.</p>
+<p>With the data from above, the model specification is straightforward.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"log_trade ~ log_dist + cntg + lang + clny + rta | exp_year +</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="st">    imp_year"</span>,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, trade <span class="sc">&gt;</span> <span class="dv">0</span>, importer <span class="sc">!=</span> exporter),</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ols"</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term     | estimate| std.error| statistic| p.value|
+|:--------|--------:|---------:|---------:|-------:|
+|log_dist |   -1.216|     0.039|   -31.180|   0.000|
+|cntg     |    0.223|     0.203|     1.099|   0.272|
+|lang     |    0.661|     0.082|     8.045|   0.000|
+|clny     |    0.670|     0.149|     4.487|   0.000|
+|rta      |   -0.004|     0.054|    -0.081|   0.935|
+
+
+|  nobs| total_rta_effect| trta_std_err| trta_std_err_pval|intr  |
+|-----:|----------------:|------------:|-----------------:|:-----|
+| 25689|           -0.004|        0.053|             0.934|FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="ppml-standard-rta-estimates-with-international-trade-only" class="level3" data-number="2.3.3">
+<h3 data-number="2.3.3" class="anchored" data-anchor-id="ppml-standard-rta-estimates-with-international-trade-only"><span class="header-section-number">2.3.3</span> PPML standard RTA estimates with international trade only</h3>
+<p>The model specification is very similar to OLS, and we only need to change the method specified in the function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year"</span>,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, importer <span class="sc">!=</span> exporter),</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term     | estimate| std.error| statistic| p.value|
+|:--------|--------:|---------:|---------:|-------:|
+|log_dist |   -0.822|     0.031|   -26.125|   0.000|
+|cntg     |    0.416|     0.084|     4.944|   0.000|
+|lang     |    0.250|     0.078|     3.211|   0.001|
+|clny     |   -0.205|     0.116|    -1.770|   0.077|
+|rta      |    0.191|     0.067|     2.855|   0.004|
+
+
+|  nobs| total_rta_effect| trta_std_err| trta_std_err_pval|intr  |
+|-----:|----------------:|------------:|-----------------:|:-----|
+| 28152|            0.191|        0.066|             0.004|FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="addressing-potential-domestic-trade-diversion" class="level3" data-number="2.3.4">
+<h3 data-number="2.3.4" class="anchored" data-anchor-id="addressing-potential-domestic-trade-diversion"><span class="header-section-number">2.3.4</span> Addressing potential domestic trade diversion</h3>
+<p>The model specification is quite the same as PPML. We only need to add the international border variable but use the entire dataset instead of removing rows where the importer and the exporter are the same.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year +</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="st">    intl_brdr"</span>,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application3,</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term     | estimate| std.error| statistic| p.value|
+|:--------|--------:|---------:|---------:|-------:|
+|log_dist |   -0.800|     0.031|   -26.025|   0.000|
+|cntg     |    0.393|     0.080|     4.906|   0.000|
+|lang     |    0.244|     0.078|     3.111|   0.002|
+|clny     |   -0.182|     0.115|    -1.581|   0.114|
+|rta      |    0.409|     0.070|     5.841|   0.000|
+
+
+|  nobs| total_rta_effect| trta_std_err| trta_std_err_pval|intr  |
+|-----:|----------------:|------------:|-----------------:|:-----|
+| 28566|            0.409|        0.069|                 0|FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="addressing-potential-endogeneity-of-rtas" class="level3" data-number="2.3.5">
+<h3 data-number="2.3.5" class="anchored" data-anchor-id="addressing-potential-endogeneity-of-rtas"><span class="header-section-number">2.3.5</span> Addressing potential endogeneity of RTAs</h3>
+<p>The model specification includes the RTA variable and the exporter-time, importer-time and internal dyad fixed effects to account for domestic trade.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ rta | exp_year + imp_year + pair_id_2"</span>,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term | estimate| std.error| statistic| p.value|
+|:----|--------:|---------:|---------:|-------:|
+|rta  |    0.557|     0.108|     5.138|       0|
+
+
+|  nobs| total_rta_effect| trta_std_err| trta_std_err_pval|intr  |
+|-----:|----------------:|------------:|-----------------:|:-----|
+| 28482|            0.557|        0.102|                 0|FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="testing-for-potential-reverse-causality-between-trade-and-rtas" class="level3" data-number="2.3.6">
+<h3 data-number="2.3.6" class="anchored" data-anchor-id="testing-for-potential-reverse-causality-between-trade-and-rtas"><span class="header-section-number">2.3.6</span> Testing for potential “reverse causality” between trade and RTAs</h3>
+<p>We need to modify the previous model to include the forward lagged RTA variable (by four years) and consider where the trade sum is larger than zero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ rta + rta_lead4 | exp_year + imp_year + pair_id_2"</span>,</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term      | estimate| std.error| statistic| p.value|
+|:---------|--------:|---------:|---------:|-------:|
+|rta       |    0.520|     0.091|     5.709|   0.000|
+|rta_lead4 |    0.077|     0.098|     0.792|   0.428|
+
+
+|  nobs| total_rta_effect| trta_std_err| trta_std_err_pval|intr  |
+|-----:|----------------:|------------:|-----------------:|:-----|
+| 28482|            0.597|        0.138|                 0|FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="addressing-potential-non-linear-and-phasing-in-effects-of-rtas" class="level3" data-number="2.3.7">
+<h3 data-number="2.3.7" class="anchored" data-anchor-id="addressing-potential-non-linear-and-phasing-in-effects-of-rtas"><span class="header-section-number">2.3.7</span> Addressing potential non-linear and phasing-in effects of RTAs</h3>
+<p>Instead of future-lagged RTA variables, as in the previous model, we modify the previous model and include the RTA backwards lagged variables instead.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 | exp_year +</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="st">    imp_year + pair_id_2"</span>,</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term      | estimate| std.error| statistic| p.value|
+|:---------|--------:|---------:|---------:|-------:|
+|rta       |    0.291|     0.095|     3.081|   0.002|
+|rta_lag4  |    0.414|     0.071|     5.798|   0.000|
+|rta_lag8  |    0.169|     0.046|     3.688|   0.000|
+|rta_lag12 |    0.119|     0.032|     3.729|   0.000|
+
+
+|  nobs| total_rta_effect| trta_std_err| trta_std_err_pval|intr  |
+|-----:|----------------:|------------:|-----------------:|:-----|
+| 28482|            0.993|        0.094|                 0|FALSE |</code></pre>
+</div>
+</div>
+</section>
+<section id="addressing-globalization-effects" class="level3" data-number="2.3.8">
+<h3 data-number="2.3.8" class="anchored" data-anchor-id="addressing-globalization-effects"><span class="header-section-number">2.3.8</span> Addressing globalization effects</h3>
+<p>In addition to the previous model, we include the international borders on different years besides the lagged RTAs.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tp_summary_app_3</span>(</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="st">"trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 + intl_border_1986 +</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="st">    intl_border_1990 + intl_border_1994 + intl_border_1998 + intl_border_2002 |</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="st">    exp_year + imp_year + pair_id_2"</span>,</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ppml"</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|term             | estimate| std.error| statistic| p.value|
+|:----------------|--------:|---------:|---------:|-------:|
+|rta              |    0.116|     0.092|     1.258|   0.209|
+|rta_lag4         |    0.288|     0.065|     4.399|   0.000|
+|rta_lag8         |    0.069|     0.051|     1.356|   0.175|
+|rta_lag12        |    0.002|     0.031|     0.076|   0.939|
+|intl_border_1986 |   -0.706|     0.051|   -13.917|   0.000|
+|intl_border_1990 |   -0.480|     0.046|   -10.541|   0.000|
+|intl_border_1994 |   -0.367|     0.035|   -10.327|   0.000|
+|intl_border_1998 |   -0.158|     0.025|    -6.405|   0.000|
+|intl_border_2002 |   -0.141|     0.018|    -7.867|   0.000|
+
+
+|  nobs| total_rta_effect| trta_std_err| trta_std_err_pval|intr  |
+|-----:|----------------:|------------:|-----------------:|:-----|
+| 28482|            0.475|        0.109|                 0|FALSE |</code></pre>
+</div>
+</div>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-silva2006log" class="csl-entry" role="listitem">
+Silva, JMC Santos, and Silvana Tenreyro. 2006. <span>“The Log of Gravity.”</span> <em>The Review of Economics and Statistics</em> 88 (4): 641–58.
+</div>
+<div id="ref-wickham2016r" class="csl-entry" role="listitem">
+Wickham, Hadley, and Garrett Grolemund. 2016. <em>R for Data Science: Import, Tidy, Transform, Visualize, and Model Data</em>. " O’Reilly Media, Inc.".
+</div>
+<div id="ref-yotov2016advanced" class="csl-entry" role="listitem">
+Yotov, Yoto V, Roberta Piermartini, José-Antonio Monteiro, and Mario Larch. 2016. <em>An Advanced Guide to Trade Policy Analysis: The Structural Gravity Model</em>. World Trade Organization Geneva.
+</div>
+<div id="ref-trimmingfat" class="csl-entry" role="listitem">
+Zumel, Nina. 2014. <span>“Trimming the Fat from Glm() Models in r.”</span> <a href="https://win-vector.com/2014/05/30/trimming-the-fat-from-glm-models-in-r/" class="uri">https://win-vector.com/2014/05/30/trimming-the-fat-from-glm-models-in-r/</a>.
+</div>
+</div>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./02-general-equilibrium.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">General equilibrium trade policy analysis with structural gravity</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

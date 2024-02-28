@@ -1,0 +1,12 @@
+project:
+  type: book
+  output-dir: docs
+  
+book:
+  title: "Solutions Manual for An Advanced Guide to Trade Policy Analysis in R (3rd Edition)"
+  author: Mauricio "Pachá" Vargas Sepúlveda
+  date: "2024-02-28"
+  chapters:
+    - index.qmd
+    - 01-traditional-gravity.qmd
+    - 02-general-equilibrium.qmd
