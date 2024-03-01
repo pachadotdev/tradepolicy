@@ -33,3 +33,7 @@ A list
 Computes clustered standard errors, tests on coefficients with
 clustered standard errors and obtains RESET test p-value.
 }
+\examples{
+# See the ebook
+
+}

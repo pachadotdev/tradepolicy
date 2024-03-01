@@ -10,25 +10,30 @@
 #' @param etfe Exporter time fixed effects column (defaults to "exp_year")
 #' @param itfe Importer time fixed effects column (defaults to "imp_year")
 #'
+#' @examples
+#' # See the ebook
+#'
 #' @return A list
 #' @export
 tp_summary_app_1 <- function(formula, data, method = "ppml", pair = "pair_id",
                              etfe = "exp_year", itfe = "imp_year") {
   stopifnot(any(method %in% c("ols", "ppml")))
 
+  formula <- as.formula(formula)
+
   if (!all(class(data) %in% "data.frame")) {
     data <- as.data.frame(data)
   }
 
   if (method == "ols") {
-    fit <- feols(as.formula(formula),
+    fit <- feols(formula,
       data = data,
       cluster = data[, pair]
     )
   }
 
   if (method == "ppml") {
-    fit <- fepois(as.formula(formula),
+    fit <- fepois(formula,
       data = data,
       cluster = data[, pair]
     )
@@ -43,21 +48,24 @@ tp_summary_app_1 <- function(formula, data, method = "ppml", pair = "pair_id",
   # For PPML get fitted values of the linear index, not of trade
   data$predict2 <- (predict(fit, type = "link"))^2
 
-  form_reset <- as.character(update(fit$fml_all$linear, ~ predict2 + .))
+  # Assuming form_reset is constructed up to this point as a character string
+  form_reset <- paste0(formula[2], " ~ ", formula[3], " + predict2")
 
+  # For fixed effects, if applicable
   if (length(as.character(fit$fml_all$fixef)) > 0) {
-    form_reset <- paste0(form_reset[2], " ~ ", form_reset[3], " | ", as.character(fit$fml_all$fixef)[2])
-  } else {
-    form_reset <- paste0(form_reset[2], " ~ ", form_reset[3])
+    form_reset <- paste0(form_reset, " | ", as.character(fit$fml_all$fixef)[2])
   }
 
+  # Convert the character string back into a formula
+  form_reset <- as.formula(form_reset)
+
   if (!is_ppml) {
-    fit_reset <- feols(as.formula(form_reset),
+    fit_reset <- feols(form_reset,
       data = data,
       cluster = data[, pair]
     )
   } else {
-    fit_reset <- fepois(as.formula(form_reset),
+    fit_reset <- fepois(form_reset,
       data = data,
       cluster = data[, pair]
     )
@@ -105,6 +113,9 @@ tp_summary_app_1 <- function(formula, data, method = "ppml", pair = "pair_id",
 #' @param intr Intra-national distance column (defaults to "log_dist_intra")
 #' @param csfe Country-specific fixed effects (defaults to "intra_pair")
 #'
+#' @examples
+#' # See the ebook
+#'
 #' @return A list
 #' @export
 tp_summary_app_2 <- function(formula, data, method = "ppml",
@@ -113,19 +124,21 @@ tp_summary_app_2 <- function(formula, data, method = "ppml",
                              intr = "log_dist_intra", csfe = "intra_pair") {
   stopifnot(any(method %in% c("ols", "ppml")))
 
+  formula <- as.Formula(formula)
+
   if (!all(class(data) %in% "data.frame")) {
     data <- as.data.frame(data)
   }
 
   if (method == "ols") {
-    fit <- feols(as.formula(formula),
+    fit <- feols(formula,
       data = data,
       cluster = data[, pair]
     )
   }
 
   if (method == "ppml") {
-    fit <- fepois(as.formula(formula),
+    fit <- fepois(formula,
       data = data,
       cluster = data[, pair]
     )
@@ -188,6 +201,9 @@ tp_summary_app_2 <- function(formula, data, method = "ppml",
 #' @param intr Intra-national distance column (defaults to "log_dist_intra")
 #' @param brdr Inter-national borders column (defaults to "intl_brdr")
 #'
+#' @examples
+#' # See the ebook
+#'
 #' @return A list
 #' @export
 tp_summary_app_3 <- function(formula, data, method = "ppml",
@@ -197,20 +213,22 @@ tp_summary_app_3 <- function(formula, data, method = "ppml",
                              brdr = "intl_brdr") {
   stopifnot(any(method %in% c("ols", "ppml")))
 
+  formula <- as.Formula(formula)
+
   if (!all(class(data) %in% "data.frame")) {
     data <- as.data.frame(data)
   }
 
   if (method == "ols") {
     fit <- feols(
-      as.formula(formula),
+      formula,
       data = data,
       cluster = data[, pair]
     )
   }
 
   if (method == "ppml") {
-    fit <- fepois(as.formula(formula),
+    fit <- fepois(formula,
       data = data,
       cluster = data[, pair]
     )

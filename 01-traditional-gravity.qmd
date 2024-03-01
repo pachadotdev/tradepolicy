@@ -168,7 +168,7 @@ These statistical results are returned as a list to keep it simple, which we can
 
 ```{r ch1_app_1_ols_2}
 tp_summary_app_1(
-  formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e",
+  formula = log_trade ~ log_dist + cntg + lang + clny + log_y + log_e,
   data = filter(ch1_application1, trade > 0),
   method = "ols"
 )
@@ -200,8 +200,8 @@ Our approach follows box #1 on page 43 from @yotov2016advanced. Fitting the regr
 
 ```{r ch1_app_1_ols_remoteness_1}
 tp_summary_app_1(
-  formula = "log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
-    log_remoteness_exp + log_remoteness_imp",
+  formula = log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
+    log_remoteness_exp + log_remoteness_imp,
   data = filter(ch1_application1, trade > 0),
   method = "ols"
 )
@@ -225,7 +225,7 @@ Please notice that the summaries intentionally do not show fixed effects, becaus
 
 ```{r ch1_app_1_fe_1}
 tp_summary_app_1(
-  formula = "log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year",
+  formula = log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
   data = filter(ch1_application1, trade > 0),
   method = "ols"
 )
@@ -285,7 +285,7 @@ We can obtain a detailed list as in the previous examples.
 
 ```{r ch1_app_1_ppml_2}
 tp_summary_app_1(
-  formula = "trade ~ log_dist + cntg + lang + clny | exp_year + imp_year",
+  formula = trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
   data = ch1_application1,
   method = "ppml"
 )
@@ -357,9 +357,9 @@ With the data from above, the model specification is straightforward.
 
 ```{r ch1_app_2_ols_1}
 tp_summary_app_2(
-  formula = "log_trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
+  formula = log_trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny |
-    exp_year + imp_year",
+    exp_year + imp_year,
   data = filter(ch1_application2, importer != exporter, trade > 0),
   method = "ols"
 )
@@ -371,9 +371,9 @@ This model is very similar to the one specified in the PPML section from the las
 
 ```{r ch1_app_2_ppml_1}
 tp_summary_app_2(
-  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
+  formula = trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny |
-    exp_year + imp_year",
+    exp_year + imp_year,
   data = filter(ch1_application2, importer != exporter),
   method = "ppml"
 )
@@ -385,9 +385,9 @@ This model requires us to add the internal distance variable to the PPML model a
 
 ```{r ch1_app_2_intra_1}
 tp_summary_app_2(
-  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
+  formula = trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +
-    log_dist_intra | exp_year + imp_year",
+    log_dist_intra | exp_year + imp_year,
   data = ch1_application2,
   method = "ppml"
 )
@@ -399,9 +399,9 @@ This model requires us to add the same country variable to the internal distance
 
 ```{r ch1_app_2_home_1}
 tp_summary_app_2(
-  formula = "trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
+  formula = trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +
-    log_dist_intra + smctry | exp_year + imp_year",
+    log_dist_intra + smctry | exp_year + imp_year,
   data = ch1_application2,
   method = "ppml"
 )
@@ -413,9 +413,9 @@ This model requires us to remove the internal distance and same country variable
 
 ```{r ch1_app_2_fe_1}
 tp_summary_app_2(
-  formula = "trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
+  formula = trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +
-    intra_pair | exp_year + imp_year",
+    intra_pair | exp_year + imp_year,
   data = ch1_application2,
   method = "ppml"
 )
@@ -473,8 +473,8 @@ With the data from above, the model specification is straightforward.
 
 ```{r ch1_app_3_ols_1}
 tp_summary_app_3(
-  formula = "log_trade ~ log_dist + cntg + lang + clny + rta | exp_year +
-    imp_year",
+  formula = log_trade ~ log_dist + cntg + lang + clny + rta | exp_year +
+    imp_year,
   data = filter(ch1_application3, trade > 0, importer != exporter),
   method = "ols"
 )
@@ -486,7 +486,7 @@ The model specification is very similar to OLS, and we only need to change the m
 
 ```{r ch1_app_3_ppml_1}
 tp_summary_app_3(
-  formula = "trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year",
+  formula = trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year,
   data = filter(ch1_application3, importer != exporter),
   method = "ppml"
 )
@@ -498,8 +498,8 @@ The model specification is quite the same as PPML. We only need to add the inter
 
 ```{r ch1_app_3_intra_1}
 tp_summary_app_3(
-  formula = "trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year +
-    intl_brdr",
+  formula = trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year +
+    intl_brdr,
   data = ch1_application3,
   method = "ppml"
 )
@@ -511,7 +511,7 @@ The model specification includes the RTA variable and the exporter-time, importe
 
 ```{r ch1_app_3_endg_1}
 tp_summary_app_3(
-  formula = "trade ~ rta | exp_year + imp_year + pair_id_2",
+  formula = trade ~ rta | exp_year + imp_year + pair_id_2,
   data = filter(ch1_application3, sum_trade > 0),
   method = "ppml"
 )
@@ -523,7 +523,7 @@ We need to modify the previous model to include the forward lagged RTA variable 
 
 ```{r ch1_app_3_lead_1}
 tp_summary_app_3(
-  formula = "trade ~ rta + rta_lead4 | exp_year + imp_year + pair_id_2",
+  formula = trade ~ rta + rta_lead4 | exp_year + imp_year + pair_id_2,
   data = filter(ch1_application3, sum_trade > 0),
   method = "ppml"
 )
@@ -535,8 +535,8 @@ Instead of future-lagged RTA variables, as in the previous model, we modify the 
 
 ```{r ch1_app_3_phsng_1}
 tp_summary_app_3(
-  formula = "trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 | exp_year +
-    imp_year + pair_id_2",
+  formula = trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 | exp_year +
+    imp_year + pair_id_2,
   data = filter(ch1_application3, sum_trade > 0),
   method = "ppml"
 )
@@ -548,9 +548,9 @@ In addition to the previous model, we include the international borders on diffe
 
 ```{r ch1_app_3_glbzn_1}
 tp_summary_app_3(
-  formula = "trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 + intl_border_1986 +
+  formula = trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 + intl_border_1986 +
     intl_border_1990 + intl_border_1994 + intl_border_1998 + intl_border_2002 |
-    exp_year + imp_year + pair_id_2",
+    exp_year + imp_year + pair_id_2,
   data = filter(ch1_application3, sum_trade > 0),
   method = "ppml"
 )

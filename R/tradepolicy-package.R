@@ -50,6 +50,7 @@ NULL
 #' @importFrom sandwich vcovCL
 #' @importFrom msm deltamethod
 #' @importFrom dplyr filter mutate_if tibble
+#' @importFrom Formula as.Formula
 #' @importFrom knitr kable
 NULL
 

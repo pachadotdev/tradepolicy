@@ -16,13 +16,13 @@ test_that("Functions from Ch.1 work as expected, part 1", {
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
   summary1 <- tp_summary_app_1(
-    formula = "log_trade ~ log_dist + cntg + lang + clny",
+    formula = log_trade ~ log_dist + cntg + lang + clny,
     data = d_test,
     method = "ols"
   )
 
   summary2 <- tp_summary_app_1(
-    formula = "trade ~ log_dist + cntg + lang + clny",
+    formula = trade ~ log_dist + cntg + lang + clny,
     data = d_test,
     method = "ppml"
   )
@@ -54,13 +54,13 @@ test_that("Functions from Ch.1 work as expected, part 2", {
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
   summary3 <- tp_summary_app_2(
-    formula = "log_trade ~ log_dist_2002 + log_dist_2006 | exporter + importer",
+    formula = log_trade ~ log_dist_2002 + log_dist_2006 | exporter + importer,
     data = d_test,
     method = "ols"
   )
 
   summary4 <- tp_summary_app_2(
-    formula = "trade ~ log_dist_2002 + log_dist_2006 | exporter + importer",
+    formula = trade ~ log_dist_2002 + log_dist_2006 | exporter + importer,
     data = d_test,
     method = "ppml"
   )
@@ -91,13 +91,13 @@ test_that("Functions from Ch.1 work as expected, part 3", {
   # THESE REGRESSIONS ARE JUST FOR TESTING !!
 
   summary5 <- tp_summary_app_3(
-    formula = "log_trade ~ 1 | exporter + importer",
+    formula = log_trade ~ 1 | exporter + importer,
     data = d_test,
     method = "ols"
   )
 
   summary6 <- tp_summary_app_3(
-    formula = "trade ~ 1 | exporter + importer",
+    formula = trade ~ 1 | exporter + importer,
     data = d_test,
     method = "ppml"
   )

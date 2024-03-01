@@ -46,3 +46,7 @@ Computes clustered standard errors, tests on coefficients with
 clustered standard errors and returns total RTAs effect with its associated
 standard error.
 }
+\examples{
+# See the ebook
+
+}

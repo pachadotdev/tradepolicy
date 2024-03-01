@@ -27,3 +27,4 @@
 ^CRAN-SUBMISSION$
 ^\.quarto$
 ^_freeze$
+^index_cache$

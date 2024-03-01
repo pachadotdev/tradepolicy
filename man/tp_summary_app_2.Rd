@@ -43,3 +43,7 @@ Computes clustered standard errors, tests on coefficients with
 clustered standard errors and uses the delta method to obtain changes in
 time-based distance estimated coefficients.
 }
+\examples{
+# See the ebook
+
+}

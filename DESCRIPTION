@@ -3,7 +3,7 @@ Title: Replication of 'An Advanced Guide To Trade Policy Analysis'
 Version: 0.7.0
 Authors@R: c( 
         person(given = "Mauricio",
-               family = "Vargas",
+               family = "Vargas Sepulveda",
                role = c("aut", "cre"),
                email = "m.sepulveda@mail.utoronto.ca",
                comment = c(ORCID = "0000-0003-1017-7574")),
@@ -20,10 +20,10 @@ Authors@R: c(
                role = c("dtc", "cph", "fnd")
         )
     )
-Description: Datasets from An Advanced Guide to Trade Policy Analysis
-    (Year: 2016, ISBN: 978-92-870-4367-2) by Yotov, et al. and functions to 
+Description: Datasets from Yotov, et al. (2016) <doi:978-92-870-4367-2>
+    (An Advanced Guide to Trade Policy Analysis) and functions to 
     report regression summaries with clustered robust standard errors.
-URL: https://r.tiid.org/R_structural_gravity/
+URL: https://github.com/pachadotdev/tradepolicy/
 BugReports: https://github.com/pachadotdev/tradepolicy/issues/
 License: CC BY 4.0
 Encoding: UTF-8
@@ -39,7 +39,8 @@ Imports:
     sandwich,
     broom,
     msm,
-    knitr
+    knitr,
+    Formula
 Suggests:
     testthat,
     covr

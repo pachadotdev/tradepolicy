@@ -6,18 +6,18 @@
 \alias{tradepolicy-package}
 \title{tradepolicy: Replication of 'An Advanced Guide To Trade Policy Analysis'}
 \description{
-Datasets from An Advanced Guide to Trade Policy Analysis (Year: 2016, ISBN: 978-92-870-4367-2) by Yotov, et al. and functions to report regression summaries with clustered robust standard errors.
+Datasets from Yotov, et al. (2016) \doi{978-92-870-4367-2} (An Advanced Guide to Trade Policy Analysis) and functions to report regression summaries with clustered robust standard errors.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://r.tiid.org/R_structural_gravity/}
+  \item \url{https://github.com/pachadotdev/tradepolicy/}
   \item Report bugs at \url{https://github.com/pachadotdev/tradepolicy/issues/}
 }
 
 }
 \author{
-\strong{Maintainer}: Mauricio Vargas \email{m.sepulveda@mail.utoronto.ca} (\href{https://orcid.org/0000-0003-1017-7574}{ORCID})
+\strong{Maintainer}: Mauricio Vargas Sepulveda \email{m.sepulveda@mail.utoronto.ca} (\href{https://orcid.org/0000-0003-1017-7574}{ORCID})
 
 Other contributors:
 \itemize{
