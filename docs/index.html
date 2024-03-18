@@ -191,6 +191,7 @@ div.csl-indent {
   <li><a href="#changes-concerning-the-second-edition" id="toc-changes-concerning-the-second-edition" class="nav-link" data-scroll-target="#changes-concerning-the-second-edition"><span class="header-section-number">1.6</span> Changes concerning the second edition</a></li>
   <li><a href="#changes-concerning-the-third-edition" id="toc-changes-concerning-the-third-edition" class="nav-link" data-scroll-target="#changes-concerning-the-third-edition"><span class="header-section-number">1.7</span> Changes concerning the third edition</a></li>
   <li><a href="#contact" id="toc-contact" class="nav-link" data-scroll-target="#contact"><span class="header-section-number">1.8</span> Contact</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">1.9</span> References</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -282,7 +283,7 @@ div.csl-indent {
 <section id="changes-concerning-the-second-edition" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="changes-concerning-the-second-edition"><span class="header-section-number">1.6</span> Changes concerning the second edition</h2>
 <p>The first edition was very conservative in avoiding external libraries (or packages). It only used the strict minimal packages such as <em>dplyr</em> for data cleaning and <em>sandwich</em> for clustered standard errors. We fitted all the models using base R, which was considerably slower than Stata, with a computation time around five to twenty times larger depending on the model link (or family) used.</p>
-<p>The current edition uses <em>fixest</em> reduced the fitting for all the models by around 95%. The book’s first edition takes around three hours to fit all the models and produce the final HTML. The same process now takes around ten minutes, and we hope these time efficiencies benefit the readers. An additional improvement was to add additional explanations to the codes and review all the text grammar based on the feedback received after publishing the first edition.</p>
+<p>The current edition uses <em>fixest</em>, which reduced the fitting time for all the models by around 95%. The book’s first edition takes around three hours to fit all the models and produce the final HTML. The same process now takes around ten minutes, and we hope these time efficiencies benefit the readers. An additional improvement was to add additional explanations to the codes and review all the text grammar based on the feedback received after publishing the first edition.</p>
 <p>While writing this second edition, a critical bug was detected and reported to improve <em>fixest</em>, which gave problems when having more than two fixed effects columns. The details for this are available on <a href="https://github.com/lrberge/fixest/issues/286">GitHub</a>. The possibility of comparing with base R, reporting and getting fixes from the packages’ authors with transparent communication is a tremendous advantage from Open Source.</p>
 <p>As Professor Yotov told this author once while writing his master’s thesis and the first edition: We should focus on the correctness of our results, then think about computational efficiency. He was right!</p>
 </section>
@@ -294,6 +295,9 @@ div.csl-indent {
 <section id="contact" class="level2" data-number="1.8">
 <h2 data-number="1.8" class="anchored" data-anchor-id="contact"><span class="header-section-number">1.8</span> Contact</h2>
 <p>Please send me an email to <em>m.sepulveda</em> <em>[at]</em> <em>mail.utoronto.ca</em> if you have any questions.</p>
+</section>
+<section id="references" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="references"><span class="header-section-number">1.9</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">

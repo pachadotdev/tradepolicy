@@ -15,7 +15,10 @@ To do what is shown in box #1 from page 104 in @yotov2016advanced, we need to co
 Before conducting any data filtering or regression, we need to load the required packages.
 
 ```{r ch1_app_2_packages}
-# datase
+#| message: false
+#| warning: false
+
+# dataset and summary functions
 library(tradepolicy)
 
 # data transformation
@@ -971,3 +974,5 @@ indexes_final <- indexes_final %>%
 ```{r ch2_app2_counterfactual_15_2, echo=FALSE}
 DT::datatable(indexes_final, options = list(scrollX = T))
 ```
+
+## References

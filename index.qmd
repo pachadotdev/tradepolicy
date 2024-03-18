@@ -80,7 +80,7 @@ Earlier versions of these solutions started during the development of the [gravi
 
 The first edition was very conservative in avoiding external libraries (or packages). It only used the strict minimal packages such as *dplyr* for data cleaning and *sandwich* for clustered standard errors. We fitted all the models using base R, which was considerably slower than Stata, with a computation time around five to twenty times larger depending on the model link (or family) used.
 
-The current edition uses *fixest* reduced the fitting for all the models by around 95%. The book's first edition takes around three hours to fit all the models and produce the final HTML. The same process now takes around ten minutes, and we hope these time efficiencies benefit the readers. An additional improvement was to add additional explanations to the codes and review all the text grammar based on the feedback received after publishing the first edition.
+The current edition uses *fixest*, which reduced the fitting time for all the models by around 95%. The book's first edition takes around three hours to fit all the models and produce the final HTML. The same process now takes around ten minutes, and we hope these time efficiencies benefit the readers. An additional improvement was to add additional explanations to the codes and review all the text grammar based on the feedback received after publishing the first edition.
 
 While writing this second edition, a critical bug was detected and reported to improve *fixest*, which gave problems when having more than two fixed effects columns. The details for this are available on [GitHub](https://github.com/lrberge/fixest/issues/286). The possibility of comparing with base R, reporting and getting fixes from the packages' authors with transparent communication is a tremendous advantage from Open Source.
 
@@ -95,3 +95,5 @@ On the technical side, now we use Quarto to streamline the ebook creation proces
 ## Contact
 
 Please send me an email to *m.sepulveda* _[at]_ *mail.utoronto.ca* if you have any questions.
+
+## References

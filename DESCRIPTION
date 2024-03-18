@@ -20,7 +20,7 @@ Authors@R: c(
                role = c("dtc", "cph", "fnd")
         )
     )
-Description: Datasets from Yotov, et al. (2016) <doi:978-92-870-4367-2>
+Description: Datasets from Yotov, et al. (2016) <isbn:978-92-870-4367-2>
     (An Advanced Guide to Trade Policy Analysis) and functions to 
     report regression summaries with clustered robust standard errors.
 URL: https://github.com/pachadotdev/tradepolicy/

@@ -24,7 +24,10 @@ Unlike @yotov2016advanced, here we shall use a single dataset for all the applic
 Before conducting any data filtering or regression, we need to load the required packages.
 
 ```{r ch1_app_1_packages}
-# dataset and summaries
+#| message: false
+#| warning: false
+
+# dataset and summary functions
 library(tradepolicy)
 
 # data transformation
@@ -555,3 +558,5 @@ tp_summary_app_3(
   method = "ppml"
 )
 ```
+
+## References
