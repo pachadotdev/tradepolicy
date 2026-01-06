@@ -4,7 +4,7 @@ bibliography: 00-references.bib
 
 # Partial equilibrium trade policy analysis with structural gravity
 
-## Traditional Gravity Estimates
+## Traditional gravity estimates
 
 ### Preparing the data
 
@@ -36,6 +36,9 @@ library(tidyr)
 
 # regression
 library(capybara)
+
+# delta method
+library(msm)
 ```
 
 Step 1, including subsetting columns for this application, is straightforward.
@@ -418,7 +421,8 @@ ch1_application2 <- agtpa_applications %>%
   mutate(across(log_dist_1986:log_dist_2006, function(x) x * (1 - smctry)))
 ```
 
-The `across()` function is a shortcut to avoid repetition, as in the following example, we show it for reference without computation.
+The `across()` function is a shortcut to avoid repetition, as in the following example provided for reference without
+computation.
 
 ```{r ch1_app_2_data_3, eval = FALSE}
 ch1_application2 %>%
@@ -441,13 +445,45 @@ The gravity specification, which includes $\pi_{i,t} + \chi_{i,t}$, means that w
 With the data from above, the model specification is straightforward.
 
 ```{r ch1_app_2_ols_1}
-tp_summary_app_2(
-  formula = log_trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
-    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny |
-    exp_year + imp_year,
-  data = filter(ch1_application2, importer != exporter, trade > 0),
-  method = "ols"
+fit_ols_distance_puzzle <- felm(
+  log_trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
+    log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny | exp_year +
+    imp_year | pair_id,
+  data = filter(ch1_application2, importer != exporter, trade > 0)
 )
+
+fit_ols_distance_puzzle
+```
+
+For the inference, we need to use the Delta method on the estimated coefficients.
+
+```{r ch1_app_2_ols_2}
+beta_log_dist <- grep("log_dist", rownames(fit_ols_distance_puzzle$coef_table), value = TRUE)
+beta_log_dist <- c(min(beta_log_dist), max(beta_log_dist))
+
+# change = 100 * (beta2 - beta1) / beta1
+betas <- fit_ols_distance_puzzle$coef_table[, 1][beta_log_dist]
+beta_pct_chg <- as.numeric(100 * (betas[2] - betas[1]) / betas[1])
+
+beta_vcov_cluster <- fit_ols_distance_puzzle$vcov[
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_ols_distance_puzzle$vcov))),
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_ols_distance_puzzle$vcov)))
+]
+
+beta_std_err <- deltamethod(
+  ~ 100 * (x2 - x1) / x1,
+  c(betas[1], betas[2]), beta_vcov_cluster
+)
+
+beta_tstat <- beta_pct_chg / beta_std_err
+
+beta_pval <- pnorm(-abs(beta_tstat)) + (1 - pnorm(abs(beta_tstat)))
+
+round(c(
+  "pct_chg_log_dist" = beta_pct_chg,
+  "std_err" = beta_std_err,
+  "p-value" = beta_pval
+), 4)
 ```
 
 ### PPML solution for the "distance puzzle"
@@ -455,13 +491,44 @@ tp_summary_app_2(
 This model is very similar to the one specified in the PPML section from the last section. We can directly fit the model.
 
 ```{r ch1_app_2_ppml_1}
-tp_summary_app_2(
-  formula = trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
+fit_ppml_distance_puzzle <- fepoisson(
+  trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny |
-    exp_year + imp_year,
-  data = filter(ch1_application2, importer != exporter),
-  method = "ppml"
+    exp_year + imp_year | pair_id,
+  data = filter(ch1_application2, importer != exporter)
 )
+
+fit_ppml_distance_puzzle
+```
+
+For the inference, we need to use the Delta method on the estimated coefficients as we did in the OLS case.
+
+```{r ch1_app_2_ppml_2}
+beta_log_dist <- grep("log_dist", rownames(fit_ppml_distance_puzzle$coef_table), value = TRUE)
+beta_log_dist <- c(min(beta_log_dist), max(beta_log_dist))
+
+# change = 100 * (beta2 - beta1) / beta1
+betas <- fit_ppml_distance_puzzle$coef_table[, 1][beta_log_dist]
+beta_pct_chg <- as.numeric(100 * (betas[2] - betas[1]) / betas[1])
+
+beta_vcov_cluster <- fit_ppml_distance_puzzle$vcov[
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_ppml_distance_puzzle$vcov))),
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_ppml_distance_puzzle$vcov)))
+]
+
+beta_std_err <- deltamethod(
+  ~ 100 * (x2 - x1) / x1,
+  c(betas[1], betas[2]), beta_vcov_cluster
+)
+
+beta_tstat <- beta_pct_chg / beta_std_err
+beta_pval <- pnorm(-abs(beta_tstat)) + (1 - pnorm(abs(beta_tstat)))
+
+round(c(
+  "pct_chg_log_dist" = beta_pct_chg,
+  "std_err" = beta_std_err,
+  "p-value" = beta_pval
+), 4)
 ```
 
 ### Internal distance solution for the "distance puzzle"
@@ -469,13 +536,45 @@ tp_summary_app_2(
 This model requires us to add the internal distance variable to the PPML model and not filter the rows where the exporter and the importer are the same.
 
 ```{r ch1_app_2_intra_1}
-tp_summary_app_2(
-  formula = trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
+fit_ppml_intra_distance_puzzle <- fepoisson(
+  trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +
-    log_dist_intra | exp_year + imp_year,
-  data = ch1_application2,
-  method = "ppml"
+    log_dist_intra | exp_year + imp_year | pair_id,
+  data = ch1_application2
 )
+
+fit_ppml_intra_distance_puzzle
+```
+
+For the inference, we need to use the Delta method on the estimated coefficients as we did in the OLS case (we need the
+numbers for the regular expression).
+
+```{r ch1_app_2_intra_2}
+beta_log_dist <- grep("log_dist_[0-9]{4}", rownames(fit_ppml_intra_distance_puzzle$coef_table), value = TRUE)
+beta_log_dist <- c(min(beta_log_dist), max(beta_log_dist))
+
+# change = 100 * (beta2 - beta1) / beta1
+betas <- fit_ppml_intra_distance_puzzle$coef_table[, 1][beta_log_dist]
+beta_pct_chg <- as.numeric(100 * (betas[2] - betas[1]) / betas[1])
+
+beta_vcov_cluster <- fit_ppml_intra_distance_puzzle$vcov[
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_ppml_intra_distance_puzzle$vcov))),
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_ppml_intra_distance_puzzle$vcov)))
+]
+
+beta_std_err <- deltamethod(
+  ~ 100 * (x2 - x1) / x1,
+  c(betas[1], betas[2]), beta_vcov_cluster
+)
+
+beta_tstat <- beta_pct_chg / beta_std_err
+beta_pval <- pnorm(-abs(beta_tstat)) + (1 - pnorm(abs(beta_tstat)))
+
+round(c(
+  "pct_chg_log_dist" = beta_pct_chg,
+  "std_err" = beta_std_err,
+  "p-value" = beta_pval
+), 4)
 ```
 
 ### Internal distance and home bias solution for the "distance puzzle"
@@ -483,13 +582,45 @@ tp_summary_app_2(
 This model requires us to add the same country variable to the internal distance model and repeat the rest of the steps from the last section.
 
 ```{r ch1_app_2_home_1}
-tp_summary_app_2(
-  formula = trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
+fit_ppml_home_distance_puzzle <- fepoisson(
+  trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +
-    log_dist_intra + smctry | exp_year + imp_year,
-  data = ch1_application2,
-  method = "ppml"
+    log_dist_intra + smctry | exp_year + imp_year | pair_id,
+  data = ch1_application2
 )
+
+fit_ppml_home_distance_puzzle
+```
+
+For the inference, we need to use the Delta method on the estimated coefficients as we did in the OLS case (we need the
+numbers for the regular expression).
+
+```{r ch1_app_2_home_2}
+beta_log_dist <- grep("log_dist_[0-9]{4}", rownames(fit_ppml_home_distance_puzzle$coef_table), value = TRUE)
+beta_log_dist <- c(min(beta_log_dist), max(beta_log_dist))
+
+# change = 100 * (beta2 - beta1) / beta1
+betas <- fit_ppml_home_distance_puzzle$coef_table[, 1][beta_log_dist]
+beta_pct_chg <- as.numeric(100 * (betas[2] - betas[1]) / betas[1])
+
+beta_vcov_cluster <- fit_ppml_home_distance_puzzle$vcov[
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_ppml_home_distance_puzzle$vcov))),
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_ppml_home_distance_puzzle$vcov)))
+]
+
+beta_std_err <- deltamethod(
+  ~ 100 * (x2 - x1) / x1,
+  c(betas[1], betas[2]), beta_vcov_cluster
+)
+
+beta_tstat <- beta_pct_chg / beta_std_err
+beta_pval <- pnorm(-abs(beta_tstat)) + (1 - pnorm(abs(beta_tstat)))
+
+round(c(
+  "pct_chg_log_dist" = beta_pct_chg,
+  "std_err" = beta_std_err,
+  "p-value" = beta_pval
+), 4)
 ```
 
 ### Fixed effects solution for the "distance puzzle"
@@ -497,13 +628,44 @@ tp_summary_app_2(
 This model requires us to remove the internal distance and same country variables from the last model and include the internal pair variable to account for the intra-national fixed effects.
 
 ```{r ch1_app_2_fe_1}
-tp_summary_app_2(
-  formula = trade ~ 0 + log_dist_1986 + log_dist_1990 + log_dist_1994 +
+fit_fe_distance_puzzle <- fepoisson(
+  trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny +
-    intra_pair | exp_year + imp_year,
-  data = ch1_application2,
-  method = "ppml"
+    intra_pair | exp_year + imp_year | pair_id,
+  data = ch1_application2
 )
+
+fit_fe_distance_puzzle
+```
+
+For the inference, we need to use the Delta method on the estimated coefficients as we did in the OLS case.
+
+```{r ch1_app_2_fe_2}
+beta_log_dist <- grep("log_dist_[0-9]{4}", rownames(fit_fe_distance_puzzle$coef_table), value = TRUE)
+beta_log_dist <- c(min(beta_log_dist), max(beta_log_dist))
+
+# change = 100 * (beta2 - beta1) / beta1
+betas <- fit_fe_distance_puzzle$coef_table[, 1][beta_log_dist]
+beta_pct_chg <- as.numeric(100 * (betas[2] - betas[1]) / betas[1])
+
+beta_vcov_cluster <- fit_fe_distance_puzzle$vcov[
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_fe_distance_puzzle$vcov))),
+  which(grepl(paste(beta_log_dist, collapse = "|"), rownames(fit_fe_distance_puzzle$vcov)))
+]
+
+beta_std_err <- deltamethod(
+  ~ 100 * (x2 - x1) / x1,
+  c(betas[1], betas[2]), beta_vcov_cluster
+)
+
+beta_tstat <- beta_pct_chg / beta_std_err
+beta_pval <- pnorm(-abs(beta_tstat)) + (1 - pnorm(abs(beta_tstat)))
+
+round(c(
+  "pct_chg_log_dist" = beta_pct_chg,
+  "std_err" = beta_std_err,
+  "p-value" = beta_pval
+), 4)
 ```
 
 ## Regional trade agreements effects
