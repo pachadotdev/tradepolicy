@@ -102,7 +102,8 @@ ch1_application1 <- ch1_application1 %>%
   mutate(
     remoteness_imp = sum(dist / (y / total_y)),
     log_remoteness_imp = log(remoteness_imp)
-  )
+  ) %>%
+  ungroup()
 ```
 
 To create the variables for the OLS with Fixed Effects Model, we followed box #1 on page 44 from @yotov2016advanced. We combine both exporter and importer variables with the year to create the fixed effects variables.
@@ -154,8 +155,8 @@ fit_ols
 Note that the $R^2$ and adjusted $R^2$ look the same because of rounding.
 
 ```{r ch1_app_1_ols_2}
-fit_ols$r.squared
-fit_ols$adj.r.squared
+fit_ols$r_squared
+fit_ols$adj_r_squared
 ```
 
 The employed function, `felm()`, does not carry a copy of its training data by default besides providing faster fitting for models with fixed effects. This is not the case in base R, where `glm()` outputs include this data, increasing the model's size, but this does not affect the model's predictions and can be changed as the user needs it [@trimmingfat].
@@ -185,7 +186,6 @@ To conduct the RESET test we need to add the squared fitted values to the traini
 
 ```{r ch1_app_1_ols_4}
 ch1_application1_ols <- ch1_application1 %>%
-  ungroup() %>%
   filter(
     trade > 0,
     exporter != importer
@@ -719,12 +719,12 @@ The gravity specification, which includes $\pi_{i,t} + \chi_{i,t}$, means that w
 With the data from above, the model specification is straightforward.
 
 ```{r ch1_app_3_ols_1}
-tp_summary_app_3(
-  formula = log_trade ~ log_dist + cntg + lang + clny + rta | exp_year +
-    imp_year,
-  data = filter(ch1_application3, trade > 0, importer != exporter),
-  method = "ols"
+fit_ols_rta <- felm(
+  log_trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year | pair_id,
+  data = filter(ch1_application3, trade > 0, importer != exporter)
 )
+
+fit_ols_rta
 ```
 
 ### PPML standard RTA estimates with international trade only
@@ -732,11 +732,12 @@ tp_summary_app_3(
 The model specification is very similar to OLS, and we only need to change the method specified in the function.
 
 ```{r ch1_app_3_ppml_1}
-tp_summary_app_3(
-  formula = trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year,
-  data = filter(ch1_application3, importer != exporter),
-  method = "ppml"
+fit_ppml_rta <- fepoisson(
+  trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year | pair_id,
+  data = filter(ch1_application3, importer != exporter)
 )
+
+fit_ppml_rta
 ```
 
 ### Addressing potential domestic trade diversion
@@ -744,12 +745,13 @@ tp_summary_app_3(
 The model specification is quite the same as PPML. We only need to add the international border variable but use the entire dataset instead of removing rows where the importer and the exporter are the same.
 
 ```{r ch1_app_3_intra_1}
-tp_summary_app_3(
-  formula = trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year +
-    intl_brdr,
-  data = ch1_application3,
-  method = "ppml"
+fit_intra_rta <- fepoisson(
+  trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year +
+    intl_brdr | pair_id,
+  data = ch1_application3
 )
+
+fit_intra_rta
 ```
 
 ### Addressing potential endogeneity of RTAs
@@ -757,11 +759,12 @@ tp_summary_app_3(
 The model specification includes the RTA variable and the exporter-time, importer-time and internal dyad fixed effects to account for domestic trade.
 
 ```{r ch1_app_3_endg_1}
-tp_summary_app_3(
-  formula = trade ~ rta | exp_year + imp_year + pair_id_2,
-  data = filter(ch1_application3, sum_trade > 0),
-  method = "ppml"
+fit_endg_rta <- fepoisson(
+  trade ~ rta | exp_year + imp_year + pair_id_2 | pair_id,
+  data = filter(ch1_application3, sum_trade > 0)
 )
+
+fit_endg_rta
 ```
 
 ### Testing for potential "reverse causality" between trade and RTAs
@@ -769,11 +772,28 @@ tp_summary_app_3(
 We need to modify the previous model to include the forward lagged RTA variable (by four years) and consider where the trade sum is larger than zero.
 
 ```{r ch1_app_3_lead_1}
-tp_summary_app_3(
-  formula = trade ~ rta + rta_lead4 | exp_year + imp_year + pair_id_2,
-  data = filter(ch1_application3, sum_trade > 0),
-  method = "ppml"
+fit_lead_rta <- fepoisson(
+  trade ~ rta + rta_lead4 | exp_year + imp_year + pair_id_2 | pair_id,
+  data = filter(ch1_application3, sum_trade > 0)
 )
+
+fit_lead_rta
+
+beta_rta <- fit_lead_rta$coef_table[, 1]
+beta_sum <- sum(beta_rta)
+
+beta_form <- paste(paste0("x", seq_along(beta_rta)), collapse = "+")
+beta_form <- paste0("~", beta_form)
+
+beta_std_err <- deltamethod(as.formula(beta_form), beta_rta, fit_lead_rta$vcov)
+beta_tstat <- beta_sum / beta_std_err
+beta_pval <- pnorm(-abs(beta_tstat)) + (1 - pnorm(abs(beta_tstat)))
+
+round(c(
+  "sum_coef_rta" = beta_sum,
+  "std_err" = beta_std_err,
+  "p-value" = beta_pval
+), 4)
 ```
 
 ### Addressing potential non-linear and phasing-in effects of RTAs
@@ -781,12 +801,28 @@ tp_summary_app_3(
 Instead of future-lagged RTA variables, as in the previous model, we modify the previous model and include the RTA backwards lagged variables instead.
 
 ```{r ch1_app_3_phsng_1}
-tp_summary_app_3(
-  formula = trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 | exp_year +
-    imp_year + pair_id_2,
-  data = filter(ch1_application3, sum_trade > 0),
-  method = "ppml"
+fit_phsng_rta <- fepoisson(
+  trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 | exp_year + imp_year + pair_id_2 | pair_id,
+  data = filter(ch1_application3, sum_trade > 0)
 )
+
+fit_phsng_rta
+
+beta_rta <- fit_phsng_rta$coef_table[, 1]
+beta_sum <- sum(beta_rta)
+
+beta_form <- paste(paste0("x", seq_along(beta_rta)), collapse = "+")
+beta_form <- paste0("~", beta_form)
+
+beta_std_err <- deltamethod(as.formula(beta_form), beta_rta, fit_phsng_rta$vcov)
+beta_tstat <- beta_sum / beta_std_err
+beta_pval <- pnorm(-abs(beta_tstat)) + (1 - pnorm(abs(beta_tstat)))
+
+round(c(
+  "sum_coef_rta" = beta_sum,
+  "std_err" = beta_std_err,
+  "p-value" = beta_pval
+), 4)
 ```
 
 ### Addressing globalization effects
@@ -794,13 +830,30 @@ tp_summary_app_3(
 In addition to the previous model, we include the international borders on different years besides the lagged RTAs.
 
 ```{r ch1_app_3_glbzn_1}
-tp_summary_app_3(
-  formula = trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 + intl_border_1986 +
+fit_glbzn_rta <- fepoisson(
+  trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 + intl_border_1986 +
     intl_border_1990 + intl_border_1994 + intl_border_1998 + intl_border_2002 |
-    exp_year + imp_year + pair_id_2,
-  data = filter(ch1_application3, sum_trade > 0),
-  method = "ppml"
+    exp_year + imp_year + pair_id_2 | pair_id,
+  data = filter(ch1_application3, sum_trade > 0)
 )
+
+fit_glbzn_rta
+
+beta_rta <- fit_glbzn_rta$coef_table[, 1][grep("rta", rownames(fit_glbzn_rta$coef_table))]
+beta_sum <- sum(beta_rta)
+
+beta_form <- paste(paste0("x", seq_along(beta_rta)), collapse = "+")
+beta_form <- paste0("~", beta_form)
+
+beta_std_err <- deltamethod(as.formula(beta_form), beta_rta, fit_glbzn_rta$vcov[names(beta_rta), names(beta_rta)])
+beta_tstat <- beta_sum / beta_std_err
+beta_pval <- pnorm(-abs(beta_tstat)) + (1 - pnorm(abs(beta_tstat)))
+
+round(c(
+  "sum_coef_rta" = beta_sum,
+  "std_err" = beta_std_err,
+  "p-value" = beta_pval
+), 4)
 ```
 
 ## References
