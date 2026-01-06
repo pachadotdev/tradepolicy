@@ -668,6 +668,20 @@ round(c(
 ), 4)
 ```
 
+### Presenting all models together
+
+As it was done in the previous section, we can use the `summary_table()` function to show all the models fitted in this section.
+
+```{r ch1_app_2_summary_table}
+summary_table(
+  fit_ols_distance_puzzle,
+  fit_ppml_distance_puzzle,
+  fit_ppml_intra_distance_puzzle,
+  fit_ppml_home_distance_puzzle,
+  fit_fe_distance_puzzle
+)
+```
+
 ## Regional trade agreements effects
 
 ### Preparing the data
@@ -854,6 +868,22 @@ round(c(
   "std_err" = beta_std_err,
   "p-value" = beta_pval
 ), 4)
+```
+
+### Presenting all models together
+
+As it was done in the previous sections, we can use the `summary_table()` function to show all the models fitted in this section.
+
+```{r ch1_app_3_summary_table}
+summary_table(
+  fit_ols_rta,
+  fit_ppml_rta,
+  fit_intra_rta,
+  fit_endg_rta,
+  fit_lead_rta,
+  fit_phsng_rta,
+  fit_glbzn_rta
+)
 ```
 
 ## References
