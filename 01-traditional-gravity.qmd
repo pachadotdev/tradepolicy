@@ -35,7 +35,7 @@ library(dplyr)
 library(tidyr)
 
 # regression
-library(fixest)
+library(capybara)
 ```
 
 Step 1, including subsetting columns for this application, is straightforward.
@@ -113,11 +113,12 @@ ch1_application1 <- ch1_application1 %>%
   )
 ```
 
-The addition of exporter/importer time fixed effects concludes step 2, and now we need to perform step 3.
+The addition of exporter/importer time fixed effects concludes step 2, and now we need to perform step 3. This step will
+be commented for now as I found an error in the reported $R^2$ for the PPML model that I show next.
 
 ```{r ch1_app_1_data_6}
-ch1_application1 <- ch1_application1 %>%
-  filter(exporter != importer)
+# ch1_application1 <- ch1_application1 %>%
+#   filter(exporter != importer)
 ```
 
 Some cases require conducting step 4, and we will be explicit about it when needed.
@@ -137,47 +138,66 @@ Please see page 41 in @yotov2016advanced for full detail of each variable.
 The model for this case is straightforward, and in this case, we need to apply step 4 from the previous section to drop cases where the trade is zero.
 
 ```{r ch1_app_1_ols_1}
-fit_ols <- feols(
+fit_ols <- felm(
   log_trade ~ log_dist + cntg + lang + clny + log_y + log_e,
-  data = filter(ch1_application1, trade > 0)
+  data = ch1_application1 %>%
+    filter(trade > 0) %>%
+    filter(exporter != importer) # commented out step 3
 )
 
-summary(fit_ols)
+fit_ols
 ```
 
-The employed function, `feols()`, does not carry a copy of its training data by default besides providing faster fitting for models with fixed effects. This is not the case in base R, where `glm()` outputs include this data, increasing the model's size, but this does not affect the model's predictions and can be changed as the user needs it [@trimmingfat].
+Note that the $R^2$ and adjusted $R^2$ look the same because of rounding.
+
+```{r ch1_app_1_ols_2}
+fit_ols$r.squared
+fit_ols$adj.r.squared
+```
+
+The employed function, `felm()`, does not carry a copy of its training data by default besides providing faster fitting for models with fixed effects. This is not the case in base R, where `glm()` outputs include this data, increasing the model's size, but this does not affect the model's predictions and can be changed as the user needs it [@trimmingfat].
 
 The model is almost ready. We only need to stick to the methodology from @yotov2016advanced and cluster the standard errors by country pair (see the note on page 42, it is imperative).
 
-```{r ch1_app_1_ols_1_2}
-fit_ols <- feols(
-  log_trade ~ log_dist + cntg + lang + clny + log_y + log_e,
-  data = filter(ch1_application1, trade > 0),
-  cluster = ~pair_id
-)
+The capybara package processes formulas as:
 
-summary(fit_ols)
+```r
+response ~ slopes | fixed_effects | cluster
 ```
 
-The *tradepolicy* package provides functions to provide more informative summaries. Please read the documentation of the package and look for the `tp_summary_app_1()` function, it summarises the model in the exact way as reported in the book by providing:
+The model with clustered standard errors is as follows.
 
-* Clustered standard errors.
-* Number of observations.
-* $R^2$ (if applicable).
-* Presence (or absence) of exporter and exporter-time fixed effects.
-* RESET test p-value.
-
-These statistical results are returned as a list to keep it simple, which we can see for the model in the same format as reported in the book.
-
-```{r ch1_app_1_ols_2}
-tp_summary_app_1(
-  formula = log_trade ~ log_dist + cntg + lang + clny + log_y + log_e,
-  data = filter(ch1_application1, trade > 0),
-  method = "ols"
+```{r ch1_app_1_ols_3}
+fit_ols <- felm(
+  log_trade ~ log_dist + cntg + lang + clny + log_y + log_e | 0 | pair_id,
+  data = ch1_application1 %>%
+    filter(trade > 0) %>%
+    filter(exporter != importer) # commented out step 3
 )
+
+fit_ols
 ```
 
-Please notice that the summary hides the exporter/importer fixed effects.
+To conduct the RESET test we need to add the squared fitted values to the training data.
+
+```{r ch1_app_1_ols_4}
+ch1_application1_ols <- ch1_application1 %>%
+  ungroup() %>%
+  filter(
+    trade > 0,
+    exporter != importer
+  )
+
+ch1_application1_ols <- ch1_application1_ols %>%
+  mutate(trade_hat_sq = (predict(fit_ols, newdata = ch1_application1_ols))^2)
+
+reset_ols <- felm(
+  log_trade ~ log_dist + cntg + lang + clny + log_y + log_e + trade_hat_sq | 0 | pair_id,
+  data = ch1_application1_ols
+)
+
+round(reset_ols$coef_table["trade_hat_sq", "Pr(>|z|)"], 4)
+```
 
 ### OLS estimation controlling for multilateral resistance terms with remote indexes
 
@@ -202,12 +222,37 @@ Please see page 43 in @yotov2016advanced for full detail of each variable.
 Our approach follows box #1 on page 43 from @yotov2016advanced. Fitting the regression is straightforward. It is just about adding more regressors to what we did in the last section, and we can create a list with a summary for the model.
 
 ```{r ch1_app_1_ols_remoteness_1}
-tp_summary_app_1(
-  formula = log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
-    log_remoteness_exp + log_remoteness_imp,
-  data = filter(ch1_application1, trade > 0),
-  method = "ols"
+fit_ols_remoteness <- felm(
+  log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
+    log_remoteness_exp + log_remoteness_imp | 0 | pair_id,
+  data = ch1_application1 %>%
+    filter(trade > 0) %>%
+    filter(exporter != importer) # commented out step 3
 )
+
+fit_ols_remoteness
+```
+
+For the RESET test, we need to add the squared fitted values to the training data as before.
+
+```{r ch1_app_1_ols_remoteness_2}
+ch1_application1_ols_remoteness <- ch1_application1 %>%
+  ungroup() %>%
+  filter(
+    trade > 0,
+    exporter != importer
+  )
+
+ch1_application1_ols_remoteness <- ch1_application1_ols_remoteness %>%
+  mutate(trade_hat_sq = (predict(fit_ols_remoteness, newdata = ch1_application1_ols_remoteness))^2) 
+
+reset_ols_remoteness <- felm(
+  log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
+    log_remoteness_exp + log_remoteness_imp + trade_hat_sq | 0 | pair_id,
+  data = ch1_application1_ols_remoteness
+)
+
+round(reset_ols_remoteness$coef_table["trade_hat_sq", "Pr(>|z|)"], 4)
 ```
 
 ### OLS estimation controlling for multilateral resistance terms with fixed effects
@@ -227,35 +272,45 @@ We can quickly generate a list as we did with the previous models. The only diff
 Please notice that the summaries intentionally do not show fixed effects, because there are cases where we have thousands of fixed effects.
 
 ```{r ch1_app_1_fe_1}
-tp_summary_app_1(
-  formula = log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
-  data = filter(ch1_application1, trade > 0),
-  method = "ols"
+# tp_summary_app_1(
+#   formula = log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
+#   data = filter(ch1_application1, trade > 0),
+#   method = "ols"
+# )
+
+fit_fe <- felm(
+  log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year | pair_id,
+  data = ch1_application1 %>%
+    filter(trade > 0) %>%
+    filter(exporter != importer) # commented out step 3
 )
+
+fit_fe
 ```
 
-There is another difference when we compare `feols()` or `fepois()` against `glm()` in the presence of fixed effects, which we can explain with an example.
+Note that the `felm()` function does not print the fixed effects. You can access them with `fit_fe$fixed_effects` and
+`fit_fe$fe_levels` as needed.
 
-In the data used for the previous summary, we have $T$ years (1986, 1990, 1994, 1998, 2002 and 2006). We could be interested in filtering for a single exporter and a single importer to fit the fixed effects model
-$$
-\log X_{t} = \beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} + \beta_3 LANG_{i,j} + \beta_4 CLNY_{i,j} + \sum_{u} \beta_u FE_u + \varepsilon_{ij,t},
-$$
-where
-$$
-\begin{align*}
-&u \in \{1986, 1990, 1994, 1998, 2002, 2006\} \text{ and}\cr
-&FE_u = \begin{cases}
-1 & \text {if } t = u \cr
-0 & \text{otherwise}.
-\end{cases}
-\end{align*}
-$$
+For the RESET test, we need to add the squared fitted values to the training data as before.
 
-When we use `feols()`, or any of the functions in the *fixest* package, a formula of the form $z \sim x_1 + x_2 \mid y$ will estimate the model described in the previous equations.
+```{r ch1_app_1_fe_2}
+ch1_application1_fe <- ch1_application1 %>%
+  ungroup() %>%
+  filter(
+    trade > 0,
+    exporter != importer
+  )
 
-If we do the same in base R, with `glm()`, the equivalent formula would be of the form $z \sim 0 + x_1 + x_2 + y$, otherwise base R estimates a model of the form $y_t = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \sum_u y_{u}$, which means that not including a zero in the formula estimates an additional coefficient in the estimation which corresponds to a global intercept or the "grand mean".
+ch1_application1_fe <- ch1_application1_fe %>%
+  mutate(trade_hat_sq = (predict(fit_fe, newdata = ch1_application1_fe))^2)
 
-On the $\beta_0$ constant, it is tough to interpret with many-way fixed effects, and it is advised against reporting it.
+reset_fe <- felm(
+  log_trade ~ log_dist + cntg + lang + clny + trade_hat_sq | exp_year + imp_year | pair_id,
+  data = ch1_application1_fe
+)
+
+round(reset_fe$coef_table["trade_hat_sq", "Pr(>|z|)"], 4)
+```
 
 ### PPML estimation controlling for multilateral resistance terms with fixed effects
 
@@ -272,27 +327,54 @@ The reason to compute this model, despite the lower speed compared to OLS, is th
 The data for this model is the same as for the fixed effects model, and one option in R is to use the `fepois()` function.
 
 ```{r ch1_app_1_ppml_1, eval = FALSE}
-fit_ppml <- fepois(trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
-  data = ch1_application1,
-  cluster = ~pair_id
+fit_ppml <- fepoisson(trade ~ log_dist + cntg + lang + clny | exp_year + imp_year | pair_id,
+  data = ch1_application1 %>%
+    filter(exporter != importer) # commented out step 3
 )
+
+fit_ppml
 ```
 
-Exactly as it was mentioned for `feols()`, `fepois()` shares the same differences regarding `glm()` objects.
-
-If the reader decides to run this model and print the summary, they will notice that it does not report an $R^2$ and displays an extensive fixed effect list. For PPML models, the $R^2$ needs to be computed afterwards as Kendall's correlation (or rank correlation) between the observed and predicted values. Please see @silva2006log for the details and the RESET test for PPML (GLM) models.
-
-Beware that software such as Stata requires additional libraries such as *ppmlhdfe* to report a correct $R^2$ for the PPML model. What Stata shows is a reported pseudo-$R^2$. To construct a proper $R^2$ in R, `tp_summary_app_1()` takes the rank correlation between actual and predicted trade flows.
-
-We can obtain a detailed list as in the previous examples.
+Up to this part, everything matches table 1 in @yotov2016advanced, except for the $R^2$ of the PPML model, which I could
+not replicate except by obtaining an out-of-sample $R^2$ by obtaining the fitted values including domestic flows. I
+believe there is a mistake in the book regarding this value.
 
 ```{r ch1_app_1_ppml_2}
-tp_summary_app_1(
-  formula = trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
-  data = ch1_application1,
-  method = "ppml"
-)
+trade <- pull(ch1_application1, trade)
+trade_hat <- predict(fit_ppml, type = "response", newdata = ch1_application1)
+cor(trade, trade_hat)^2
 ```
+
+For the RESET test, we need to add the squared fitted values to the training data as before.
+
+```{r ch1_app_1_ppml_3}
+ch1_application1_ppml <- ch1_application1 %>%
+  ungroup() %>%
+  filter(exporter != importer)
+
+ch1_application1_ppml <- ch1_application1_ppml %>%
+  mutate(trade_hat_sq = (predict(fit_ppml, newdata = ch1_application1_ppml))^2)
+
+reset_ppml <- fepoisson(
+  trade ~ log_dist + cntg + lang + clny + trade_hat_sq | exp_year + imp_year | pair_id,
+  data = ch1_application1_ppml
+)
+
+round(reset_ppml$coef_table["trade_hat_sq", "Pr(>|z|)"], 4)
+```
+
+### Presenting all models together
+
+Capybara provides the `summary_table()` function to present multiple models together. We can use it to show all the
+models fitted in this section (note it is a general use function that does not include the RESET test p-values).
+
+```{r ch1_app_1_summary_table}
+summary_table(fit_ols, fit_ols_remoteness, fit_fe, fit_ppml)
+```
+
+The difference with @yotov2016advanced is that the 3rd and 4th columns do not include the "grand mean" (intercept)
+because I included exporter-time and importer-time fixed effects, which remove the need for an intercept as it is
+absorbed by the fixed effects and the slopes and their standard effect match.
 
 ## The "distance puzzle" resolved
 
