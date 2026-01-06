@@ -1,9 +1,5 @@
 # Appendix: Importing the original datasets {#data}
 
-This section can be a bit obscure. It is only included to make the datasets importing steps transparent. It is important to mention that we converted the datasets from DTA (Stata, closed source format) to Arrow Parquet (cross-language, open-source).
-
-The decision to use Arrow instead of CSV/TSV is that Arrow files are always read with the correct column specification (i.e., a column with values such as "00123" is always read as a string and is never confused as a numeric).
-
 ## Downloading the original datasets
 
 ```{r download, eval=FALSE, message=FALSE, warning=FALSE, results='hide'}

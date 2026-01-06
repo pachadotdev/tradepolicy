@@ -30,20 +30,12 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports:
-    magrittr,
+    capybara,
     ggplot2,
     dplyr,
     tidyr,
     purrr,
-    fixest (>= 0.10.4),
-    sandwich,
-    broom,
-    msm,
-    knitr,
-    Formula
-Suggests:
-    testthat,
-    covr
+    knitr
 Depends:
     R (>= 4.0)
 LazyData: true
