@@ -344,11 +344,11 @@ believe there is a mistake in the book regarding this value.
 
 ```{r ch1_app_1_ppml_2}
 trade <- pull(ch1_application1, trade)
-trade_hat <- predict(fit_ppml, type = "response", newdata = ch1_application1)
+trade_hat <- predict(fit_ppml, newdata = ch1_application1)
 cor(trade, trade_hat)^2
 ```
 
-For the RESET test, we need to add the squared fitted values to the training data as before.
+For the RESET test, we need to add the squared fitted link values to the training data as before.
 
 ```{r ch1_app_1_ppml_3}
 ch1_application1_ppml <- ch1_application1 |>
@@ -356,7 +356,7 @@ ch1_application1_ppml <- ch1_application1 |>
   filter(exporter != importer)
 
 ch1_application1_ppml <- ch1_application1_ppml |>
-  mutate(trade_hat_sq = (predict(fit_ppml, newdata = ch1_application1_ppml))^2)
+  mutate(trade_hat_sq = (predict(fit_ppml, type = "link", newdata = ch1_application1_ppml))^2)
 
 reset_ppml <- fepoisson(
   trade ~ log_dist + cntg + lang + clny + trade_hat_sq | exp_year + imp_year | pair_id,
