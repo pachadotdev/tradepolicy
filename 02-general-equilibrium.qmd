@@ -82,19 +82,22 @@ With the data from above, the model specification is straightforward.
 ```{r ch2_app1_baseline_1}
 fit_baseline_app1 <- fepois(
   trade ~ log_dist + cntg + intl | exporter + importer,
-  data = ch2_application1,
-  glm.iter = 500
+  data = ch2_application1
 )
 ```
 
 With the estimated model, we can proceed as in box #1 from page 105 in @yotov2016advanced to construct the variables for exporter and importer fixed effects. This step is very different compared to Stata.
 
 ```{r ch2_app1_baseline_3}
+fe_exporter_bln <- fixef(fit_baseline_app1)$exporter %>%
+  tibble::enframe(name = "exporter", value = "fe_exporter_bln")
+
+fe_importer_bln <- fixef(fit_baseline_app1)$importer %>%
+  tibble::enframe(name = "importer", value = "fe_importer_bln")
+
 ch2_application1 <- ch2_application1 %>%
-  mutate(
-    fe_exporter_bln = fixef(fit_baseline_app1)$exporter[exporter],
-    fe_importer_bln = fixef(fit_baseline_app1)$importer[importer]
-  )
+  left_join(fe_exporter_bln, by = "exporter") %>%
+  left_join(fe_importer_bln, by = "importer")
 ```
 
 Still following box #1, we need to compute the variables of bilateral trade costs and multilateral resistances.
@@ -172,11 +175,15 @@ fit_counterfactual_app1 <- fepois(
 As in the previous chapter, we need to extract the fixed effects.
 
 ```{r ch2_app1_counterfactual_4}
+fe_exporter_cfl <- fixef(fit_counterfactual_app1)$exporter %>%
+  tibble::enframe(name = "exporter", value = "fe_exporter_cfl")
+
+fe_importer_cfl <- fixef(fit_counterfactual_app1)$importer %>%
+  tibble::enframe(name = "importer", value = "fe_importer_cfl")
+
 ch2_application1 <- ch2_application1 %>%
-  mutate(
-    fe_exporter_cfl = fixef(fit_counterfactual_app1)$exporter[exporter],
-    fe_importer_cfl = fixef(fit_counterfactual_app1)$importer[importer]
-  )
+  left_join(fe_exporter_cfl, by = "exporter") %>%
+  left_join(fe_importer_cfl, by = "importer")
 ```
 
 Now we go for Box #2 from page 106 in @yotov2016advanced, where the authors obtain the bilateral trade costs and multilateral resistances variables.
@@ -275,11 +282,15 @@ while (sd_dif > 1e-5 | max_dif > 1e-5) {
     glm.iter = 500
   )
 
+  fe_exporter_cfl_1 <- fixef(fit_counterfactual_app1_2)$exporter %>%
+    tibble::enframe(name = "exporter", value = "fe_exporter_cfl_1")
+
+  fe_importer_cfl_1 <- fixef(fit_counterfactual_app1_2)$importer %>%
+    tibble::enframe(name = "importer", value = "fe_importer_cfl_1")
+    
   ch2_application1 <- ch2_application1 %>%
-    mutate(
-      fe_exporter_cfl_1 = fixef(fit_counterfactual_app1_2)$exporter[exporter],
-      fe_importer_cfl_1 = fixef(fit_counterfactual_app1_2)$importer[importer]
-    )
+    left_join(fe_exporter_cfl_1, by = "exporter") %>%
+    left_join(fe_importer_cfl_1, by = "importer")
 
   # compute the conditional general equilibrium effects of trade
   ch2_application1 <- ch2_application1 %>%
@@ -343,16 +354,6 @@ while (sd_dif > 1e-5 | max_dif > 1e-5) {
   i <- i + 1
 }
 ```
-
-In the previous step, we obtained a warning that we cannot eliminate by increasing GLM interations. The fitted model has truncated deviance for steps eight and twenty-two in the while loop. We tested with 20,000
-GLM iterations for each step, resulting in a very similar message:
-
-> Warning: Absence of convergence: Maximum number of iterations reached (20000). Final deviance: 3.725e-8.
-> Warning: Absence of convergence: Maximum number of iterations reached (20000). Final deviance: -4.47e-8.
-
-This is not a problem by itself, and we can disregard this. A very different 
-case would be estimating a model with high collinearity, resulting in 
-coefficients with undefined standard errors and an unreliable result.
 
 Box #1 from page 108 in @yotov2016advanced shows the steps to obtain different endowments, which can be divided into smaller pieces. We start computing the full endowment general equilibrium of factory-gate price (changes in $p_i^{full}$ and $p_j^{full}$) and the full endowment general equilibrium of output ($y^{full}$).
 
