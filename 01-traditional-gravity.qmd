@@ -27,7 +27,7 @@ Before conducting any data filtering or regression, we need to load the required
 #| message: false
 #| warning: false
 
-# dataset and summary functions
+# dataset
 library(tradepolicy)
 
 # data transformation
