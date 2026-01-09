@@ -92,8 +92,14 @@ The second edition provided multiple internal enhancements to simplify package l
 
 On the technical side, now we use Quarto to streamline the ebook creation process.
 
+## Changes concerning the fourth edition
+
+The models were fitted using [capybara](github.com/pachadotdev/capybara), a new package created to fit gravity models more efficiently. It uses the rmadillo C++ library for a balance between speed and memory usage.
+
+All the tables and statistics are shown step by step instead of relying on internal functions.
+
 ## Contact
 
-Please send me an email to *m.sepulveda* _[at]_ *mail.utoronto.ca* if you have any questions.
+Please send me an email to *m.vargas.sepulveda* _[at]_ *gmail.com* if you have any questions.
 
 ## References

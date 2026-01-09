@@ -463,6 +463,12 @@ data_figure_6 <- ch2_application1 |>
     )
   )
 
+DT::datatable(
+  ch2_application1 |>
+    filter(exporter != "HKG") |>
+    select(exporter, log_y, change_xi_cfl, change_xi_full)
+)
+
 ggplot(data = data_figure_6) +
   geom_point(aes(x = x, y = y, color = change)) +
   labs(
@@ -491,6 +497,12 @@ data_figure_7 <- ch2_application1 |>
       TRUE ~ "Real GDP"
     )
   )
+
+DT::datatable(
+  ch2_application1 |>
+    filter(exporter != "HKG") |>
+    select(exporter, log_y, change_imr_full, change_price_full, rgdp)
+)
 
 ggplot(data = data_figure_7) +
   geom_point(aes(x = x, y = y, color = change)) +
@@ -977,7 +989,8 @@ importer_indexes <- ch2_application2 |>
   )
 ```
 
-Finally, we can replicate the table that we wanted to.
+Finally, we can replicate the table that we wanted to. Instead of printing the raw table, we format it as HTML in a separate chunk. Note that this result matches the Stata
+code but in the book flipped the GDP and OMR columns.
 
 ```{r ch2_app2_counterfactual_15, echo=FALSE}
 indexes_final <- exporter_indexes |>
@@ -994,12 +1007,7 @@ indexes_final <- exporter_indexes |>
 
 indexes_final <- indexes_final |>
   mutate_if(is.numeric, function(x) round(x, 2))
-```
 
-Instead of printing the raw table, we format it as HTML in a separate chunk. Note that this result matches the Stata
-code but in the book flipped the GDP and OMR columns.
-
-```{r ch2_app2_counterfactual_15_2}
 DT::datatable(indexes_final, options = list(scrollX = T))
 ```
 

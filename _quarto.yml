@@ -3,7 +3,7 @@ project:
   output-dir: docs
   
 book:
-  title: "Solutions Manual for An Advanced Guide to Trade Policy Analysis in R (3rd Edition)"
+  title: "Solutions Manual for An Advanced Guide to Trade Policy Analysis in R (4th Edition)"
   author: Mauricio "Pachá" Vargas Sepúlveda
   date: "2024-02-28"
   chapters:
