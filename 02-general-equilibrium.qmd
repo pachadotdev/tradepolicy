@@ -83,7 +83,7 @@ With the data from above, the model specification is straightforward.
 fit_baseline_app1 <- fepoisson(
   trade ~ log_dist + cntg + intl | exporter + importer,
   data = ch2_application1,
-  control = list(iter_max = 500)
+  control = list(iter_max = 500, return_fe = TRUE)
 )
 ```
 
@@ -169,7 +169,7 @@ fit_counterfactual_app1 <- fepoisson(
   trade ~ 0 | exporter + importer,
   data = ch2_application1,
   offset = ~ log(tij_cfl),
-  control = list(iter_max = 500)
+  control = list(iter_max = 500, return_fe = TRUE)
 )
 ```
 
@@ -280,7 +280,7 @@ while (sd_dif > 1e-5 | max_dif > 1e-5) {
     trade_1 ~ 0 | exporter + importer,
     data = ch2_application1,
     offset = ~ log(tij_cfl),
-    control = list(iter_max = 500)
+    control = list(iter_max = 500, return_fe = TRUE)
   )
 
   fe_exporter_cfl_1 <- fit_counterfactual_app1_2$fixed_effects$exporter |>
@@ -591,7 +591,7 @@ With the steps done before, it is straightforward to obtain the PPML regression 
 fit_baseline_app2 <- fepoisson(
   trade ~ rta | exp_year + imp_year + pair_id_2,
   data = filter(ch2_application2, sum_trade > 0),
-  control = list(iter_max = 500)
+  control = list(iter_max = 500, return_fe = TRUE)
 )
 ```
 
@@ -639,7 +639,7 @@ Now, unlike the book, which duplicates $\overline{t_{ij}}$ by creating $t_{ij}$,
 fit_costs_app2 <- fepoisson(
   tij_bar ~ log_dist + cntg + lang + clny | exporter + importer,
   data = ch2_application2_2,
-  control = list(iter_max = 500)
+  control = list(iter_max = 500, return_fe = TRUE)
 )
 ```
 
@@ -671,7 +671,7 @@ fit_constrained_app2 <- fepoisson(
   trade ~ 0 | exporter + importer,
   data = ch2_application2,
   offset = ~ log(tij_bln),
-  control = list(iter_max = 500)
+  control = list(iter_max = 500, return_fe = TRUE)
 )
 ```
 
@@ -726,7 +726,7 @@ fit_counterfactual_app2 <- fepoisson(
   trade ~ 0 | exporter + importer,
   data = ch2_application2,
   offset = ~ log(tij_cfl),
-  control = list(iter_max = 500)
+  control = list(iter_max = 500, return_fe = TRUE)
 )
 ```
 
@@ -826,7 +826,7 @@ while (sd_dif > 1e-3 | max_dif > 1e-3) {
     trade_1 ~ 0 | exporter + importer,
     data = ch2_application2,
     offset = ~ log(tij_cfl),
-    control = list(iter_max = 500)
+    control = list(iter_max = 500, return_fe = TRUE)
   )
 
   fe_exporter_cfl <- fit_counterfactual_app2_2$fixed_effects$exporter |>

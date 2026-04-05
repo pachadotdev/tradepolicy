@@ -10,3 +10,5 @@ test-bank
 test-bank.zip
 
 /.quarto/
+
+**/*.quarto_ipynb
