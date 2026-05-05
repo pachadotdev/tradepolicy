@@ -1,5 +1,3 @@
-globalVariables(c("country", "exporter", "importer", "name", "type", "value", "term"))
-
 #' @keywords internal
 "_PACKAGE"
 
@@ -43,19 +41,11 @@ globalVariables(c("country", "exporter", "importer", "name", "type", "value", "t
 #' @keywords data
 NULL
 
-# Funs for summaries
-#' @importFrom stats as.formula predict update cor pnorm
-#' @importFrom fixest feols fepois r2
-#' @importFrom broom tidy
-#' @importFrom sandwich vcovCL
-#' @importFrom msm deltamethod
-#' @importFrom dplyr filter mutate_if tibble
-#' @importFrom Formula as.Formula
-#' @importFrom knitr kable
-NULL
-
 # Funs for ebook
 #' @importFrom ggplot2 ggplot
-#' @importFrom purrr map
+#' @importFrom dplyr mutate
 #' @importFrom tidyr pivot_wider
+#' @importFrom capybara fepoisson
+#' @importFrom knitr kable
+#' @importFrom msm deltamethod
 NULL

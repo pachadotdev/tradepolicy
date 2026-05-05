@@ -332,7 +332,8 @@ The data for this model is the same as for the fixed effects model, and one opti
 ```{r ch1_app_1_ppml_1}
 fit_ppml <- fepoisson(trade ~ log_dist + cntg + lang + clny | exp_year + imp_year | pair_id,
   data = ch1_application1 |>
-    filter(exporter != importer) # commented out step 3
+    filter(exporter != importer), # commented out step 3
+  control = fit_control(return_fe = TRUE) # needed to obtain fitted values with predict()
 )
 
 fit_ppml
