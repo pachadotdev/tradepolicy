@@ -230,7 +230,7 @@ Please notice that the summaries intentionally do not show fixed effects, becaus
 ```{r ch1_app_1_fe_1}
 # tp_summary_app_1(
 #   formula = log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,
-#   data = filter(ch1_application1, trade > 0),
+#   data = ch1_application1[trade > 0]
 #   method = "ols"
 # )
 
@@ -286,7 +286,7 @@ not replicate except by obtaining an out-of-sample $R^2$ by obtaining the fitted
 believe there is a mistake in the book regarding this value.
 
 ```{r ch1_app_1_ppml_2}
-trade <- pull(ch1_application1, trade)
+trade <- ch1_application1$trade
 trade_hat <- predict(fit_ppml, newdata = ch1_application1)
 cor(trade, trade_hat)^2
 ```
@@ -397,7 +397,7 @@ fit_ols_distance_puzzle <- felm(
   log_trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny | exp_year +
     imp_year | pair_id,
-  data = filter(ch1_application2, importer != exporter, trade > 0)
+  data = ch1_application2[importer != exporter & trade > 0]
 )
 
 fit_ols_distance_puzzle
@@ -443,7 +443,7 @@ fit_ppml_distance_puzzle <- fepoisson(
   trade ~ log_dist_1986 + log_dist_1990 + log_dist_1994 +
     log_dist_1998 + log_dist_2002 + log_dist_2006 + cntg + lang + clny |
     exp_year + imp_year | pair_id,
-  data = filter(ch1_application2, importer != exporter)
+  data = ch1_application2[importer != exporter]
 )
 
 fit_ppml_distance_puzzle
@@ -657,9 +657,9 @@ ch1_application3[, c("exp_year", "imp_year", "year", "log_trade", "log_dist",
   paste0("intl_border_", year),
   log(trade),
   log(dist),
-  fifelse(exporter == importer, pair_id, "inter"),
+  fifelse(exporter == importer, as.character(pair_id), "inter"),
   fifelse(exporter == importer, 0, 1),
-  fifelse(exporter == importer, "0-intra", pair_id)
+  fifelse(exporter == importer, "0-intra", as.character(pair_id))
 )]
 
 ch1_application3 <- dcast(ch1_application3, ... ~ year, value.var = "intl_brdr_2", fill = 0)
@@ -682,7 +682,7 @@ With the data from above, the model specification is straightforward.
 ```{r ch1_app_3_ols_1}
 fit_ols_rta <- felm(
   log_trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year | pair_id,
-  data = filter(ch1_application3, trade > 0, importer != exporter)
+  data = ch1_application3[importer != exporter & trade > 0]
 )
 
 fit_ols_rta
@@ -695,7 +695,7 @@ The model specification is very similar to OLS, and we only need to change the m
 ```{r ch1_app_3_ppml_1}
 fit_ppml_rta <- fepoisson(
   trade ~ log_dist + cntg + lang + clny + rta | exp_year + imp_year | pair_id,
-  data = filter(ch1_application3, importer != exporter)
+  data = ch1_application3[importer != exporter]
 )
 
 fit_ppml_rta
@@ -722,7 +722,7 @@ The model specification includes the RTA variable and the exporter-time, importe
 ```{r ch1_app_3_endg_1}
 fit_endg_rta <- fepoisson(
   trade ~ rta | exp_year + imp_year + pair_id_2 | pair_id,
-  data = filter(ch1_application3, sum_trade > 0)
+  data = ch1_application3[sum_trade > 0]
 )
 
 fit_endg_rta
@@ -735,7 +735,7 @@ We need to modify the previous model to include the forward lagged RTA variable 
 ```{r ch1_app_3_lead_1}
 fit_lead_rta <- fepoisson(
   trade ~ rta + rta_lead4 | exp_year + imp_year + pair_id_2 | pair_id,
-  data = filter(ch1_application3, sum_trade > 0)
+  data = ch1_application3[sum_trade > 0]
 )
 
 fit_lead_rta
@@ -764,7 +764,7 @@ Instead of future-lagged RTA variables, as in the previous model, we modify the 
 ```{r ch1_app_3_phsng_1}
 fit_phsng_rta <- fepoisson(
   trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 | exp_year + imp_year + pair_id_2 | pair_id,
-  data = filter(ch1_application3, sum_trade > 0)
+  data = ch1_application3[sum_trade > 0]
 )
 
 fit_phsng_rta
@@ -795,7 +795,7 @@ fit_glbzn_rta <- fepoisson(
   trade ~ rta + rta_lag4 + rta_lag8 + rta_lag12 + intl_border_1986 +
     intl_border_1990 + intl_border_1994 + intl_border_1998 + intl_border_2002 |
     exp_year + imp_year + pair_id_2 | pair_id,
-  data = filter(ch1_application3, sum_trade > 0)
+  data = ch1_application3[sum_trade > 0]
 )
 
 fit_glbzn_rta

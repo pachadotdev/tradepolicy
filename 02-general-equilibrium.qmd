@@ -22,8 +22,7 @@ Before conducting any data filtering or regression, we need to load the required
 library(tradepolicy)
 
 # data transformation
-library(dplyr)
-library(tidyr)
+library(data.table)
 
 # regression
 library(capybara)
@@ -524,7 +523,7 @@ Because of the panel dimension, we proceed as we did in the previous chapter by 
 ch2_application2[, c("exp_year", "imp_year", "pair_id_2") := .(
   paste0(exporter, year),
   paste0(importer, year),
-  fifelse(exporter == importer, "0-domestic", pair_id)
+  fifelse(exporter == importer, "0-domestic", as.character(pair_id))
 )]
 ```
 
@@ -543,7 +542,7 @@ With the steps done before, it is straightforward to obtain the PPML regression 
 ```{r ch2_app2_baseline_1}
 fit_baseline_app2 <- fepoisson(
   trade ~ rta | exp_year + imp_year + pair_id_2,
-  data = filter(ch2_application2, sum_trade > 0),
+  data = ch2_application2[sum_trade > 0],
   control = list(iter_max = 500, return_fe = TRUE)
 )
 ```
