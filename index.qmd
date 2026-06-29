@@ -98,6 +98,10 @@ The models were fitted using [capybara](github.com/pachadotdev/capybara), a new 
 
 All the tables and statistics are shown step by step instead of relying on internal functions.
 
+## Changes concerning the fifth edition
+
+I am now using `data.table` instead of `dplyr` and `tidyr`. I think this offers a more stable set of functions for data analysis and somehow a more collaborative software governance.
+
 ## Contact
 
 Please send me an email to *m.vargas.sepulveda* _[at]_ *gmail.com* if you have any questions.

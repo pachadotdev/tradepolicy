@@ -4165,85 +4165,57 @@ window.Quarto = {
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tradepolicy)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># data transformation</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># regression</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(capybara)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># delta method</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(msm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># regression</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(capybara)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># delta method</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(msm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Step 1, including subsetting columns for this application, is straightforward.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">|&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) <span class="sc">|&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> agtpa_applications[, .(exporter, importer, pair_id, year, trade, dist, cntg, </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    lang, clny)][year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>For step 2, this can be divided in parts, starting with the log transformation of trade and distance.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ch1_application1[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">log_trade =</span> <span class="fu">log</span>(trade), <span class="at">log_dist =</span> <span class="fu">log</span>(dist))]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Continuing step 2, we can now create the variables <span class="math inline">\(Y_{i,t}\)</span> and <span class="math inline">\(E_{i,t}\)</span> that appear on the OLS model equation in the book.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create Yit</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">|&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">sum</span>(trade),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_y =</span> <span class="fu">log</span>(y)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create Eit</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">|&gt;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">e =</span> <span class="fu">sum</span>(trade),</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_e =</span> <span class="fu">log</span>(e)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Yit</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ch1_application1[, <span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"log_y"</span>) <span class="sc">:</span><span class="er">=</span> .(<span class="fu">sum</span>(trade), <span class="fu">log</span>(<span class="fu">sum</span>(trade))), by <span class="ot">=</span> .(exporter, year)]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Eit</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ch1_application1[, <span class="fu">c</span>(<span class="st">"e"</span>, <span class="st">"log_e"</span>) <span class="sc">:</span><span class="er">=</span> .(<span class="fu">sum</span>(trade), <span class="fu">log</span>(<span class="fu">sum</span>(trade))), by <span class="ot">=</span> .(importer, year)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The OLS model with remoteness index needs both exporter and importer index, which grouping variables can create. We divide it into sub-steps: Replicate the computation of total exports, then the remoteness index for exporters, and finally the total imports with the corresponding remoteness index for importers.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate total_e</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">|&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_e =</span> <span class="fu">sum</span>(e)) <span class="sc">|&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_e =</span> <span class="fu">max</span>(total_e)) <span class="sc">|&gt;</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate rem_exp</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(exporter, year) <span class="sc">|&gt;</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">remoteness_exp =</span> <span class="fu">sum</span>(dist <span class="sc">*</span> total_e <span class="sc">/</span> e),</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_remoteness_exp =</span> <span class="fu">log</span>(remoteness_exp)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate total_y</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">|&gt;</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_y =</span> <span class="fu">sum</span>(y)) <span class="sc">|&gt;</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_y =</span> <span class="fu">max</span>(total_y)) <span class="sc">|&gt;</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replicate rem_imp</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(importer, year) <span class="sc">|&gt;</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">remoteness_imp =</span> <span class="fu">sum</span>(dist <span class="sc">/</span> (y <span class="sc">/</span> total_y)),</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_remoteness_imp =</span> <span class="fu">log</span>(remoteness_imp)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Replicate total_e</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ch1_application1[, total_e <span class="sc">:</span><span class="er">=</span> <span class="fu">sum</span>(e), by <span class="ot">=</span> .(exporter, year)]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ch1_application1[, total_e <span class="sc">:</span><span class="er">=</span> <span class="fu">max</span>(total_e), by <span class="ot">=</span> year]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Replicate rem_exp</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ch1_application1[, <span class="fu">c</span>(<span class="st">"remoteness_exp"</span>, <span class="st">"log_remoteness_exp"</span>) <span class="sc">:</span><span class="er">=</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  .(<span class="fu">sum</span>(dist <span class="sc">*</span> total_e <span class="sc">/</span> e), <span class="fu">log</span>(<span class="fu">sum</span>(dist <span class="sc">*</span> total_e <span class="sc">/</span> e))), by <span class="ot">=</span> .(exporter, year)]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Replicate total_y</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ch1_application1[, total_y <span class="sc">:</span><span class="er">=</span> <span class="fu">sum</span>(y), by <span class="ot">=</span> .(importer, year)]</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>ch1_application1[, total_y <span class="sc">:</span><span class="er">=</span> <span class="fu">max</span>(total_y), by <span class="ot">=</span> year]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Replicate rem_imp</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>ch1_application1[, <span class="fu">c</span>(<span class="st">"remoteness_imp"</span>, <span class="st">"log_remoteness_imp"</span>) <span class="sc">:</span><span class="er">=</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  .(<span class="fu">sum</span>(dist <span class="sc">/</span> (y <span class="sc">/</span> total_y)), <span class="fu">log</span>(<span class="fu">sum</span>(dist <span class="sc">/</span> (y <span class="sc">/</span> total_y)))), by <span class="ot">=</span> .(importer, year)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>To create the variables for the OLS with Fixed Effects Model, we followed box #1 on page 44 from <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>. We combine both exporter and importer variables with the year to create the fixed effects variables.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ch1_application1 <span class="ot">&lt;-</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># This merges the columns exporter/importer with year</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This merges the columns exporter/importer with year</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ch1_application1[, <span class="fu">c</span>(<span class="st">"exp_year"</span>, <span class="st">"imp_year"</span>) <span class="sc">:</span><span class="er">=</span> .(<span class="fu">paste0</span>(exporter, year), <span class="fu">paste0</span>(importer, year))]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The addition of exporter/importer time fixed effects concludes step 2, and now we need to perform step 3. This step will be commented for now as I found an error in the reported <span class="math inline">\(R^2\)</span> for the PPML model that I show next.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ch1_application1 &lt;- ch1_application1 |&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(exporter != importer)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ch1_application1 &lt;- ch1_application1[exporter != importer]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Some cases require conducting step 4, and we will be explicit about it when needed.</p>
 </section>
@@ -4260,12 +4232,10 @@ window.Quarto = {
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fit_ols <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(trade <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(exporter <span class="sc">!=</span> importer) <span class="co"># commented out step 3</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>fit_ols</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1[trade <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> exporter <span class="sc">!=</span> importer] <span class="co"># commented out step 3</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>fit_ols</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Formula: log_trade ~ log_dist + cntg + lang + clny + log_y + log_e
 
@@ -4308,12 +4278,10 @@ Number of observations: Full 25689; Missing 0; Perfect classification 0 </code><
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fit_ols <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e <span class="sc">|</span> <span class="dv">0</span> <span class="sc">|</span> pair_id,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(trade <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(exporter <span class="sc">!=</span> importer) <span class="co"># commented out step 3</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>fit_ols</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1[trade <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> exporter <span class="sc">!=</span> importer] <span class="co"># commented out step 3</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>fit_ols</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Formula: log_trade ~ log_dist + cntg + lang + clny + log_y + log_e | 0 | 
     pair_id
@@ -4340,21 +4308,15 @@ Number of observations: Full 25689; Missing 0; Perfect classification 0 </code><
 </div>
 <p>To conduct the RESET test we need to add the squared fitted values to the training data.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ch1_application1_ols <span class="ot">&lt;-</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    trade <span class="sc">&gt;</span> <span class="dv">0</span>,</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    exporter <span class="sc">!=</span> importer</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>ch1_application1_ols <span class="ot">&lt;-</span> ch1_application1_ols <span class="sc">|&gt;</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trade_hat_sq =</span> (<span class="fu">predict</span>(fit_ols, <span class="at">newdata =</span> ch1_application1_ols))<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>reset_ols <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e <span class="sc">+</span> trade_hat_sq <span class="sc">|</span> <span class="dv">0</span> <span class="sc">|</span> pair_id,</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1_ols</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(reset_ols<span class="sc">$</span>coef_table[<span class="st">"trade_hat_sq"</span>, <span class="st">"Pr(&gt;|z|)"</span>], <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ch1_application1_ols <span class="ot">&lt;-</span> ch1_application1[trade <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> exporter <span class="sc">!=</span> importer]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ch1_application1_ols[, trade_hat_sq <span class="sc">:</span><span class="er">=</span> (<span class="fu">predict</span>(fit_ols, <span class="at">newdata =</span> ch1_application1_ols))<span class="sc">^</span><span class="dv">2</span>]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>reset_ols <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e <span class="sc">+</span> trade_hat_sq <span class="sc">|</span> <span class="dv">0</span> <span class="sc">|</span> pair_id,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1_ols</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(reset_ols<span class="sc">$</span>coef_table[<span class="st">"trade_hat_sq"</span>, <span class="st">"Pr(&gt;|z|)"</span>], <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
@@ -4380,12 +4342,10 @@ Number of observations: Full 25689; Missing 0; Perfect classification 0 </code><
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fit_ols_remoteness <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e <span class="sc">+</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    log_remoteness_exp <span class="sc">+</span> log_remoteness_imp <span class="sc">|</span> <span class="dv">0</span> <span class="sc">|</span> pair_id,</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(trade <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(exporter <span class="sc">!=</span> importer) <span class="co"># commented out step 3</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>fit_ols_remoteness</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1[trade <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> exporter <span class="sc">!=</span> importer] <span class="co"># commented out step 3</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>fit_ols_remoteness</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Formula: log_trade ~ log_dist + cntg + lang + clny + log_y + log_e + log_remoteness_exp + 
     log_remoteness_imp | 0 | pair_id
@@ -4414,23 +4374,16 @@ Number of observations: Full 25689; Missing 0; Perfect classification 0 </code><
 </div>
 <p>For the RESET test, we need to add the squared fitted values to the training data as before.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ch1_application1_ols_remoteness <span class="ot">&lt;-</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    trade <span class="sc">&gt;</span> <span class="dv">0</span>,</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    exporter <span class="sc">!=</span> importer</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>ch1_application1_ols_remoteness <span class="ot">&lt;-</span> ch1_application1_ols_remoteness <span class="sc">|&gt;</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trade_hat_sq =</span> (<span class="fu">predict</span>(fit_ols_remoteness, <span class="at">newdata =</span> ch1_application1_ols_remoteness))<span class="sc">^</span><span class="dv">2</span>) </span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>reset_ols_remoteness <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e <span class="sc">+</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    log_remoteness_exp <span class="sc">+</span> log_remoteness_imp <span class="sc">+</span> trade_hat_sq <span class="sc">|</span> <span class="dv">0</span> <span class="sc">|</span> pair_id,</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1_ols_remoteness</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(reset_ols_remoteness<span class="sc">$</span>coef_table[<span class="st">"trade_hat_sq"</span>, <span class="st">"Pr(&gt;|z|)"</span>], <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ch1_application1_ols_remoteness <span class="ot">&lt;-</span> ch1_application1[trade <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> exporter <span class="sc">!=</span> importer]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ch1_application1_ols_remoteness[, trade_hat_sq <span class="sc">:</span><span class="er">=</span> (<span class="fu">predict</span>(fit_ols_remoteness, <span class="at">newdata =</span> ch1_application1_ols_remoteness))<span class="sc">^</span><span class="dv">2</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>reset_ols_remoteness <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> log_y <span class="sc">+</span> log_e <span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    log_remoteness_exp <span class="sc">+</span> log_remoteness_imp <span class="sc">+</span> trade_hat_sq <span class="sc">|</span> <span class="dv">0</span> <span class="sc">|</span> pair_id,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1_ols_remoteness</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(reset_ols_remoteness<span class="sc">$</span>coef_table[<span class="st">"trade_hat_sq"</span>, <span class="st">"Pr(&gt;|z|)"</span>], <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2e-04</code></pre>
 </div>
@@ -4450,18 +4403,16 @@ Number of observations: Full 25689; Missing 0; Perfect classification 0 </code><
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tp_summary_app_1(</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   formula = log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year,</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   data = filter(ch1_application1, trade &gt; 0),</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   data = ch1_application1[trade &gt; 0]</span></span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   method = "ols"</span></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>fit_fe <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(trade <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(exporter <span class="sc">!=</span> importer) <span class="co"># commented out step 3</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>fit_fe</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1[trade <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> exporter <span class="sc">!=</span> importer] <span class="co"># commented out step 3</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>fit_fe</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Formula: log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year | 
     pair_id
@@ -4490,22 +4441,15 @@ Number of observations: Full 25689; Missing 0; Perfect classification 0 </code><
 <p>Note that the <code>felm()</code> function does not print the fixed effects. You can access them with <code>fit_fe$fixed_effects</code> and <code>fit_fe$fe_levels</code> as needed.</p>
 <p>For the RESET test, we need to add the squared fitted values to the training data as before.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ch1_application1_fe <span class="ot">&lt;-</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    trade <span class="sc">&gt;</span> <span class="dv">0</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    exporter <span class="sc">!=</span> importer</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>ch1_application1_fe <span class="ot">&lt;-</span> ch1_application1_fe <span class="sc">|&gt;</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trade_hat_sq =</span> (<span class="fu">predict</span>(fit_fe, <span class="at">newdata =</span> ch1_application1_fe))<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>reset_fe <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> trade_hat_sq <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1_fe</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(reset_fe<span class="sc">$</span>coef_table[<span class="st">"trade_hat_sq"</span>, <span class="st">"Pr(&gt;|z|)"</span>], <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ch1_application1_fe <span class="ot">&lt;-</span> ch1_application1[trade <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> exporter <span class="sc">!=</span> importer]</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>ch1_application1_fe[, trade_hat_sq <span class="sc">:</span><span class="er">=</span> (<span class="fu">predict</span>(fit_fe, <span class="at">newdata =</span> ch1_application1_fe))<span class="sc">^</span><span class="dv">2</span>]</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>reset_fe <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> trade_hat_sq <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1_fe</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(reset_fe<span class="sc">$</span>coef_table[<span class="st">"trade_hat_sq"</span>, <span class="st">"Pr(&gt;|z|)"</span>], <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
@@ -4523,12 +4467,10 @@ X_{ij,t} =&amp; \:\exp\left[\beta_1 \log(DIST)_{i,j} + \beta_2 CNTG_{i,j} +\righ
 <p>The data for this model is the same as for the fixed effects model, and one option in R is to use the <code>fepois()</code> function.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit_ppml <span class="ot">&lt;-</span> <span class="fu">fepoisson</span>(trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(exporter <span class="sc">!=</span> importer), <span class="co"># commented out step 3</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">fit_control</span>(<span class="at">return_fe =</span> <span class="cn">TRUE</span>) <span class="co"># needed to obtain fitted values with predict()</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>fit_ppml</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1[exporter <span class="sc">!=</span> importer] <span class="co"># commented out step 3</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>fit_ppml</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Formula: trade ~ log_dist + cntg + lang + clny | exp_year + imp_year | 
     pair_id
@@ -4559,7 +4501,7 @@ Number of Fisher Scoring iterations: 10 </code></pre>
 </div>
 <p>Up to this part, everything matches table 1 in <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>, except for the <span class="math inline">\(R^2\)</span> of the PPML model, which I could not replicate except by obtaining an out-of-sample <span class="math inline">\(R^2\)</span> by obtaining the fitted values including domestic flows. I believe there is a mistake in the book regarding this value.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> <span class="fu">pull</span>(ch1_application1, trade)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>trade <span class="ot">&lt;-</span> ch1_application1<span class="sc">$</span>trade</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>trade_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_ppml, <span class="at">newdata =</span> ch1_application1)</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(trade, trade_hat)<span class="sc">^</span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -4568,19 +4510,15 @@ Number of Fisher Scoring iterations: 10 </code></pre>
 </div>
 <p>For the RESET test, we need to add the squared fitted link values to the training data as before.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ch1_application1_ppml <span class="ot">&lt;-</span> ch1_application1 <span class="sc">|&gt;</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(exporter <span class="sc">!=</span> importer)</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>ch1_application1_ppml <span class="ot">&lt;-</span> ch1_application1_ppml <span class="sc">|&gt;</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trade_hat_sq =</span> (<span class="fu">predict</span>(fit_ppml, <span class="at">type =</span> <span class="st">"link"</span>, <span class="at">newdata =</span> ch1_application1_ppml))<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>reset_ppml <span class="ot">&lt;-</span> <span class="fu">fepoisson</span>(</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> trade_hat_sq <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1_ppml</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(reset_ppml<span class="sc">$</span>coef_table[<span class="st">"trade_hat_sq"</span>, <span class="st">"Pr(&gt;|z|)"</span>], <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ch1_application1_ppml <span class="ot">&lt;-</span> ch1_application1[exporter <span class="sc">!=</span> importer]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>ch1_application1_ppml[, trade_hat_sq <span class="sc">:</span><span class="er">=</span> (<span class="fu">predict</span>(fit_ppml, <span class="at">type =</span> <span class="st">"link"</span>, <span class="at">newdata =</span> ch1_application1_ppml))<span class="sc">^</span><span class="dv">2</span>]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>reset_ppml <span class="ot">&lt;-</span> <span class="fu">fepoisson</span>(</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> trade_hat_sq <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application1_ppml</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(reset_ppml<span class="sc">$</span>coef_table[<span class="st">"trade_hat_sq"</span>, <span class="st">"Pr(&gt;|z|)"</span>], <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6416</code></pre>
 </div>
@@ -4618,7 +4556,7 @@ Number of Fisher Scoring iterations: 10 </code></pre>
 | imp_year             |                  No |                  No |                Yes |                Yes |
 |                      |                     |                     |                    |                    |
 | N                    |              25,689 |              25,689 |             25,689 |             28,152 |
-| Pseudo R-squared     |               0.759 |               0.765 |              0.843 |              0.946 |
+| R-squared            |               0.759 |               0.765 |              0.843 |              0.946 |
 | SE type              |      Cluster-robust |      Cluster-robust |     Cluster-robust |     Cluster-robust |
 
 Standard errors in parenthesis
@@ -4643,38 +4581,46 @@ X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + 
 <p>We need to remove cases where the exporter is the same as the importer and cases where trade is zero for the OLS model. For the PPML models, we need to mark rows where the exporter and the importer are the same, and we need to create the same country column, which is also required to transform the distance variables as shown in box #1 in page 48 from <span class="citation" data-cites="yotov2016advanced">Yotov et al. (<a href="#ref-yotov2016advanced" role="doc-biblioref">2016</a>)</span>.</p>
 <p>In order to avoid creating two very similar datasets, we shall create one dataset to cover both OLS and PPML.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ch1_application2 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">|&gt;</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) <span class="sc">|&gt;</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this filter covers both OLS and PPML</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># variables for both OLS and PPML</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year),</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">paste0</span>(<span class="st">"log_dist_"</span>, year),</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist),</span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">smctry =</span> <span class="fu">ifelse</span>(importer <span class="sc">!=</span> exporter, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># PPML specific variables</span></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_intra =</span> log_dist <span class="sc">*</span> smctry,</span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">intra_pair =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, exporter, <span class="st">"inter"</span>)</span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> log_dist, <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(log_dist_1986<span class="sc">:</span>log_dist_2006, <span class="cf">function</span>(x) x <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ch1_application2 <span class="ot">&lt;-</span> agtpa_applications[</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>),</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  .(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># variables for both OLS and PPML</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>ch1_application2[, <span class="fu">c</span>(<span class="st">"exp_year"</span>, <span class="st">"imp_year"</span>, <span class="st">"year"</span>, <span class="st">"log_trade"</span>, <span class="st">"log_dist"</span>, <span class="st">"smctry"</span>) <span class="sc">:</span><span class="er">=</span> .(</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(exporter, year),</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(importer, year),</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">"log_dist_"</span>, year),</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(trade),</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(dist),</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fifelse</span>(importer <span class="sc">!=</span> exporter, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>)]</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="co"># PPML specific variables (depend on log_dist and smctry computed above)</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>ch1_application2[, <span class="fu">c</span>(<span class="st">"log_dist_intra"</span>, <span class="st">"intra_pair"</span>) <span class="sc">:</span><span class="er">=</span> .(</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  log_dist <span class="sc">*</span> smctry,</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fifelse</span>(exporter <span class="sc">==</span> importer, exporter, <span class="st">"inter"</span>)</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>)]</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>ch1_application2 <span class="ot">&lt;-</span> <span class="fu">dcast</span>(</span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>  ch1_application2,</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>  exporter <span class="sc">+</span> importer <span class="sc">+</span> pair_id <span class="sc">+</span> trade <span class="sc">+</span> dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>    exp_year <span class="sc">+</span> imp_year <span class="sc">+</span> log_trade <span class="sc">+</span> smctry <span class="sc">+</span> log_dist_intra <span class="sc">+</span> intra_pair <span class="sc">~</span> year,</span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">value.var =</span> <span class="st">"log_dist"</span>,</span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill =</span> <span class="dv">0</span></span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>dist_cols <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"log_dist_"</span>, <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>))</span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>ch1_application2[, (dist_cols) <span class="sc">:</span><span class="er">=</span> <span class="fu">lapply</span>(.SD, \(x) x <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry)), .SDcols <span class="ot">=</span> dist_cols]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The <code>across()</code> function is a shortcut to avoid repetition, as in the following example provided for reference without computation.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ch1_application2 <span class="sc">|&gt;</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_1986 =</span>  log_dist_1986 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry),</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_1990 =</span>  log_dist_1990 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry),</span>
+<p>The <code>\(x)</code> syntax provides a shortcut to avoid repetition of the form</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>log_dist_1986 <span class="ot">=</span>  log_dist_1986 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry),</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>log_dist_1990 <span class="ot">=</span>  log_dist_1990 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry),</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># repeat log_dist_T many_times for T = 1994, 1998, ...</span></span>
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># repeat log_dist_T many_times for T = 1994, 1998, ...</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist_2006 =</span>  log_dist_2006 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry)</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>log_dist_2006 <span class="ot">=</span>  log_dist_2006 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> smctry)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Note that the OLS model shall require filtering when we specify the model because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same. Because the solution for the “distance puzzle” implies different transformations and filters for the OLS and PPML cases, one possibility is to filter in the same summary functions.</p>
 </section>
 <section id="ols-solution-for-the-distance-puzzle" class="level3" data-number="2.2.2">
@@ -4686,7 +4632,7 @@ X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + 
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist_1986 <span class="sc">+</span> log_dist_1990 <span class="sc">+</span> log_dist_1994 <span class="sc">+</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    log_dist_1998 <span class="sc">+</span> log_dist_2002 <span class="sc">+</span> log_dist_2006 <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">|</span> exp_year <span class="sc">+</span></span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    imp_year <span class="sc">|</span> pair_id,</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application2, importer <span class="sc">!=</span> exporter, trade <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application2[importer <span class="sc">!=</span> exporter <span class="sc">&amp;</span> trade <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
 <span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>fit_ols_distance_puzzle</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -4763,7 +4709,7 @@ Number of observations: Full 25689; Missing 0; Perfect classification 0 </code><
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  trade <span class="sc">~</span> log_dist_1986 <span class="sc">+</span> log_dist_1990 <span class="sc">+</span> log_dist_1994 <span class="sc">+</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    log_dist_1998 <span class="sc">+</span> log_dist_2002 <span class="sc">+</span> log_dist_2006 <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">|</span></span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application2, importer <span class="sc">!=</span> exporter)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application2[importer <span class="sc">!=</span> exporter]</span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>fit_ppml_distance_puzzle</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -5155,176 +5101,176 @@ Number of Fisher Scoring iterations: 12 </code></pre>
 <span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  fit_fe_distance_puzzle</span>
 <span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>|      Variable      |        (1)         |        (2)         |        (3)         |        (4)         |        (5)         |
-|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|
-| log_dist_1986      |           -1.168** |           -0.859** |           -0.980** |           -0.857** |           -0.910** |
-|                    |            (0.043) |            (0.037) |            (0.072) |            (0.063) |            (0.032) |
-| log_dist_1990      |           -1.155** |           -0.834** |           -0.940** |           -0.819** |           -0.879** |
-|                    |            (0.042) |            (0.038) |            (0.073) |            (0.063) |            (0.032) |
-| log_dist_1994      |           -1.211** |           -0.835** |           -0.915** |           -0.796** |           -0.860** |
-|                    |            (0.045) |            (0.035) |            (0.072) |            (0.063) |            (0.032) |
-| log_dist_1998      |           -1.248** |           -0.847** |           -0.887** |           -0.770** |           -0.833** |
-|                    |            (0.042) |            (0.035) |            (0.071) |            (0.063) |            (0.032) |
-| log_dist_2002      |           -1.241** |           -0.848** |           -0.884** |           -0.767** |           -0.829** |
-|                    |            (0.043) |            (0.032) |            (0.071) |            (0.063) |            (0.032) |
-| log_dist_2006      |           -1.261** |           -0.836** |           -0.872** |           -0.754** |           -0.811** |
-|                    |            (0.043) |            (0.031) |            (0.071) |            (0.062) |            (0.032) |
-| cntg               |              0.223 |            0.437** |            0.371** |            0.574** |            0.442** |
-|                    |            (0.199) |            (0.083) |            (0.140) |            (0.155) |            (0.082) |
-| lang               |            0.661** |            0.248** |             0.337* |             0.352* |            0.241** |
-|                    |            (0.081) |            (0.077) |            (0.168) |            (0.137) |            (0.076) |
-| clny               |            0.670** |            -0.222+ |              0.019 |              0.027 |            -0.220+ |
-|                    |            (0.147) |            (0.116) |            (0.156) |            (0.125) |            (0.117) |
-| log_dist_intra     |                    |                    |           -0.488** |           -0.602** |                    |
-|                    |                    |                    |            (0.101) |            (0.109) |                    |
-| smctry             |                    |                    |                    |            1.689** |                    |
-|                    |                    |                    |                    |            (0.574) |                    |
-| intra_pairAUS      |                    |                    |                    |                    |            -1.041* |
-|                    |                    |                    |                    |                    |            (0.507) |
-| intra_pairAUT      |                    |                    |                    |                    |              0.064 |
-|                    |                    |                    |                    |                    |            (0.530) |
-| intra_pairBEL      |                    |                    |                    |                    |              0.416 |
-|                    |                    |                    |                    |                    |            (0.509) |
-| intra_pairBGR      |                    |                    |                    |                    |            2.493** |
-|                    |                    |                    |                    |                    |            (0.556) |
-| intra_pairBOL      |                    |                    |                    |                    |            2.624** |
-|                    |                    |                    |                    |                    |            (0.555) |
-| intra_pairBRA      |                    |                    |                    |                    |             -0.269 |
-|                    |                    |                    |                    |                    |            (0.417) |
-| intra_pairCAN      |                    |                    |                    |                    |           -1.579** |
-|                    |                    |                    |                    |                    |            (0.486) |
-| intra_pairCHE      |                    |                    |                    |                    |             0.918+ |
-|                    |                    |                    |                    |                    |            (0.500) |
-| intra_pairCHL      |                    |                    |                    |                    |             -0.111 |
-|                    |                    |                    |                    |                    |            (0.561) |
-| intra_pairCHN      |                    |                    |                    |                    |           -1.495** |
-|                    |                    |                    |                    |                    |            (0.481) |
-| intra_pairCMR      |                    |                    |                    |                    |            3.059** |
-|                    |                    |                    |                    |                    |            (0.801) |
-| intra_pairCOL      |                    |                    |                    |                    |            1.694** |
-|                    |                    |                    |                    |                    |            (0.505) |
-| intra_pairCRI      |                    |                    |                    |                    |            1.524** |
-|                    |                    |                    |                    |                    |            (0.490) |
-| intra_pairCYP      |                    |                    |                    |                    |            2.882** |
-|                    |                    |                    |                    |                    |            (0.720) |
-| intra_pairDEU      |                    |                    |                    |                    |           -1.657** |
-|                    |                    |                    |                    |                    |            (0.482) |
-| intra_pairDNK      |                    |                    |                    |                    |              0.144 |
-|                    |                    |                    |                    |                    |            (0.543) |
-| intra_pairECU      |                    |                    |                    |                    |            2.161** |
-|                    |                    |                    |                    |                    |            (0.596) |
-| intra_pairEGY      |                    |                    |                    |                    |            1.972** |
-|                    |                    |                    |                    |                    |            (0.508) |
-| intra_pairESP      |                    |                    |                    |                    |             -0.739 |
-|                    |                    |                    |                    |                    |            (0.511) |
-| intra_pairFIN      |                    |                    |                    |                    |              0.131 |
-|                    |                    |                    |                    |                    |            (0.522) |
-| intra_pairFRA      |                    |                    |                    |                    |            -0.957* |
-|                    |                    |                    |                    |                    |            (0.479) |
-| intra_pairGBR      |                    |                    |                    |                    |           -1.416** |
-|                    |                    |                    |                    |                    |            (0.479) |
-| intra_pairGRC      |                    |                    |                    |                    |             1.079* |
-|                    |                    |                    |                    |                    |            (0.548) |
-| intra_pairHKG      |                    |                    |                    |                    |           -2.371** |
-|                    |                    |                    |                    |                    |            (0.502) |
-| intra_pairHUN      |                    |                    |                    |                    |              0.593 |
-|                    |                    |                    |                    |                    |            (0.617) |
-| intra_pairIDN      |                    |                    |                    |                    |             -0.214 |
-|                    |                    |                    |                    |                    |            (0.511) |
-| intra_pairIND      |                    |                    |                    |                    |              0.526 |
-|                    |                    |                    |                    |                    |            (0.515) |
-| intra_pairIRL      |                    |                    |                    |                    |             -0.618 |
-|                    |                    |                    |                    |                    |            (0.488) |
-| intra_pairIRN      |                    |                    |                    |                    |            2.538** |
-|                    |                    |                    |                    |                    |            (0.610) |
-| intra_pairISL      |                    |                    |                    |                    |            3.190** |
-|                    |                    |                    |                    |                    |            (0.650) |
-| intra_pairISR      |                    |                    |                    |                    |              0.292 |
-|                    |                    |                    |                    |                    |            (0.562) |
-| intra_pairITA      |                    |                    |                    |                    |            -1.019* |
-|                    |                    |                    |                    |                    |            (0.494) |
-| intra_pairJOR      |                    |                    |                    |                    |            3.869** |
-|                    |                    |                    |                    |                    |            (0.608) |
-| intra_pairJPN      |                    |                    |                    |                    |           -1.775** |
-|                    |                    |                    |                    |                    |            (0.502) |
-| intra_pairKEN      |                    |                    |                    |                    |            3.742** |
-|                    |                    |                    |                    |                    |            (0.618) |
-| intra_pairKOR      |                    |                    |                    |                    |            -0.864+ |
-|                    |                    |                    |                    |                    |            (0.523) |
-| intra_pairKWT      |                    |                    |                    |                    |            1.631** |
-|                    |                    |                    |                    |                    |            (0.557) |
-| intra_pairLKA      |                    |                    |                    |                    |            1.741** |
-|                    |                    |                    |                    |                    |            (0.549) |
-| intra_pairMAC      |                    |                    |                    |                    |            2.886** |
-|                    |                    |                    |                    |                    |            (0.902) |
-| intra_pairMAR      |                    |                    |                    |                    |             1.754* |
-|                    |                    |                    |                    |                    |            (0.744) |
-| intra_pairMEX      |                    |                    |                    |                    |           -1.588** |
-|                    |                    |                    |                    |                    |            (0.514) |
-| intra_pairMLT      |                    |                    |                    |                    |            1.836** |
-|                    |                    |                    |                    |                    |            (0.569) |
-| intra_pairMMR      |                    |                    |                    |                    |            5.020** |
-|                    |                    |                    |                    |                    |            (0.512) |
-| intra_pairMUS      |                    |                    |                    |                    |              1.076 |
-|                    |                    |                    |                    |                    |            (0.758) |
-| intra_pairMWI      |                    |                    |                    |                    |            3.611** |
-|                    |                    |                    |                    |                    |            (0.755) |
-| intra_pairMYS      |                    |                    |                    |                    |            -1.316* |
-|                    |                    |                    |                    |                    |            (0.549) |
-| intra_pairNER      |                    |                    |                    |                    |             2.728* |
-|                    |                    |                    |                    |                    |            (1.133) |
-| intra_pairNGA      |                    |                    |                    |                    |            3.614** |
-|                    |                    |                    |                    |                    |            (0.506) |
-| intra_pairNLD      |                    |                    |                    |                    |            -0.893+ |
-|                    |                    |                    |                    |                    |            (0.504) |
-| intra_pairNOR      |                    |                    |                    |                    |              0.550 |
-|                    |                    |                    |                    |                    |            (0.532) |
-| intra_pairNPL      |                    |                    |                    |                    |            4.034** |
-|                    |                    |                    |                    |                    |            (0.843) |
-| intra_pairPAN      |                    |                    |                    |                    |              1.265 |
-|                    |                    |                    |                    |                    |            (0.897) |
-| intra_pairPHL      |                    |                    |                    |                    |             -0.561 |
-|                    |                    |                    |                    |                    |            (0.524) |
-| intra_pairPOL      |                    |                    |                    |                    |             1.061+ |
-|                    |                    |                    |                    |                    |            (0.560) |
-| intra_pairPRT      |                    |                    |                    |                    |              0.140 |
-|                    |                    |                    |                    |                    |            (0.597) |
-| intra_pairQAT      |                    |                    |                    |                    |            2.062** |
-|                    |                    |                    |                    |                    |            (0.531) |
-| intra_pairROM      |                    |                    |                    |                    |            1.610** |
-|                    |                    |                    |                    |                    |            (0.578) |
-| intra_pairSEN      |                    |                    |                    |                    |            3.771** |
-|                    |                    |                    |                    |                    |            (0.951) |
-| intra_pairSGP      |                    |                    |                    |                    |           -2.506** |
-|                    |                    |                    |                    |                    |            (0.484) |
-| intra_pairSWE      |                    |                    |                    |                    |            -0.870+ |
-|                    |                    |                    |                    |                    |            (0.504) |
-| intra_pairTHA      |                    |                    |                    |                    |            -1.001+ |
-|                    |                    |                    |                    |                    |            (0.521) |
-| intra_pairTTO      |                    |                    |                    |                    |            2.457** |
-|                    |                    |                    |                    |                    |            (0.525) |
-| intra_pairTUN      |                    |                    |                    |                    |            2.025** |
-|                    |                    |                    |                    |                    |            (0.740) |
-| intra_pairTUR      |                    |                    |                    |                    |              0.497 |
-|                    |                    |                    |                    |                    |            (0.533) |
-| intra_pairTZA      |                    |                    |                    |                    |            2.218** |
-|                    |                    |                    |                    |                    |            (0.701) |
-| intra_pairURY      |                    |                    |                    |                    |             1.622* |
-|                    |                    |                    |                    |                    |            (0.711) |
-| intra_pairUSA      |                    |                    |                    |                    |           -3.413** |
-|                    |                    |                    |                    |                    |            (0.480) |
-| intra_pairZAF      |                    |                    |                    |                    |             -0.384 |
-|                    |                    |                    |                    |                    |            (0.568) |
-| intra_pairinter    |                    |                    |                    |                    |             1.302* |
-|                    |                    |                    |                    |                    |            (0.563) |
-|                    |                    |                    |                    |                    |                    |
-| Fixed effects      |                    |                    |                    |                    |                    |
-| exp_year           |                Yes |                Yes |                Yes |                Yes |                Yes |
-| imp_year           |                Yes |                Yes |                Yes |                Yes |                Yes |
-|                    |                    |                    |                    |                    |                    |
-| N                  |             25,689 |             28,152 |             28,566 |             28,566 |             28,566 |
-| Pseudo R-squared   |              0.843 |              0.946 |              0.995 |              0.996 |              0.999 |
-| SE type            |     Cluster-robust |     Cluster-robust |     Cluster-robust |     Cluster-robust |     Cluster-robust |
+<pre><code>|     Variable      |        (1)         |        (2)         |        (3)         |        (4)         |        (5)         |
+|-------------------|--------------------|--------------------|--------------------|--------------------|--------------------|
+| log_dist_1986     |           -1.168** |           -0.859** |           -0.980** |           -0.857** |           -0.910** |
+|                   |            (0.043) |            (0.037) |            (0.072) |            (0.063) |            (0.032) |
+| log_dist_1990     |           -1.155** |           -0.834** |           -0.940** |           -0.819** |           -0.879** |
+|                   |            (0.042) |            (0.038) |            (0.073) |            (0.063) |            (0.032) |
+| log_dist_1994     |           -1.211** |           -0.835** |           -0.915** |           -0.796** |           -0.860** |
+|                   |            (0.045) |            (0.035) |            (0.072) |            (0.063) |            (0.032) |
+| log_dist_1998     |           -1.248** |           -0.847** |           -0.887** |           -0.770** |           -0.833** |
+|                   |            (0.042) |            (0.035) |            (0.071) |            (0.063) |            (0.032) |
+| log_dist_2002     |           -1.241** |           -0.848** |           -0.884** |           -0.767** |           -0.829** |
+|                   |            (0.043) |            (0.032) |            (0.071) |            (0.063) |            (0.032) |
+| log_dist_2006     |           -1.261** |           -0.836** |           -0.872** |           -0.754** |           -0.811** |
+|                   |            (0.043) |            (0.031) |            (0.071) |            (0.062) |            (0.032) |
+| cntg              |              0.223 |            0.437** |            0.371** |            0.574** |            0.442** |
+|                   |            (0.199) |            (0.083) |            (0.140) |            (0.155) |            (0.082) |
+| lang              |            0.661** |            0.248** |             0.337* |             0.352* |            0.241** |
+|                   |            (0.081) |            (0.077) |            (0.168) |            (0.137) |            (0.076) |
+| clny              |            0.670** |            -0.222+ |              0.019 |              0.027 |            -0.220+ |
+|                   |            (0.147) |            (0.116) |            (0.156) |            (0.125) |            (0.117) |
+| log_dist_intra    |                    |                    |           -0.488** |           -0.602** |                    |
+|                   |                    |                    |            (0.101) |            (0.109) |                    |
+| smctry            |                    |                    |                    |            1.689** |                    |
+|                   |                    |                    |                    |            (0.574) |                    |
+| intra_pairAUS     |                    |                    |                    |                    |            -1.041* |
+|                   |                    |                    |                    |                    |            (0.507) |
+| intra_pairAUT     |                    |                    |                    |                    |              0.064 |
+|                   |                    |                    |                    |                    |            (0.530) |
+| intra_pairBEL     |                    |                    |                    |                    |              0.416 |
+|                   |                    |                    |                    |                    |            (0.509) |
+| intra_pairBGR     |                    |                    |                    |                    |            2.493** |
+|                   |                    |                    |                    |                    |            (0.556) |
+| intra_pairBOL     |                    |                    |                    |                    |            2.624** |
+|                   |                    |                    |                    |                    |            (0.555) |
+| intra_pairBRA     |                    |                    |                    |                    |             -0.269 |
+|                   |                    |                    |                    |                    |            (0.417) |
+| intra_pairCAN     |                    |                    |                    |                    |           -1.579** |
+|                   |                    |                    |                    |                    |            (0.486) |
+| intra_pairCHE     |                    |                    |                    |                    |             0.918+ |
+|                   |                    |                    |                    |                    |            (0.500) |
+| intra_pairCHL     |                    |                    |                    |                    |             -0.111 |
+|                   |                    |                    |                    |                    |            (0.561) |
+| intra_pairCHN     |                    |                    |                    |                    |           -1.495** |
+|                   |                    |                    |                    |                    |            (0.481) |
+| intra_pairCMR     |                    |                    |                    |                    |            3.059** |
+|                   |                    |                    |                    |                    |            (0.801) |
+| intra_pairCOL     |                    |                    |                    |                    |            1.694** |
+|                   |                    |                    |                    |                    |            (0.505) |
+| intra_pairCRI     |                    |                    |                    |                    |            1.524** |
+|                   |                    |                    |                    |                    |            (0.490) |
+| intra_pairCYP     |                    |                    |                    |                    |            2.882** |
+|                   |                    |                    |                    |                    |            (0.720) |
+| intra_pairDEU     |                    |                    |                    |                    |           -1.657** |
+|                   |                    |                    |                    |                    |            (0.482) |
+| intra_pairDNK     |                    |                    |                    |                    |              0.144 |
+|                   |                    |                    |                    |                    |            (0.543) |
+| intra_pairECU     |                    |                    |                    |                    |            2.161** |
+|                   |                    |                    |                    |                    |            (0.596) |
+| intra_pairEGY     |                    |                    |                    |                    |            1.972** |
+|                   |                    |                    |                    |                    |            (0.508) |
+| intra_pairESP     |                    |                    |                    |                    |             -0.739 |
+|                   |                    |                    |                    |                    |            (0.511) |
+| intra_pairFIN     |                    |                    |                    |                    |              0.131 |
+|                   |                    |                    |                    |                    |            (0.522) |
+| intra_pairFRA     |                    |                    |                    |                    |            -0.957* |
+|                   |                    |                    |                    |                    |            (0.479) |
+| intra_pairGBR     |                    |                    |                    |                    |           -1.416** |
+|                   |                    |                    |                    |                    |            (0.479) |
+| intra_pairGRC     |                    |                    |                    |                    |             1.079* |
+|                   |                    |                    |                    |                    |            (0.548) |
+| intra_pairHKG     |                    |                    |                    |                    |           -2.371** |
+|                   |                    |                    |                    |                    |            (0.502) |
+| intra_pairHUN     |                    |                    |                    |                    |              0.593 |
+|                   |                    |                    |                    |                    |            (0.617) |
+| intra_pairIDN     |                    |                    |                    |                    |             -0.214 |
+|                   |                    |                    |                    |                    |            (0.511) |
+| intra_pairIND     |                    |                    |                    |                    |              0.526 |
+|                   |                    |                    |                    |                    |            (0.515) |
+| intra_pairIRL     |                    |                    |                    |                    |             -0.618 |
+|                   |                    |                    |                    |                    |            (0.488) |
+| intra_pairIRN     |                    |                    |                    |                    |            2.538** |
+|                   |                    |                    |                    |                    |            (0.610) |
+| intra_pairISL     |                    |                    |                    |                    |            3.190** |
+|                   |                    |                    |                    |                    |            (0.650) |
+| intra_pairISR     |                    |                    |                    |                    |              0.292 |
+|                   |                    |                    |                    |                    |            (0.562) |
+| intra_pairITA     |                    |                    |                    |                    |            -1.019* |
+|                   |                    |                    |                    |                    |            (0.494) |
+| intra_pairJOR     |                    |                    |                    |                    |            3.869** |
+|                   |                    |                    |                    |                    |            (0.608) |
+| intra_pairJPN     |                    |                    |                    |                    |           -1.775** |
+|                   |                    |                    |                    |                    |            (0.502) |
+| intra_pairKEN     |                    |                    |                    |                    |            3.742** |
+|                   |                    |                    |                    |                    |            (0.618) |
+| intra_pairKOR     |                    |                    |                    |                    |            -0.864+ |
+|                   |                    |                    |                    |                    |            (0.523) |
+| intra_pairKWT     |                    |                    |                    |                    |            1.631** |
+|                   |                    |                    |                    |                    |            (0.557) |
+| intra_pairLKA     |                    |                    |                    |                    |            1.741** |
+|                   |                    |                    |                    |                    |            (0.549) |
+| intra_pairMAC     |                    |                    |                    |                    |            2.886** |
+|                   |                    |                    |                    |                    |            (0.902) |
+| intra_pairMAR     |                    |                    |                    |                    |             1.754* |
+|                   |                    |                    |                    |                    |            (0.744) |
+| intra_pairMEX     |                    |                    |                    |                    |           -1.588** |
+|                   |                    |                    |                    |                    |            (0.514) |
+| intra_pairMLT     |                    |                    |                    |                    |            1.836** |
+|                   |                    |                    |                    |                    |            (0.569) |
+| intra_pairMMR     |                    |                    |                    |                    |            5.020** |
+|                   |                    |                    |                    |                    |            (0.512) |
+| intra_pairMUS     |                    |                    |                    |                    |              1.076 |
+|                   |                    |                    |                    |                    |            (0.758) |
+| intra_pairMWI     |                    |                    |                    |                    |            3.611** |
+|                   |                    |                    |                    |                    |            (0.755) |
+| intra_pairMYS     |                    |                    |                    |                    |            -1.316* |
+|                   |                    |                    |                    |                    |            (0.549) |
+| intra_pairNER     |                    |                    |                    |                    |             2.728* |
+|                   |                    |                    |                    |                    |            (1.133) |
+| intra_pairNGA     |                    |                    |                    |                    |            3.614** |
+|                   |                    |                    |                    |                    |            (0.506) |
+| intra_pairNLD     |                    |                    |                    |                    |            -0.893+ |
+|                   |                    |                    |                    |                    |            (0.504) |
+| intra_pairNOR     |                    |                    |                    |                    |              0.550 |
+|                   |                    |                    |                    |                    |            (0.532) |
+| intra_pairNPL     |                    |                    |                    |                    |            4.034** |
+|                   |                    |                    |                    |                    |            (0.843) |
+| intra_pairPAN     |                    |                    |                    |                    |              1.265 |
+|                   |                    |                    |                    |                    |            (0.897) |
+| intra_pairPHL     |                    |                    |                    |                    |             -0.561 |
+|                   |                    |                    |                    |                    |            (0.524) |
+| intra_pairPOL     |                    |                    |                    |                    |             1.061+ |
+|                   |                    |                    |                    |                    |            (0.560) |
+| intra_pairPRT     |                    |                    |                    |                    |              0.140 |
+|                   |                    |                    |                    |                    |            (0.597) |
+| intra_pairQAT     |                    |                    |                    |                    |            2.062** |
+|                   |                    |                    |                    |                    |            (0.531) |
+| intra_pairROM     |                    |                    |                    |                    |            1.610** |
+|                   |                    |                    |                    |                    |            (0.578) |
+| intra_pairSEN     |                    |                    |                    |                    |            3.771** |
+|                   |                    |                    |                    |                    |            (0.951) |
+| intra_pairSGP     |                    |                    |                    |                    |           -2.506** |
+|                   |                    |                    |                    |                    |            (0.484) |
+| intra_pairSWE     |                    |                    |                    |                    |            -0.870+ |
+|                   |                    |                    |                    |                    |            (0.504) |
+| intra_pairTHA     |                    |                    |                    |                    |            -1.001+ |
+|                   |                    |                    |                    |                    |            (0.521) |
+| intra_pairTTO     |                    |                    |                    |                    |            2.457** |
+|                   |                    |                    |                    |                    |            (0.525) |
+| intra_pairTUN     |                    |                    |                    |                    |            2.025** |
+|                   |                    |                    |                    |                    |            (0.740) |
+| intra_pairTUR     |                    |                    |                    |                    |              0.497 |
+|                   |                    |                    |                    |                    |            (0.533) |
+| intra_pairTZA     |                    |                    |                    |                    |            2.218** |
+|                   |                    |                    |                    |                    |            (0.701) |
+| intra_pairURY     |                    |                    |                    |                    |             1.622* |
+|                   |                    |                    |                    |                    |            (0.711) |
+| intra_pairUSA     |                    |                    |                    |                    |           -3.413** |
+|                   |                    |                    |                    |                    |            (0.480) |
+| intra_pairZAF     |                    |                    |                    |                    |             -0.384 |
+|                   |                    |                    |                    |                    |            (0.568) |
+| intra_pairinter   |                    |                    |                    |                    |             1.302* |
+|                   |                    |                    |                    |                    |            (0.563) |
+|                   |                    |                    |                    |                    |                    |
+| Fixed effects     |                    |                    |                    |                    |                    |
+| exp_year          |                Yes |                Yes |                Yes |                Yes |                Yes |
+| imp_year          |                Yes |                Yes |                Yes |                Yes |                Yes |
+|                   |                    |                    |                    |                    |                    |
+| N                 |             25,689 |             28,152 |             28,566 |             28,566 |             28,566 |
+| R-squared         |              0.843 |              0.946 |              0.995 |              0.996 |              0.999 |
+| SE type           |     Cluster-robust |     Cluster-robust |     Cluster-robust |     Cluster-robust |     Cluster-robust |
 
 Standard errors in parenthesis
 Significance levels: ** p &lt; 0.01; * p &lt; 0.05; + p &lt; 0.10</code></pre>
@@ -5346,27 +5292,26 @@ X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + 
 <p>In comparison to the previous examples, we need to create additional variables to include fixed effects that account for the observations where the exporter and the importer are the same. These variables are internal border, internal dyad and internal borders for different years.</p>
 <p>The direct way of obtaining the desired variables is similar to what we did in the previous sections.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>ch1_application3 <span class="ot">&lt;-</span> agtpa_applications <span class="sc">|&gt;</span></span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">exp_year =</span> <span class="fu">paste0</span>(exporter, year),</span>
-<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">imp_year =</span> <span class="fu">paste0</span>(importer, year),</span>
-<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">paste0</span>(<span class="st">"intl_border_"</span>, year),</span>
-<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_trade =</span> <span class="fu">log</span>(trade),</span>
-<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_dist =</span> <span class="fu">log</span>(dist),</span>
-<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">intl_brdr =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, pair_id, <span class="st">"inter"</span>),</span>
-<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">intl_brdr_2 =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">pair_id_2 =</span> <span class="fu">ifelse</span>(exporter <span class="sc">==</span> importer, <span class="st">"0-intra"</span>, pair_id)</span>
-<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> intl_brdr_2, <span class="at">values_fill =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>ch1_application3 <span class="ot">&lt;-</span> agtpa_applications[year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="dv">1986</span>, <span class="dv">2006</span>, <span class="dv">4</span>)]</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>ch1_application3[, <span class="fu">c</span>(<span class="st">"exp_year"</span>, <span class="st">"imp_year"</span>, <span class="st">"year"</span>, <span class="st">"log_trade"</span>, <span class="st">"log_dist"</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"intl_brdr"</span>, <span class="st">"intl_brdr_2"</span>, <span class="st">"pair_id_2"</span>) <span class="sc">:</span><span class="er">=</span> .(</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(exporter, year),</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(importer, year),</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">"intl_border_"</span>, year),</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(trade),</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(dist),</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fifelse</span>(exporter <span class="sc">==</span> importer, <span class="fu">as.character</span>(pair_id), <span class="st">"inter"</span>),</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fifelse</span>(exporter <span class="sc">==</span> importer, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fifelse</span>(exporter <span class="sc">==</span> importer, <span class="st">"0-intra"</span>, <span class="fu">as.character</span>(pair_id))</span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>)]</span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a>ch1_application3 <span class="ot">&lt;-</span> <span class="fu">dcast</span>(ch1_application3, ... <span class="sc">~</span> year, <span class="at">value.var =</span> <span class="st">"intl_brdr_2"</span>, <span class="at">fill =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Notice that we used “0-intra” and not just “intra” because the rest of the observations in the internal dyads are numbers 1, …, N, and R internals shall consider “0-intra” as the reference factor for being the first item when it orders the unique observations alphabetically. Also, observe the order of the resulting table, the pivoting of the table will put “0-intra” as the first row for the first exporter-importer dyad. This makes the difference between the expected or other behaviours in the next chapter.</p>
 <p>In addition, we need to create the variable containing the trade sum to filter the cases where the sum by dyad is zero.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>ch1_application3 <span class="ot">&lt;-</span> ch1_application3 <span class="sc">|&gt;</span></span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pair_id) <span class="sc">|&gt;</span></span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sum_trade =</span> <span class="fu">sum</span>(trade)) <span class="sc">|&gt;</span></span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>ch1_application3[, sum_trade <span class="sc">:</span><span class="er">=</span> <span class="fu">sum</span>(trade), by <span class="ot">=</span> pair_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="ols-standard-rta-estimates-with-international-trade-only" class="level3" data-number="2.3.2">
@@ -5376,7 +5321,7 @@ X_{ij,t} =&amp; \:\exp\left[\pi_{i,t} + \chi_{i,t} + \beta_1 \log(DIST)_{i,j} + 
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>fit_ols_rta <span class="ot">&lt;-</span> <span class="fu">felm</span>(</span>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  log_trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> rta <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, trade <span class="sc">&gt;</span> <span class="dv">0</span>, importer <span class="sc">!=</span> exporter)</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application3[importer <span class="sc">!=</span> exporter <span class="sc">&amp;</span> trade <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
 <span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>fit_ols_rta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -5413,7 +5358,7 @@ Number of observations: Full 25689; Missing 0; Perfect classification 0 </code><
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>fit_ppml_rta <span class="ot">&lt;-</span> <span class="fu">fepoisson</span>(</span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  trade <span class="sc">~</span> log_dist <span class="sc">+</span> cntg <span class="sc">+</span> lang <span class="sc">+</span> clny <span class="sc">+</span> rta <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">|</span> pair_id,</span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, importer <span class="sc">!=</span> exporter)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application3[importer <span class="sc">!=</span> exporter]</span>
 <span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>fit_ppml_rta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -5495,7 +5440,7 @@ Number of Fisher Scoring iterations: 12 </code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>fit_endg_rta <span class="ot">&lt;-</span> <span class="fu">fepoisson</span>(</span>
 <span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  trade <span class="sc">~</span> rta <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">+</span> pair_id_2 <span class="sc">|</span> pair_id,</span>
-<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application3[sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
 <span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>fit_endg_rta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -5531,7 +5476,7 @@ Number of Fisher Scoring iterations: 13 </code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>fit_lead_rta <span class="ot">&lt;-</span> <span class="fu">fepoisson</span>(</span>
 <span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>  trade <span class="sc">~</span> rta <span class="sc">+</span> rta_lead4 <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">+</span> pair_id_2 <span class="sc">|</span> pair_id,</span>
-<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application3[sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
 <span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>fit_lead_rta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -5587,7 +5532,7 @@ Number of Fisher Scoring iterations: 13 </code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>fit_phsng_rta <span class="ot">&lt;-</span> <span class="fu">fepoisson</span>(</span>
 <span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  trade <span class="sc">~</span> rta <span class="sc">+</span> rta_lag4 <span class="sc">+</span> rta_lag8 <span class="sc">+</span> rta_lag12 <span class="sc">|</span> exp_year <span class="sc">+</span> imp_year <span class="sc">+</span> pair_id_2 <span class="sc">|</span> pair_id,</span>
-<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application3[sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
 <span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>fit_phsng_rta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -5648,7 +5593,7 @@ Number of Fisher Scoring iterations: 13 </code></pre>
 <span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  trade <span class="sc">~</span> rta <span class="sc">+</span> rta_lag4 <span class="sc">+</span> rta_lag8 <span class="sc">+</span> rta_lag12 <span class="sc">+</span> intl_border_1986 <span class="sc">+</span></span>
 <span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>    intl_border_1990 <span class="sc">+</span> intl_border_1994 <span class="sc">+</span> intl_border_1998 <span class="sc">+</span> intl_border_2002 <span class="sc">|</span></span>
 <span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>    exp_year <span class="sc">+</span> imp_year <span class="sc">+</span> pair_id_2 <span class="sc">|</span> pair_id,</span>
-<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(ch1_application3, sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ch1_application3[sum_trade <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
 <span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>fit_glbzn_rta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -5759,7 +5704,7 @@ Number of Fisher Scoring iterations: 13 </code></pre>
 | pair_id_2          |                 No |                 No |                 No |               Yes |               Yes |               Yes |                Yes |
 |                    |                    |                    |                    |                   |                   |                   |                    |
 | N                  |             25,689 |             28,152 |             28,566 |            28,482 |            28,482 |            28,482 |             28,482 |
-| Pseudo R-squared   |              0.843 |              0.946 |              0.998 |             0.999 |             0.999 |             0.999 |              1.000 |
+| R-squared          |              0.843 |              0.946 |              0.998 |             0.999 |             0.999 |             0.999 |              1.000 |
 | SE type            |     Cluster-robust |     Cluster-robust |     Cluster-robust |    Cluster-robust |    Cluster-robust |    Cluster-robust |     Cluster-robust |
 
 Standard errors in parenthesis
