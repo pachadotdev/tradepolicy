@@ -1,3 +1,9 @@
+# tradepolicy 0.7.0
+
+Changes
+* Uses `capybara` to facilitate displaying regression results.
+* Uses `data.table` instead of `dplyr` and `tidyr` for the replication.
+* Uses `tinyplot` instead of `ggplot2` to mimimize dependencies.
 # tradepolicy 0.6.1
 
 Improvements

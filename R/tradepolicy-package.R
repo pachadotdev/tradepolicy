@@ -42,10 +42,9 @@
 NULL
 
 # Funs for ebook
-#' @importFrom ggplot2 ggplot
-#' @importFrom dplyr mutate
-#' @importFrom tidyr pivot_wider
+#' @importFrom data.table as.data.table
 #' @importFrom capybara fepoisson
 #' @importFrom knitr kable
 #' @importFrom msm deltamethod
+#' @importFrom tinyplot plt
 NULL
