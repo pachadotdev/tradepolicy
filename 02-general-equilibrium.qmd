@@ -28,7 +28,7 @@ library(data.table)
 library(capybara)
 
 # plots
-library(ggplot2)
+library(tinyplot)
 ```
 
 We start by defining some parameters to simplify the code. The value for the elasticity of substitution, $\sigma = 7$, used to set the convergence criteria is taken from the literature. There is an explanation in the original Stata code.
@@ -420,22 +420,20 @@ data_figure_6[, change := fcase(
   default = "Full endowment general equilibrium"
 )]
 
-DT::datatable(
-  ch2_application1[exporter != "HKG", .(exporter, log_y, change_xi_cfl, change_xi_full)]
-)
+ch2_application1[exporter != "HKG", .(exporter, log_y, change_xi_cfl, change_xi_full)]
 
-ggplot(data = data_figure_6) +
-  geom_point(aes(x = x, y = y, color = change)) +
-  labs(
-    x = "Log value of output",
-    y = "Percent change of exports",
-    title = "Figure 6: Effects of abolishing international borders on exports",
-    caption = "Source: Authors' calculations",
-    color = ""
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  scale_color_manual(values = c("#b6b8dd", "#232958"))
+plt(y ~ x | change, data = data_figure_6,
+  type = "p",
+  xlab = "Log value of output",
+  ylab = "Percent change of exports",
+  main = "Figure 6: Effects of abolishing international borders on exports",
+  palette = c("#b6b8dd", "#232958"),
+  pch = 16,
+  grid = TRUE,
+  frame = FALSE,
+  legend = list("bottom!", title = " ")
+)
+mtext("Source: Authors' calculations", side = 1, line = 4, cex = 0.8)
 ```
 
 To create Figure 7, we proceed in the same way as Figure 6.
@@ -453,22 +451,24 @@ data_figure_7[, change := fcase(
   default = "Real GDP"
 )]
 
-DT::datatable(
-  ch2_application1[exporter != "HKG", .(exporter, log_y, change_imr_full, change_price_full, rgdp)]
-)
 
-ggplot(data = data_figure_7) +
-  geom_point(aes(x = x, y = y, color = change)) +
-  labs(
-    x = "Log value of output",
-    y = "Percent changes",
-    title = "Figure 7: Effects of abolishing international borders on real GDP",
-    caption = "Note: The inward multilateral resistances have been reformulated by multiplying their value by minus one.\nSource: Authors' calculations",
-    color = ""
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  scale_color_manual(values = c("#3bade3", "#b6b8dd", "#232958"))
+ch2_application1[exporter != "HKG", .(exporter, log_y, change_imr_full, change_price_full, rgdp)]
+
+plt(y ~ x | change, data = data_figure_7,
+  type = "p",
+  xlab = "Log value of output",
+  ylab = "Percent changes",
+  main = "Figure 7: Effects of abolishing international borders on real GDP",
+  palette = c("#3bade3", "#b6b8dd", "#232958"),
+  pch = 16,
+  grid = TRUE,
+  frame = FALSE,
+  legend = list("bottom!", title = " ")
+)
+mtext(
+  "Note: The inward multilateral resistances have been reformulated by multiplying their value by minus one.\nSource: Authors' calculations",
+  side = 1, line = 5, cex = 0.8
+)
 ```
 
 ## Impact of regional trade agreements
@@ -919,7 +919,7 @@ indexes_final <- indexes_final[, .(
 numeric_cols <- names(indexes_final)[sapply(indexes_final, is.numeric)]
 indexes_final[, (numeric_cols) := lapply(.SD, round, 2), .SDcols = numeric_cols]
 
-DT::datatable(indexes_final, options = list(scrollX = T))
+indexes_final
 ```
 
 ## References
