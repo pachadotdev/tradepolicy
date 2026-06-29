@@ -31,8 +31,7 @@ Before conducting any data filtering or regression, we need to load the required
 library(tradepolicy)
 
 # data transformation
-library(dplyr)
-library(tidyr)
+library(data.table)
 
 # regression
 library(capybara)
@@ -44,85 +43,58 @@ library(msm)
 Step 1, including subsetting columns for this application, is straightforward.
 
 ```{r ch1_app_1_data_1}
-ch1_application1 <- agtpa_applications |>
-  select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) |>
-  filter(year %in% seq(1986, 2006, 4))
+ch1_application1 <- agtpa_applications[, .(exporter, importer, pair_id, year, trade, dist, cntg, 
+    lang, clny)][year %in% seq(1986, 2006, 4)]
 ```
 
 For step 2, this can be divided in parts, starting with the log transformation of trade and distance.
 
 ```{r ch1_app_1_data_2}
-ch1_application1 <- ch1_application1 |>
-  mutate(
-    log_trade = log(trade),
-    log_dist = log(dist)
-  )
+ch1_application1[, `:=`(log_trade = log(trade), log_dist = log(dist))]
 ```
 
 Continuing step 2, we can now create the variables $Y_{i,t}$ and $E_{i,t}$ that appear on the OLS model equation in the book.
 
 ```{r ch1_app_1_data_3}
-ch1_application1 <- ch1_application1 |>
-  # Create Yit
-  group_by(exporter, year) |>
-  mutate(
-    y = sum(trade),
-    log_y = log(y)
-  ) |>
-  # Create Eit
-  group_by(importer, year) |>
-  mutate(
-    e = sum(trade),
-    log_e = log(e)
-  )
+# Create Yit
+ch1_application1[, c("y", "log_y") := .(sum(trade), log(sum(trade))), by = .(exporter, year)]
+
+# Create Eit
+ch1_application1[, c("e", "log_e") := .(sum(trade), log(sum(trade))), by = .(importer, year)]
 ```
 
 The OLS model with remoteness index needs both exporter and importer index, which grouping variables can create. We divide it into sub-steps: Replicate the computation of total exports, then the remoteness index for exporters, and finally the total imports with the corresponding remoteness index for importers.
 
 ```{r ch1_app_1_data_4}
-ch1_application1 <- ch1_application1 |>
-  # Replicate total_e
-  group_by(exporter, year) |>
-  mutate(total_e = sum(e)) |>
-  group_by(year) |>
-  mutate(total_e = max(total_e)) |>
-  # Replicate rem_exp
-  group_by(exporter, year) |>
-  mutate(
-    remoteness_exp = sum(dist * total_e / e),
-    log_remoteness_exp = log(remoteness_exp)
-  ) |>
-  # Replicate total_y
-  group_by(importer, year) |>
-  mutate(total_y = sum(y)) |>
-  group_by(year) |>
-  mutate(total_y = max(total_y)) |>
-  # Replicate rem_imp
-  group_by(importer, year) |>
-  mutate(
-    remoteness_imp = sum(dist / (y / total_y)),
-    log_remoteness_imp = log(remoteness_imp)
-  ) |>
-  ungroup()
+# Replicate total_e
+ch1_application1[, total_e := sum(e), by = .(exporter, year)]
+ch1_application1[, total_e := max(total_e), by = year]
+
+# Replicate rem_exp
+ch1_application1[, c("remoteness_exp", "log_remoteness_exp") :=
+  .(sum(dist * total_e / e), log(sum(dist * total_e / e))), by = .(exporter, year)]
+
+# Replicate total_y
+ch1_application1[, total_y := sum(y), by = .(importer, year)]
+ch1_application1[, total_y := max(total_y), by = year]
+
+# Replicate rem_imp
+ch1_application1[, c("remoteness_imp", "log_remoteness_imp") :=
+  .(sum(dist / (y / total_y)), log(sum(dist / (y / total_y)))), by = .(importer, year)]
 ```
 
 To create the variables for the OLS with Fixed Effects Model, we followed box #1 on page 44 from @yotov2016advanced. We combine both exporter and importer variables with the year to create the fixed effects variables.
 
 ```{r ch1_app_1_data_5}
-ch1_application1 <- ch1_application1 |>
-  # This merges the columns exporter/importer with year
-  mutate(
-    exp_year = paste0(exporter, year),
-    imp_year = paste0(importer, year)
-  )
+# This merges the columns exporter/importer with year
+ch1_application1[, c("exp_year", "imp_year") := .(paste0(exporter, year), paste0(importer, year))]
 ```
 
 The addition of exporter/importer time fixed effects concludes step 2, and now we need to perform step 3. This step will
 be commented for now as I found an error in the reported $R^2$ for the PPML model that I show next.
 
 ```{r ch1_app_1_data_6}
-# ch1_application1 <- ch1_application1 |>
-#   filter(exporter != importer)
+# ch1_application1 <- ch1_application1[exporter != importer]
 ```
 
 Some cases require conducting step 4, and we will be explicit about it when needed.
@@ -144,9 +116,7 @@ The model for this case is straightforward, and in this case, we need to apply s
 ```{r ch1_app_1_ols_1}
 fit_ols <- felm(
   log_trade ~ log_dist + cntg + lang + clny + log_y + log_e,
-  data = ch1_application1 |>
-    filter(trade > 0) |>
-    filter(exporter != importer) # commented out step 3
+  data = ch1_application1[trade > 0 & exporter != importer] # commented out step 3
 )
 
 fit_ols
@@ -174,9 +144,7 @@ The model with clustered standard errors is as follows.
 ```{r ch1_app_1_ols_3}
 fit_ols <- felm(
   log_trade ~ log_dist + cntg + lang + clny + log_y + log_e | 0 | pair_id,
-  data = ch1_application1 |>
-    filter(trade > 0) |>
-    filter(exporter != importer) # commented out step 3
+  data = ch1_application1[trade > 0 & exporter != importer] # commented out step 3
 )
 
 fit_ols
@@ -185,14 +153,8 @@ fit_ols
 To conduct the RESET test we need to add the squared fitted values to the training data.
 
 ```{r ch1_app_1_ols_4}
-ch1_application1_ols <- ch1_application1 |>
-  filter(
-    trade > 0,
-    exporter != importer
-  )
-
-ch1_application1_ols <- ch1_application1_ols |>
-  mutate(trade_hat_sq = (predict(fit_ols, newdata = ch1_application1_ols))^2)
+ch1_application1_ols <- ch1_application1[trade > 0 & exporter != importer]
+ch1_application1_ols[, trade_hat_sq := (predict(fit_ols, newdata = ch1_application1_ols))^2]
 
 reset_ols <- felm(
   log_trade ~ log_dist + cntg + lang + clny + log_y + log_e + trade_hat_sq | 0 | pair_id,
@@ -228,9 +190,7 @@ Our approach follows box #1 on page 43 from @yotov2016advanced. Fitting the regr
 fit_ols_remoteness <- felm(
   log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
     log_remoteness_exp + log_remoteness_imp | 0 | pair_id,
-  data = ch1_application1 |>
-    filter(trade > 0) |>
-    filter(exporter != importer) # commented out step 3
+  data = ch1_application1[trade > 0 & exporter != importer] # commented out step 3
 )
 
 fit_ols_remoteness
@@ -239,15 +199,8 @@ fit_ols_remoteness
 For the RESET test, we need to add the squared fitted values to the training data as before.
 
 ```{r ch1_app_1_ols_remoteness_2}
-ch1_application1_ols_remoteness <- ch1_application1 |>
-  ungroup() |>
-  filter(
-    trade > 0,
-    exporter != importer
-  )
-
-ch1_application1_ols_remoteness <- ch1_application1_ols_remoteness |>
-  mutate(trade_hat_sq = (predict(fit_ols_remoteness, newdata = ch1_application1_ols_remoteness))^2) 
+ch1_application1_ols_remoteness <- ch1_application1[trade > 0 & exporter != importer]
+ch1_application1_ols_remoteness[, trade_hat_sq := (predict(fit_ols_remoteness, newdata = ch1_application1_ols_remoteness))^2]
 
 reset_ols_remoteness <- felm(
   log_trade ~ log_dist + cntg + lang + clny + log_y + log_e +
@@ -283,9 +236,7 @@ Please notice that the summaries intentionally do not show fixed effects, becaus
 
 fit_fe <- felm(
   log_trade ~ log_dist + cntg + lang + clny | exp_year + imp_year | pair_id,
-  data = ch1_application1 |>
-    filter(trade > 0) |>
-    filter(exporter != importer) # commented out step 3
+  data = ch1_application1[trade > 0 & exporter != importer] # commented out step 3
 )
 
 fit_fe
@@ -297,15 +248,8 @@ Note that the `felm()` function does not print the fixed effects. You can access
 For the RESET test, we need to add the squared fitted values to the training data as before.
 
 ```{r ch1_app_1_fe_2}
-ch1_application1_fe <- ch1_application1 |>
-  ungroup() |>
-  filter(
-    trade > 0,
-    exporter != importer
-  )
-
-ch1_application1_fe <- ch1_application1_fe |>
-  mutate(trade_hat_sq = (predict(fit_fe, newdata = ch1_application1_fe))^2)
+ch1_application1_fe <- ch1_application1[trade > 0 & exporter != importer]
+ch1_application1_fe[, trade_hat_sq := (predict(fit_fe, newdata = ch1_application1_fe))^2]
 
 reset_fe <- felm(
   log_trade ~ log_dist + cntg + lang + clny + trade_hat_sq | exp_year + imp_year | pair_id,
@@ -331,9 +275,7 @@ The data for this model is the same as for the fixed effects model, and one opti
 
 ```{r ch1_app_1_ppml_1}
 fit_ppml <- fepoisson(trade ~ log_dist + cntg + lang + clny | exp_year + imp_year | pair_id,
-  data = ch1_application1 |>
-    filter(exporter != importer), # commented out step 3
-  control = fit_control(return_fe = TRUE) # needed to obtain fitted values with predict()
+  data = ch1_application1[exporter != importer] # commented out step 3
 )
 
 fit_ppml
@@ -352,12 +294,8 @@ cor(trade, trade_hat)^2
 For the RESET test, we need to add the squared fitted link values to the training data as before.
 
 ```{r ch1_app_1_ppml_3}
-ch1_application1_ppml <- ch1_application1 |>
-  ungroup() |>
-  filter(exporter != importer)
-
-ch1_application1_ppml <- ch1_application1_ppml |>
-  mutate(trade_hat_sq = (predict(fit_ppml, type = "link", newdata = ch1_application1_ppml))^2)
+ch1_application1_ppml <- ch1_application1[exporter != importer]
+ch1_application1_ppml[, trade_hat_sq := (predict(fit_ppml, type = "link", newdata = ch1_application1_ppml))^2]
 
 reset_ppml <- fepoisson(
   trade ~ log_dist + cntg + lang + clny + trade_hat_sq | exp_year + imp_year | pair_id,
@@ -401,40 +339,49 @@ We need to remove cases where the exporter is the same as the importer and cases
 In order to avoid creating two very similar datasets, we shall create one dataset to cover both OLS and PPML.
 
 ```{r ch1_app_2_data_1}
-ch1_application2 <- agtpa_applications |>
-  select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) |>
-  # this filter covers both OLS and PPML
-  filter(year %in% seq(1986, 2006, 4)) |>
-  mutate(
-    # variables for both OLS and PPML
-    exp_year = paste0(exporter, year),
-    imp_year = paste0(importer, year),
-    year = paste0("log_dist_", year),
-    log_trade = log(trade),
-    log_dist = log(dist),
-    smctry = ifelse(importer != exporter, 0, 1),
+ch1_application2 <- agtpa_applications[
+  year %in% seq(1986, 2006, 4),
+  .(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny)
+]
 
-    # PPML specific variables
-    log_dist_intra = log_dist * smctry,
-    intra_pair = ifelse(exporter == importer, exporter, "inter")
-  ) |>
-  pivot_wider(names_from = year, values_from = log_dist, values_fill = 0) |>
-  mutate(across(log_dist_1986:log_dist_2006, function(x) x * (1 - smctry)))
+# variables for both OLS and PPML
+ch1_application2[, c("exp_year", "imp_year", "year", "log_trade", "log_dist", "smctry") := .(
+  paste0(exporter, year),
+  paste0(importer, year),
+  paste0("log_dist_", year),
+  log(trade),
+  log(dist),
+  fifelse(importer != exporter, 0, 1)
+)]
+
+# PPML specific variables (depend on log_dist and smctry computed above)
+ch1_application2[, c("log_dist_intra", "intra_pair") := .(
+  log_dist * smctry,
+  fifelse(exporter == importer, exporter, "inter")
+)]
+
+ch1_application2 <- dcast(
+  ch1_application2,
+  exporter + importer + pair_id + trade + dist + cntg + lang + clny +
+    exp_year + imp_year + log_trade + smctry + log_dist_intra + intra_pair ~ year,
+  value.var = "log_dist",
+  fill = 0
+)
+
+dist_cols <- paste0("log_dist_", seq(1986, 2006, 4))
+
+ch1_application2[, (dist_cols) := lapply(.SD, \(x) x * (1 - smctry)), .SDcols = dist_cols]
 ```
 
-The `across()` function is a shortcut to avoid repetition, as in the following example provided for reference without
-computation.
+The `\(x)` syntax provides a shortcut to avoid repetition of the form
 
-```{r ch1_app_2_data_3, eval = FALSE}
-ch1_application2 |>
-  mutate(
-    log_dist_1986 =  log_dist_1986 * (1 - smctry),
-    log_dist_1990 =  log_dist_1990 * (1 - smctry),
+```r
+log_dist_1986 =  log_dist_1986 * (1 - smctry),
+log_dist_1990 =  log_dist_1990 * (1 - smctry),
 
-    # repeat log_dist_T many_times for T = 1994, 1998, ...
+# repeat log_dist_T many_times for T = 1994, 1998, ...
 
-    log_dist_2006 =  log_dist_2006 * (1 - smctry)
-  )
+log_dist_2006 =  log_dist_2006 * (1 - smctry)
 ```
 
 Note that the OLS model shall require filtering when we specify the model because we skipped filtering the cases where trade is equal to zero and both the importer and the exporter are the same. Because the solution for the "distance puzzle" implies different transformations and filters for the OLS and PPML cases, one possibility is to filter in the same summary functions.
@@ -701,19 +648,21 @@ In comparison to the previous examples, we need to create additional variables t
 The direct way of obtaining the desired variables is similar to what we did in the previous sections.
 
 ```{r ch1_app_3_data_1}
-ch1_application3 <- agtpa_applications |>
-  filter(year %in% seq(1986, 2006, 4)) |>
-  mutate(
-    exp_year = paste0(exporter, year),
-    imp_year = paste0(importer, year),
-    year = paste0("intl_border_", year),
-    log_trade = log(trade),
-    log_dist = log(dist),
-    intl_brdr = ifelse(exporter == importer, pair_id, "inter"),
-    intl_brdr_2 = ifelse(exporter == importer, 0, 1),
-    pair_id_2 = ifelse(exporter == importer, "0-intra", pair_id)
-  ) |>
-  pivot_wider(names_from = year, values_from = intl_brdr_2, values_fill = 0)
+ch1_application3 <- agtpa_applications[year %in% seq(1986, 2006, 4)]
+
+ch1_application3[, c("exp_year", "imp_year", "year", "log_trade", "log_dist",
+                      "intl_brdr", "intl_brdr_2", "pair_id_2") := .(
+  paste0(exporter, year),
+  paste0(importer, year),
+  paste0("intl_border_", year),
+  log(trade),
+  log(dist),
+  fifelse(exporter == importer, pair_id, "inter"),
+  fifelse(exporter == importer, 0, 1),
+  fifelse(exporter == importer, "0-intra", pair_id)
+)]
+
+ch1_application3 <- dcast(ch1_application3, ... ~ year, value.var = "intl_brdr_2", fill = 0)
 ```
 
 Notice that we used "0-intra" and not just "intra" because the rest of the observations in the internal dyads are numbers 1, ..., N, and R internals shall consider "0-intra" as the reference factor for being the first item when it orders the unique observations alphabetically. Also, observe the order of the resulting table, the pivoting of the table will put "0-intra" as the first row for the first exporter-importer dyad. This makes the difference between the expected or other behaviours in the next chapter.
@@ -721,10 +670,7 @@ Notice that we used "0-intra" and not just "intra" because the rest of the obser
 In addition, we need to create the variable containing the trade sum to filter the cases where the sum by dyad is zero.
 
 ```{r ch1_app_3_data_2}
-ch1_application3 <- ch1_application3 |>
-  group_by(pair_id) |>
-  mutate(sum_trade = sum(trade)) |>
-  ungroup()
+ch1_application3[, sum_trade := sum(trade), by = pair_id]
 ```
 
 ### OLS standard RTA estimates with international trade only
