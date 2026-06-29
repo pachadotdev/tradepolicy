@@ -5,10 +5,7 @@
 _bookdown_files
 all-models-and-data/*.RData
 dev
-data-parquet
-test-bank
-test-bank.zip
-
+_freeze
+index_cache
 /.quarto/
-
 **/*.quarto_ipynb
