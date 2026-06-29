@@ -46,25 +46,29 @@ change_price_i_old <- 0
 It is imperative to arrange the table by importers. Otherwise, there is a difference in the estimated fixed effects that changes the factory prices in the last figure from this section, and here the aim is to fully replicate the two figures from this section in the book. We mentioned this in the RTA effects section from the previous chapter.
 
 ```{r ch2_app1_data_1}
-ch2_application1 <- agtpa_applications |>
-  select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny) |>
-  filter(year == 2006) |>
-  mutate(
-    log_dist = log(dist),
-    intl = ifelse(exporter != importer, 1, 0),
-    exporter = ifelse(exporter == ref_country, ref_country0, exporter),
-    importer = ifelse(importer == ref_country, ref_country0, importer)
-  ) |>
-  arrange(importer) |>
-  # Create Yit
-  group_by(exporter) |>
-  mutate(y = sum(trade, na.rm = T)) |>
-  # Create Eit
-  group_by(importer) |>
-  mutate(e = sum(trade, na.rm = T)) |>
-  # Create Er
-  ungroup() |>
-  mutate(e_r = max(ifelse(importer == ref_country0, e, NA), na.rm = T))
+ch2_application1 <- agtpa_applications[
+  year == 2006,
+  .(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny)
+]
+
+ch2_application1[, c("log_dist", "intl", "exporter", "importer") := .(
+  log(dist),
+  fifelse(exporter != importer, 1L, 0L),
+  fifelse(exporter == ref_country, ref_country0, exporter),
+  fifelse(importer == ref_country, ref_country0, importer)
+)]
+
+setorder(ch2_application1, importer)
+
+# Create Yit
+ch2_application1[, y := sum(trade, na.rm = TRUE), by = exporter]
+
+# Create Eit
+ch2_application1[, e := sum(trade, na.rm = TRUE), by = importer]
+
+# Create Er
+# fifelse robust replacement of ifelse
+ch2_application1[, e_r := max(fifelse(importer == ref_country0, e, NA_real_), na.rm = TRUE)]
 ```
 
 ### Step I: Solve the baseline model
@@ -90,42 +94,42 @@ fit_baseline_app1 <- fepoisson(
 With the estimated model, we can proceed as in box #1 from page 105 in @yotov2016advanced to construct the variables for exporter and importer fixed effects. This step is very different compared to Stata.
 
 ```{r ch2_app1_baseline_3}
-fe_exporter_bln <- fit_baseline_app1$fixed_effects$exporter |>
-  tibble::enframe(name = "exporter", value = "fe_exporter_bln")
+fe_exporter_bln <- data.table(
+  exporter = names(fit_baseline_app1$fixed_effects$exporter),
+  fe_exporter_bln = fit_baseline_app1$fixed_effects$exporter
+)
 
-fe_importer_bln <- fit_baseline_app1$fixed_effects$importer |>
-  tibble::enframe(name = "importer", value = "fe_importer_bln")
+fe_importer_bln <- data.table(
+  importer = names(fit_baseline_app1$fixed_effects$importer),
+  fe_importer_bln = fit_baseline_app1$fixed_effects$importer
+)
 
-ch2_application1 <- ch2_application1 |>
-  left_join(fe_exporter_bln, by = "exporter") |>
-  left_join(fe_importer_bln, by = "importer")
+ch2_application1[fe_exporter_bln, on = "exporter", fe_exporter_bln := i.fe_exporter_bln]
+ch2_application1[fe_importer_bln, on = "importer", fe_importer_bln := i.fe_importer_bln]
 ```
 
 Still following box #1, we need to compute the variables of bilateral trade costs and multilateral resistances.
 
 ```{r ch2_app1_baseline_4}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    tij_bln = exp(fit_baseline_app1$coef_table["log_dist", 1] * log_dist +
-      fit_baseline_app1$coef_table["cntg", 1] * cntg +
-      fit_baseline_app1$coef_table["intl", 1] * intl),
+ch2_application1[, c("tij_bln", "omr_bln", "imr_bln") := .(
+  # trade costs
+  exp(fit_baseline_app1$coef_table["log_dist", 1] * log_dist +
+    fit_baseline_app1$coef_table["cntg", 1] * cntg +
+    fit_baseline_app1$coef_table["intl", 1] * intl),
 
-    # outward multilateral resistance (omr)
-    omr_bln = y * (e_r / exp(fe_exporter_bln)),
+  # outward multilateral resistance (omr)
+  y * (e_r / exp(fe_exporter_bln)),
 
-    # inward multilateral resistance (imr)
-    imr_bln = e / (exp(fe_importer_bln) * e_r)
-  )
+  # inward multilateral resistance (imr)
+  e / (exp(fe_importer_bln) * e_r)
+)]
 ```
 
 To complete this estimation stage, we need to create a column with the estimated international trade for given output and expenditures. We start by adding a column with the estimated trade for the baseline model, and then we group by the exporter and summarise to obtain the required column $\xi$-baseline.
 
 ```{r ch2_app1_baseline_5}
-ch2_application1 <- ch2_application1 |>
-  mutate(tradehat_bln = predict(fit_baseline_app1, ch2_application1)) |>
-  group_by(exporter) |>
-  mutate(xi_bln = sum(tradehat_bln * (exporter != importer), na.rm = T)) |>
-  ungroup()
+ch2_application1[, tradehat_bln := predict(fit_baseline_app1, ch2_application1)]
+ch2_application1[, xi_bln := sum(tradehat_bln * (exporter != importer), na.rm = TRUE), by = exporter]
 ```
 
 ### Step II: Define a counterfactual scenario
@@ -133,23 +137,21 @@ ch2_application1 <- ch2_application1 |>
 Box #2 from page 105 in @yotov2016advanced proposes two alternatives to define the counterfactual scenario of removing international borders. The first alternative is to eliminate the border variable and generate the logged trade costs used in the constraint.
 
 ```{r ch2_app1_counterfactual_1}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    tij_cfl = exp(fit_baseline_app1$coef_table["log_dist", 1] * log_dist +
-      fit_baseline_app1$coef_table["cntg", 1] * cntg)
-  )
+ch2_application1[, tij_cfl := exp(
+  fit_baseline_app1$coef_table["log_dist", 1] * log_dist +
+    fit_baseline_app1$coef_table["cntg", 1] * cntg
+)]
 ```
 
 The second alternative is to define a new counterfactual border variable. We only show this equivalent case without computation.
 
 ```{r ch2_app1_counterfactual_2, eval = FALSE}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    intl_cfl = 0,
-    tij_bln = exp(fit_baseline_app1$coef_table["log_dist", 1] * log_dist +
-      fit_baseline_app1$coef_table["cntg", 1] * cntg +
-      fit_baseline_app1$coef_table["intl", 1] * intl_cfl)
-  )
+ch2_application1[, c("intl_cfl", "tij_bln") := .(
+  0L,
+  exp(fit_baseline_app1$coef_table["log_dist", 1] * log_dist +
+    fit_baseline_app1$coef_table["cntg", 1] * cntg +
+    fit_baseline_app1$coef_table["intl", 1] * intl_cfl)
+)]
 ```
 
 ### Step III: Solve the counterfactual model
@@ -176,38 +178,37 @@ fit_counterfactual_app1 <- fepoisson(
 As in the previous chapter, we need to extract the fixed effects.
 
 ```{r ch2_app1_counterfactual_4}
-fe_exporter_cfl <- fit_counterfactual_app1$fixed_effects$exporter |>
-  tibble::enframe(name = "exporter", value = "fe_exporter_cfl")
+fe_exporter_cfl <- data.table(
+  exporter = names(fit_counterfactual_app1$fixed_effects$exporter),
+  fe_exporter_cfl = fit_counterfactual_app1$fixed_effects$exporter
+)
 
-fe_importer_cfl <- fit_counterfactual_app1$fixed_effects$importer |>
-  tibble::enframe(name = "importer", value = "fe_importer_cfl")
+fe_importer_cfl <- data.table(
+  importer = names(fit_counterfactual_app1$fixed_effects$importer),
+  fe_importer_cfl = fit_counterfactual_app1$fixed_effects$importer
+)
 
-ch2_application1 <- ch2_application1 |>
-  left_join(fe_exporter_cfl, by = "exporter") |>
-  left_join(fe_importer_cfl, by = "importer")
+ch2_application1[fe_exporter_cfl, on = "exporter", fe_exporter_cfl := i.fe_exporter_cfl]
+ch2_application1[fe_importer_cfl, on = "importer", fe_importer_cfl := i.fe_importer_cfl]
 ```
 
 Now we go for Box #2 from page 106 in @yotov2016advanced, where the authors obtain the bilateral trade costs and multilateral resistances variables.
 
 ```{r ch2_app1_counterfactual_5}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    # outward multilateral resistance (omr)
-    omr_cfl = y * (e_r / exp(fe_exporter_cfl)),
+ch2_application1[, c("omr_cfl", "imr_cfl") := .(
+  # outward multilateral resistance (omr)
+  y * (e_r / exp(fe_exporter_cfl)),
 
-    # inward multilateral resistance (imr)
-    imr_cfl = e / (exp(fe_importer_cfl) * e_r)
-  )
+  # inward multilateral resistance (imr)
+  e / (exp(fe_importer_cfl) * e_r)
+)]
 ```
 
 Box #2 also shows how to compute trade's conditional general equilibrium effects, similar to what we did in step I.
 
 ```{r ch2_app1_counterfactual_6}
-ch2_application1 <- ch2_application1 |>
-  mutate(tradehat_cfl = predict(fit_counterfactual_app1, ch2_application1)) |>
-  group_by(exporter) |>
-  mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer), na.rm = T)) |>
-  ungroup()
+ch2_application1[, tradehat_cfl := predict(fit_counterfactual_app1, ch2_application1)]
+ch2_application1[, xi_cfl := sum(tradehat_cfl * (exporter != importer), na.rm = TRUE), by = exporter]
 ```
 
 Box #1 from page 107 in @yotov2016advanced can be simplified with R code. To construct the iterative procedure to converge to full endowment general equilibrium effects, we start by creating the required columns and parameters so that we will deviate from the original approach.
@@ -215,55 +216,40 @@ Box #1 from page 107 in @yotov2016advanced can be simplified with R code. To con
 We start computing the change in bilateral trade costs (changes in $t_{ij}$) and trade deficit or surplus ($\phi$).
 
 ```{r ch2_app1_counterfactual_7}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    change_tij = tij_cfl / tij_bln,
-    phi = ifelse(importer == exporter, e / y, 0)
-  ) |>
-  group_by(exporter) |>
-  mutate(phi = max(phi, na.rm = T)) |>
-  ungroup()
+ch2_application1[, c("change_tij", "phi") := .(
+  tij_cfl / tij_bln,
+  fifelse(importer == exporter, e / y, 0)
+)]
+ch2_application1[, phi := max(phi, na.rm = TRUE), by = exporter]
 ```
 
 We compute the change in prices for exporters (changes in $p_i$) and importers (changes in $p_j$).
 
 ```{r ch2_app1_counterfactual_8}
-ch2_application1 <- ch2_application1 |>
-  group_by(exporter) |>
-  mutate(change_p_i = ((exp(fe_exporter_cfl) / e_r) /
-    (exp(fe_exporter_bln) / e_r))^(1 / (1 - sigma))) |>
-  ungroup() |>
-  group_by(importer) |>
-  mutate(
-    change_p_j = ifelse(importer == exporter, change_p_i, 0),
-    change_p_j = max(change_p_j, na.rm = T)
-  ) |>
-  ungroup()
+ch2_application1[, change_p_i := ((exp(fe_exporter_cfl) / e_r) /
+  (exp(fe_exporter_bln) / e_r))^(1 / (1 - sigma)), by = exporter]
+ch2_application1[, change_p_j := fifelse(importer == exporter, change_p_i, 0)]
+ch2_application1[, change_p_j := max(change_p_j, na.rm = TRUE), by = importer]
 ```
 
 Next, we need to compute the counterfactual trade flows.
 
 ```{r ch2_app1_counterfactual_9}
-ch2_application1 <- ch2_application1 |>
-  mutate(trade_cfl = tradehat_cfl * change_p_i * change_p_j)
+ch2_application1[, trade_cfl := tradehat_cfl * change_p_i * change_p_j]
 ```
 
 To conclude the steps from Box #1 we need a `while()` loop and iterate until convergence is reached. We need to duplicate some columns under new names for the loop operations because we will overwrite them using the iterative steps.
 
 ```{r ch2_app1_counterfactual_10}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    omr_cfl_0 = omr_cfl,
-    imr_cfl_0 = imr_cfl,
-    change_imr_full_0 = 1,
-    change_omr_full_0 = 1,
-    change_p_i_0 = change_p_i,
-    change_p_j_0 = change_p_j,
-    fe_exporter_cfl_0 = fe_exporter_cfl,
-    fe_importer_cfl_0 = fe_importer_cfl,
-    tradehat_0 = tradehat_cfl,
-    e_r_cfl_0 = e_r
-  )
+ch2_application1[, c(
+  "omr_cfl_0", "imr_cfl_0", "change_imr_full_0", "change_omr_full_0",
+  "change_p_i_0", "change_p_j_0", "fe_exporter_cfl_0", "fe_importer_cfl_0",
+  "tradehat_0", "e_r_cfl_0"
+) := .(
+  omr_cfl, imr_cfl, 1, 1,
+  change_p_i, change_p_j, fe_exporter_cfl, fe_importer_cfl,
+  tradehat_cfl, e_r
+)]
 ```
 
 We run the loop, which cannot be divided into smaller pieces because the step $N$ depends on the step $N-1$. As in the previous application, the idea is for the stopping criteria in this iteration is that the model converges when prices stop changing.
@@ -271,9 +257,8 @@ We run the loop, which cannot be divided into smaller pieces because the step $N
 ```{r ch2_app1_counterfactual_11}
 i <- 1
 while (sd_dif > 1e-5 | max_dif > 1e-5) {
-  ch2_application1 <- ch2_application1 |>
-    mutate(trade_1 = tradehat_0 * change_p_i_0 * change_p_j_0 /
-      (change_omr_full_0 * change_imr_full_0))
+  ch2_application1[, trade_1 := tradehat_0 * change_p_i_0 * change_p_j_0 /
+      (change_omr_full_0 * change_imr_full_0)]
 
   # repeat the counterfactual model
   fit_counterfactual_app1_2 <- fepoisson(
@@ -283,54 +268,40 @@ while (sd_dif > 1e-5 | max_dif > 1e-5) {
     control = list(iter_max = 500, return_fe = TRUE)
   )
 
-  fe_exporter_cfl_1 <- fit_counterfactual_app1_2$fixed_effects$exporter |>
-    tibble::enframe(name = "exporter", value = "fe_exporter_cfl_1")
+  fe_exporter_cfl_1 <- data.table(
+    exporter = names(fit_counterfactual_app1_2$fixed_effects$exporter),
+    fe_exporter_cfl_1 = fit_counterfactual_app1_2$fixed_effects$exporter
+  )
 
-  fe_importer_cfl_1 <- fit_counterfactual_app1_2$fixed_effects$importer |>
-    tibble::enframe(name = "importer", value = "fe_importer_cfl_1")
+  fe_importer_cfl_1 <- data.table(
+    importer = names(fit_counterfactual_app1_2$fixed_effects$importer),
+    fe_importer_cfl_1 = fit_counterfactual_app1_2$fixed_effects$importer
+  )
 
-  ch2_application1$fe_exporter_cfl_1 <- NULL
-  ch2_application1$fe_importer_cfl_1 <- NULL
-    
-  ch2_application1 <- ch2_application1 |>
-    left_join(fe_exporter_cfl_1, by = "exporter") |>
-    left_join(fe_importer_cfl_1, by = "importer")
+  ch2_application1[fe_exporter_cfl_1, on = "exporter", fe_exporter_cfl_1 := i.fe_exporter_cfl_1]
+  ch2_application1[fe_importer_cfl_1, on = "importer", fe_importer_cfl_1 := i.fe_importer_cfl_1]
 
   # compute the conditional general equilibrium effects of trade
-  ch2_application1 <- ch2_application1 |>
-    mutate(tradehat_1 = predict(fit_counterfactual_app1_2, ch2_application1)) |>
-    group_by(exporter) |>
-    mutate(y_cfl_1 = sum(tradehat_1, na.rm = T)) |>
-    ungroup() |>
-    mutate(e_cfl_1 = ifelse(importer == exporter, phi * y_cfl_1, 0)) |>
-    group_by(importer) |>
-    mutate(e_cfl_1 = max(e_cfl_1, na.rm = T)) |>
-    ungroup() |>
-    mutate(
-      e_r_cfl_1 = ifelse(importer == paste0("0-", ref_country), e_cfl_1, 0),
-      e_r_cfl_1 = max(e_r_cfl_1, na.rm = T)
-    )
+  ch2_application1[, tradehat_1 := predict(fit_counterfactual_app1_2, ch2_application1)]
+  ch2_application1[, y_cfl_1 := sum(tradehat_1, na.rm = TRUE), by = exporter]
+  ch2_application1[, e_cfl_1 := fifelse(importer == exporter, phi * y_cfl_1, 0)]
+  ch2_application1[, e_cfl_1 := max(e_cfl_1, na.rm = TRUE), by = importer]
+  ch2_application1[, e_r_cfl_1 := fifelse(importer == ref_country0, e_cfl_1, 0)]
+  ch2_application1[, e_r_cfl_1 := max(e_r_cfl_1, na.rm = TRUE)]
 
   # compute the change in prices for exporters and importers
-  ch2_application1 <- ch2_application1 |>
-    mutate(change_p_i_1 = ((exp(fe_exporter_cfl_1) / e_r_cfl_1) /
-      (exp(fe_exporter_cfl_0) / e_r_cfl_0))^(1 / (1 - sigma)))
+  ch2_application1[, change_p_i_1 := ((exp(fe_exporter_cfl_1) / e_r_cfl_1) /
+    (exp(fe_exporter_cfl_0) / e_r_cfl_0))^(1 / (1 - sigma))]
 
   # compute the change in prices for exporters and importers
-  ch2_application1 <- ch2_application1 |>
-    group_by(importer) |>
-    mutate(
-      change_p_j_1 = ifelse(importer == exporter, change_p_i_1, 0),
-      change_p_j_1 = max(change_p_j_1, na.rm = T)
-    ) |>
-    ungroup()
+  ch2_application1[, change_p_j_1 := fifelse(importer == exporter, change_p_i_1, 0)]
+  ch2_application1[, change_p_j_1 := max(change_p_j_1, na.rm = TRUE), by = importer]
 
   # compute both outward and inward multilateral resistance
-  ch2_application1 <- ch2_application1 |>
-    mutate(
-      omr_cfl_1 = (y_cfl_1 * e_r_cfl_1) / exp(fe_exporter_cfl_1),
-      imr_cfl_1 = e_cfl_1 / (exp(fe_importer_cfl_1) * e_r_cfl_1)
-    )
+  ch2_application1[, c("omr_cfl_1", "imr_cfl_1") := .(
+    (y_cfl_1 * e_r_cfl_1) / exp(fe_exporter_cfl_1),
+    e_cfl_1 / (exp(fe_importer_cfl_1) * e_r_cfl_1)
+  )]
 
   # update the differences
   max_dif <- abs(max(ch2_application1$change_p_i_0 - change_price_i_old))
@@ -338,22 +309,22 @@ while (sd_dif > 1e-5 | max_dif > 1e-5) {
   change_price_i_old <- ch2_application1$change_p_i_0
 
   # compute changes in outward and inward multilateral resistance
-  ch2_application1 <- ch2_application1 |>
-    mutate(
-      change_omr_full_1 = omr_cfl_1 / omr_cfl_0,
-      change_imr_full_1 = imr_cfl_1 / imr_cfl_0,
-      omr_cfl_0 = omr_cfl_1,
-      imr_cfl_0 = imr_cfl_1,
-      change_omr_full_0 = change_omr_full_1,
-      change_imr_full_0 = change_imr_full_1,
-      change_p_i_0 = change_p_i_1,
-      change_p_j_0 = change_p_j_1,
-      fe_exporter_cfl_0 = fe_exporter_cfl_1,
-      fe_importer_cfl_0 = fe_importer_cfl_1,
-      tradehat_0 = tradehat_1,
-      e_r_cfl_0 = e_r_cfl_1
-    ) |>
-    select(-c(fe_exporter_cfl_1, fe_importer_cfl_1))
+  ch2_application1[, c(
+    "change_omr_full_1", "change_imr_full_1",
+    "omr_cfl_0", "imr_cfl_0",
+    "change_p_i_0", "change_p_j_0",
+    "fe_exporter_cfl_0", "fe_importer_cfl_0",
+    "tradehat_0", "e_r_cfl_0"
+  ) := .(
+    omr_cfl_1 / omr_cfl_0,
+    imr_cfl_1 / imr_cfl_0,
+    omr_cfl_1, imr_cfl_1,
+    change_p_i_1, change_p_j_1,
+    fe_exporter_cfl_1, fe_importer_cfl_1,
+    tradehat_1, e_r_cfl_1
+  )]
+  ch2_application1[, c("change_omr_full_0", "change_imr_full_0") := .(change_omr_full_1, change_imr_full_1)]
+  ch2_application1[, c("fe_exporter_cfl_1", "fe_importer_cfl_1") := NULL]
 
   i <- i + 1
 }
@@ -362,50 +333,36 @@ while (sd_dif > 1e-5 | max_dif > 1e-5) {
 Box #1 from page 108 in @yotov2016advanced shows the steps to obtain different endowments, which can be divided into smaller pieces. We start computing the full endowment general equilibrium of factory-gate price (changes in $p_i^{full}$ and $p_j^{full}$) and the full endowment general equilibrium of output ($y^{full}$).
 
 ```{r ch2_app1_counterfactual_12}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    change_p_i_full = ((exp(fe_exporter_cfl_0) / e_r_cfl_0) /
-      (exp(fe_exporter_bln) / e_r))^(1 / (1 - sigma)),
-    change_p_j_full = change_p_i_full * (exporter == importer)
-  ) |>
-  group_by(importer) |>
-  mutate(change_p_j_full = max(change_p_j_full, na.rm = T)) |>
-  ungroup() |>
-  mutate(y_full = change_p_i_full * y)
+ch2_application1[, change_p_i_full := ((exp(fe_exporter_cfl_0) / e_r_cfl_0) /
+  (exp(fe_exporter_bln) / e_r))^(1 / (1 - sigma))]
+ch2_application1[, change_p_j_full := change_p_i_full * (exporter == importer)]
+ch2_application1[, change_p_j_full := max(change_p_j_full, na.rm = TRUE), by = importer]
+ch2_application1[, y_full := change_p_i_full * y]
 ```
 
 We compute the full endowment general equilibrium of aggregate expenditures ($e^{full}$ and $e_r^{full}$).
 
 ```{r ch2_app1_counterfactual_13}
-ch2_application1 <- ch2_application1 |>
-  mutate(e_full = change_p_j_full * e * (exporter == importer)) |>
-  group_by(importer) |>
-  mutate(e_full = max(e_full, na.rm = TRUE)) |>
-  ungroup() |>
-  mutate(
-    e_full_r = e_full * (importer == ref_country0),
-    e_full_r = max(e_full_r, na.rm = T)
-  )
+ch2_application1[, e_full := change_p_j_full * e * (exporter == importer)]
+ch2_application1[, e_full := max(e_full, na.rm = TRUE), by = importer]
+ch2_application1[, e_full_r := e_full * (importer == ref_country0)]
+ch2_application1[, e_full_r := max(e_full_r, na.rm = TRUE)]
 ```
 
 With the aggregate expenditure, we proceed to obtain the full endowment general equilibrium of the outward multilateral resistance ($OMR^{full}$) and inward multilateral resistance ($IMR^{full}$).
 
 ```{r ch2_app1_counterfactual_14}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    omr_full = y_full * e_r_cfl_0 / exp(fe_exporter_cfl_0),
-    imr_full = e_full / (exp(fe_importer_cfl_0) * e_full_r)
-  )
+ch2_application1[, c("omr_full", "imr_full") := .(
+  y_full * e_r_cfl_0 / exp(fe_exporter_cfl_0),
+  e_full / (exp(fe_importer_cfl_0) * e_full_r)
+)]
 ```
 
 Finally, we proceed to compute the full endowment general equilibrium of trade ($\xi^{full}$).
 
 ```{r ch2_app1_counterfactual_15}
-ch2_application1 <- ch2_application1 |>
-  mutate(x_full = (y_full * e_full * tij_cfl) / (imr_full * omr_full)) |>
-  group_by(exporter) |>
-  mutate(xi_full = sum(x_full * (importer != exporter), na.rm = T)) |>
-  ungroup()
+ch2_application1[, x_full := (y_full * e_full * tij_cfl) / (imr_full * omr_full)]
+ch2_application1[, xi_full := sum(x_full * (importer != exporter), na.rm = TRUE), by = exporter]
 ```
 
 ### Step IV: Collect, construct, and report indexes of interest
@@ -413,24 +370,25 @@ ch2_application1 <- ch2_application1 |>
 Box #1 from page 108 in @yotov2016advanced consists of constructing the percentage change of the general equilibrium indexes. The steps are direct, we need to compute the change in full endowment general equilibrium factory-gate price on the export side (changes in $p_i^{full}$), the change in conditional and full general equilibrium outward multilateral resistances (changes in $OMR^{CFL}$ and $OMR^{full}$), and the change in conditional and full general equilibrium international trade (changes in $\xi^{CFL}$ and $\xi^{full}$).
 
 ```{r ch2_app1_indexes_1}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    change_price_full = (change_p_i_full - 1) * 100,
-    change_omr_cfl = (omr_cfl^(1 / (1 - sigma)) / omr_bln^(1 / (1 - sigma)) - 1) * 100,
-    change_omr_full = (omr_full^(1 / (1 - sigma)) / omr_bln^(1 / (1 - sigma)) - 1) * 100,
-    change_xi_cfl = (xi_cfl / xi_bln - 1) * 100,
-    change_xi_full = (xi_full / xi_bln - 1) * 100
-  )
+ch2_application1[, c(
+  "change_price_full", "change_omr_cfl", "change_omr_full",
+  "change_xi_cfl", "change_xi_full"
+) := .(
+  (change_p_i_full - 1) * 100,
+  (omr_cfl^(1 / (1 - sigma)) / omr_bln^(1 / (1 - sigma)) - 1) * 100,
+  (omr_full^(1 / (1 - sigma)) / omr_bln^(1 / (1 - sigma)) - 1) * 100,
+  (xi_cfl / xi_bln - 1) * 100,
+  (xi_full / xi_bln - 1) * 100
+)]
 ```
 
 We also need to do something very similar for the importers in order to be able to recreate figure 7 later.
 
 ```{r ch2_app1_indexes_2}
-ch2_application1 <- ch2_application1 |>
-  mutate(
-    change_imr_full = -(imr_full^(1 / (1 - sigma)) / imr_bln^(1 / (1 - sigma)) - 1) * 100,
-    rgdp = ((y_full / imr_full^(1 / (1 - sigma))) / (y / imr_bln^(1 / (1 - sigma))) - 1) * 100
-  )
+ch2_application1[, c("change_imr_full", "rgdp") := .(
+  -(imr_full^(1 / (1 - sigma)) / imr_bln^(1 / (1 - sigma)) - 1) * 100,
+  ((y_full / imr_full^(1 / (1 - sigma))) / (y / imr_bln^(1 / (1 - sigma))) - 1) * 100
+)]
 ```
 
 ### Figures replication
@@ -440,33 +398,31 @@ With all of the steps above, we are ready to create the plots from page 110. in 
 We need to filter rows and to obtain $\log(y)$.
 
 ```{r ch2_app1_figures_1}
-ch2_application1 <- ch2_application1 |>
-  filter(exporter == importer) |>
-  select(
-    exporter, importer, y, change_xi_cfl, change_xi_full, rgdp,
-    change_price_full, change_imr_full
-  ) |>
-  mutate(log_y = log(y))
+ch2_application1 <- ch2_application1[
+  exporter == importer,
+  .(exporter, importer, y, change_xi_cfl, change_xi_full, rgdp, change_price_full, change_imr_full)
+]
+ch2_application1[, log_y := log(y)]
 ```
 
 In addition, the original code removes Hong Kong for visualization scale purposes.
 
 ```{r ch2_app1_figures_2}
-data_figure_6 <- ch2_application1 |>
-  filter(exporter != "HKG") |>
-  select(x = log_y, change_xi_cfl, change_xi_full) |>
-  pivot_longer(names_to = "change", values_to = "y", -x) |>
-  mutate(
-    change = case_when(
-      change == "change_xi_cfl" ~ "Conditional general equilibrium",
-      TRUE ~ "Full endowment general equilibrium"
-    )
-  )
+data_figure_6 <- ch2_application1[
+  exporter != "HKG",
+  .(x = log_y, change_xi_cfl, change_xi_full)
+]
+
+data_figure_6 <- melt(data_figure_6, id.vars = "x", variable.name = "change", value.name = "y",
+  variable.factor = FALSE)
+
+data_figure_6[, change := fcase(
+  change == "change_xi_cfl", "Conditional general equilibrium",
+  default = "Full endowment general equilibrium"
+)]
 
 DT::datatable(
-  ch2_application1 |>
-    filter(exporter != "HKG") |>
-    select(exporter, log_y, change_xi_cfl, change_xi_full)
+  ch2_application1[exporter != "HKG", .(exporter, log_y, change_xi_cfl, change_xi_full)]
 )
 
 ggplot(data = data_figure_6) +
@@ -486,22 +442,20 @@ ggplot(data = data_figure_6) +
 To create Figure 7, we proceed in the same way as Figure 6.
 
 ```{r ch2_app1_figures_3}
-data_figure_7 <- ch2_application1 |>
-  filter(exporter != "HKG") |>
-  select(x = log_y, change_imr_full, change_price_full, rgdp) |>
-  pivot_longer(names_to = "change", values_to = "y", -x) |>
-  mutate(
-    change = case_when(
-      change == "change_imr_full" ~ "-(inward multilateral resistances)",
-      change == "change_price_full" ~ "Factory-gate price",
-      TRUE ~ "Real GDP"
-    )
-  )
+data_figure_7 <- ch2_application1[
+  exporter != "HKG",
+  .(x = log_y, change_imr_full, change_price_full, rgdp)
+]
+data_figure_7 <- melt(data_figure_7, id.vars = "x", variable.name = "change", value.name = "y",
+  variable.factor = FALSE)
+data_figure_7[, change := fcase(
+  change == "change_imr_full", "-(inward multilateral resistances)",
+  change == "change_price_full", "Factory-gate price",
+  default = "Real GDP"
+)]
 
 DT::datatable(
-  ch2_application1 |>
-    filter(exporter != "HKG") |>
-    select(exporter, log_y, change_imr_full, change_price_full, rgdp)
+  ch2_application1[exporter != "HKG", .(exporter, log_y, change_imr_full, change_price_full, rgdp)]
 )
 
 ggplot(data = data_figure_7) +
@@ -540,45 +494,44 @@ change_price_i_old <- 0
 In this case, we shall keep the panel dimension of the dataset to identify the effects of RTAs and comprehensively capture the impact of all time-invariant trade costs with the use of pair fixed effects.
 
 ```{r ch2_app2_data_1}
-ch2_application2 <- agtpa_applications |>
-  select(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny, rta) |>
-  filter(year %in% seq(1986, 2006, 4)) |>
-  mutate(
-    log_dist = log(dist),
-    intl = ifelse(exporter != importer, 1, 0),
-    exporter = ifelse(exporter == ref_country, ref_country0, exporter),
-    importer = ifelse(importer == ref_country, ref_country0, importer)
-  ) |>
-  # Create Yit
-  group_by(exporter, year) |>
-  mutate(y = sum(trade, na.rm = T)) |>
-  # Create Eit
-  group_by(importer, year) |>
-  mutate(e = sum(trade, na.rm = T)) |>
-  # Create Er
-  group_by(year) |>
-  mutate(e_r = max(ifelse(importer == ref_country0, e, NA), na.rm = T)) |>
-  arrange(importer)
+ch2_application2 <- agtpa_applications[
+  year %in% seq(1986, 2006, 4),
+  .(exporter, importer, pair_id, year, trade, dist, cntg, lang, clny, rta)
+]
+
+ch2_application2[, c("log_dist", "intl", "exporter", "importer") := .(
+  log(dist),
+  fifelse(exporter != importer, 1L, 0L),
+  fifelse(exporter == ref_country, ref_country0, exporter),
+  fifelse(importer == ref_country, ref_country0, importer)
+)]
+
+# Create Yit
+ch2_application2[, y := sum(trade, na.rm = TRUE), by = .(exporter, year)]
+
+# Create Eit
+ch2_application2[, e := sum(trade, na.rm = TRUE), by = .(importer, year)]
+
+# Create Er
+ch2_application2[, e_r := max(fifelse(importer == ref_country0, e, NA_real_), na.rm = TRUE), by = year]
+
+setorder(ch2_application2, importer)
 ```
 
 Because of the panel dimension, we proceed as we did in the previous chapter by creating columns to combine exporter/importer and year alongside a pairing variable for the internal dyads for the fixed effects.
 
 ```{r ch2_app2_data_2}
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    exp_year = paste0(exporter, year),
-    imp_year = paste0(importer, year),
-    pair_id_2 = ifelse(exporter == importer, "0-domestic", pair_id)
-  )
+ch2_application2[, c("exp_year", "imp_year", "pair_id_2") := .(
+  paste0(exporter, year),
+  paste0(importer, year),
+  fifelse(exporter == importer, "0-domestic", pair_id)
+)]
 ```
 
 In addition, we need to compute the trade sum to filter the cases where the sum by dyad is zero.
 
 ```{r ch2_app2_data_3}
-ch2_application2 <- ch2_application2 |>
-  group_by(pair_id) |>
-  mutate(sum_trade = sum(trade, na.rm = T)) |>
-  ungroup()
+ch2_application2[, sum_trade := sum(trade, na.rm = TRUE), by = pair_id]
 ```
 
 ### Step 1: Solve the baseline gravity model
@@ -598,19 +551,24 @@ fit_baseline_app2 <- fepoisson(
 We can construct the variables for exporter-time, importer-time, and internal dyads with the estimated fixed effects from the model.
 
 ```{r ch2_app2_baseline_2}
-fe_exporter_bln <- fit_baseline_app2$fixed_effects$exp_year |>
-  tibble::enframe(name = "exp_year", value = "fe_exporter_bln")
+fe_exporter_bln <- data.table(
+  exp_year = names(fit_baseline_app2$fixed_effects$exp_year),
+  fe_exporter_bln = fit_baseline_app2$fixed_effects$exp_year
+)
 
-fe_importer_bln <- fit_baseline_app2$fixed_effects$imp_year |>
-  tibble::enframe(name = "imp_year", value = "fe_importer_bln")
+fe_importer_bln <- data.table(
+  imp_year = names(fit_baseline_app2$fixed_effects$imp_year),
+  fe_importer_bln = fit_baseline_app2$fixed_effects$imp_year
+)
 
-fe_pair_id_2_bln <- fit_baseline_app2$fixed_effects$pair_id_2 |>
-  tibble::enframe(name = "pair_id_2", value = "fe_pair_id_2_bln")
+fe_pair_id_2_bln <- data.table(
+  pair_id_2 = names(fit_baseline_app2$fixed_effects$pair_id_2),
+  fe_pair_id_2_bln = fit_baseline_app2$fixed_effects$pair_id_2
+)
 
-ch2_application2 <- ch2_application2 |>
-  left_join(fe_exporter_bln, by = "exp_year") |>
-  left_join(fe_importer_bln, by = "imp_year") |>
-  left_join(fe_pair_id_2_bln, by = "pair_id_2")
+ch2_application2[fe_exporter_bln, on = "exp_year", fe_exporter_bln := i.fe_exporter_bln]
+ch2_application2[fe_importer_bln, on = "imp_year", fe_importer_bln := i.fe_importer_bln]
+ch2_application2[fe_pair_id_2_bln, on = "pair_id_2", fe_pair_id_2_bln := i.fe_pair_id_2_bln]
 ```
 
 #### Stage 2: Regress the estimates of pair fixed effects on gravity variables and country fixed effects
@@ -619,18 +577,16 @@ Box #1 from page 113 in @yotov2016advanced can be divided into smaller chunks.
 We start by filtering to keep the observation from 1994, and then we compute the trade costs ($\bar{t}_{ij}$ and $t_{ij}^{BLN}$) from the internal dyads fixed effects and the estimated RTA coefficient.
 
 ```{r ch2_app2_costs_1}
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    tij_bar = exp(fe_pair_id_2_bln),
-    tij_bln = exp(fe_pair_id_2_bln + fit_baseline_app2$coef_table["rta", 1] * rta)
-  )
+ch2_application2[, c("tij_bar", "tij_bln") := .(
+  exp(fe_pair_id_2_bln),
+  exp(fe_pair_id_2_bln + fit_baseline_app2$coef_table["rta", 1] * rta)
+)]
 ```
 
 We need to create a table for the year 1994 and international flows, which we will use to predict the trade costs for the observations with zero trade flows. The reason to create a sub-table, instead of filtering observations in the regression function, is that it eases posterior work to predict the costs.
 
 ```{r ch2_app2_costs_2}
-ch2_application2_2 <- ch2_application2 |>
-  filter(year == year_rta, exporter != importer)
+ch2_application2_2 <- ch2_application2[year == year_rta & exporter != importer]
 ```
 
 Now, unlike the book, which duplicates $\overline{t_{ij}}$ by creating $t_{ij}$, we can fit a regression to estimate the costs. This is something that emerges from the small differences between expressing an idea in Stata or R.
@@ -646,22 +602,18 @@ fit_costs_app2 <- fepoisson(
 With the regression, we add the fitted values to the sub-table.
 
 ```{r ch2_app2_costs_4}
-ch2_application2_2 <- ch2_application2_2 |>
-  mutate(tij_no_rta = predict(fit_costs_app2, newdata = ch2_application2_2)) |>
-  select(exporter, importer, tij_no_rta)
+ch2_application2_2[, tij_no_rta := predict(fit_costs_app2, newdata = ch2_application2_2)]
+ch2_application2_2 <- ch2_application2_2[, .(exporter, importer, tij_no_rta)]
 ```
 
 The final step is to keep the observations for the year 1994 in the original table and replace the missing costs with the predicted values.
 
 ```{r ch2_app2_costs_5}
-ch2_application2 <- ch2_application2 |>
-  filter(year == year_rta) |>
-  left_join(ch2_application2_2, by = c("exporter", "importer")) |>
-  mutate(
-    tij_bar = ifelse(is.na(tij_bar), tij_no_rta, tij_bar),
-    tij_bln = ifelse(is.na(tij_bln), tij_bar * exp(fit_baseline_app2$coef_table["rta", 1] * rta), tij_bln)
-  ) |>
-  select(-tij_no_rta)
+ch2_application2 <- ch2_application2[year == year_rta]
+ch2_application2[ch2_application2_2, on = .(exporter, importer), tij_no_rta := i.tij_no_rta]
+ch2_application2[is.na(tij_bar), tij_bar := tij_no_rta]
+ch2_application2[is.na(tij_bln), tij_bln := tij_bar * exp(fit_baseline_app2$coef_table["rta", 1] * rta)]
+ch2_application2[, tij_no_rta := NULL]
 ```
 
 Box #2 from page 113 in @yotov2016advanced is easier to replicate. The first part of completing Box #2 involves solving the constrained baseline gravity model.
@@ -678,31 +630,30 @@ fit_constrained_app2 <- fepoisson(
 With the fitted model, we can add the prediction and the $\xi^{BLN}$ column.
 
 ```{r ch2_app2_constrained_2}
-ch2_application2 <- ch2_application2 |>
-  mutate(tradehat_bln = predict(fit_constrained_app2, ch2_application2)) |>
-  group_by(exporter) |>
-  mutate(xi_bln = sum(tradehat_bln * (exporter != importer), na.rm = T)) |>
-  ungroup()
+ch2_application2[, tradehat_bln := predict(fit_constrained_app2, ch2_application2)]
+ch2_application2[, xi_bln := sum(tradehat_bln * (exporter != importer), na.rm = TRUE), by = exporter]
 ```
 
 The book specifies that all other baseline indexes of interest can be obtained by applying the same procedure described in the previous application. Here we will obtain the multilateral resistances terms ($OMR^{BLN}$ and $IMR^{BLN}$) by adding the fixed effects from the constrained model to the data.
 
 ```{r ch2_app2_additional_1}
-fe_exporter_cns <- fit_constrained_app2$fixed_effects$exporter |>
-  tibble::enframe(name = "exporter", value = "fe_exporter_cns")
+fe_exporter_cns <- data.table(
+  exporter = names(fit_constrained_app2$fixed_effects$exporter),
+  fe_exporter_cns = fit_constrained_app2$fixed_effects$exporter
+)
 
-fe_importer_cns <- fit_constrained_app2$fixed_effects$importer |>
-  tibble::enframe(name = "importer", value = "fe_importer_cns")
+fe_importer_cns <- data.table(
+  importer = names(fit_constrained_app2$fixed_effects$importer),
+  fe_importer_cns = fit_constrained_app2$fixed_effects$importer
+)
 
-ch2_application2 <- ch2_application2 |>
-  left_join(fe_exporter_cns, by = "exporter") |>
-  left_join(fe_importer_cns, by = "importer")
+ch2_application2[fe_exporter_cns, on = "exporter", fe_exporter_cns := i.fe_exporter_cns]
+ch2_application2[fe_importer_cns, on = "importer", fe_importer_cns := i.fe_importer_cns]
 
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    omr_bln = y * e_r / exp(fe_exporter_cns),
-    imr_bln = e / (exp(fe_importer_cns) * e_r)
-  )
+ch2_application2[, c("omr_bln", "imr_bln") := .(
+  y * e_r / exp(fe_exporter_cns),
+  e / (exp(fe_importer_cns) * e_r)
+)]
 ```
 
 ### Step II: Define a counterfactual scenario
@@ -710,11 +661,10 @@ ch2_application2 <- ch2_application2 |>
 Box #1 from page 114 in @yotov2016advanced is direct and consists in replacing the RTA values by zero if the pairs of countries are NAFTA members.
 
 ```{r ch2_app2_counterfactual_1}
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    rta_no_nafta = ifelse(exporter %in% countries_rta & importer %in% countries_rta, 0, rta),
-    tij_cfl = tij_bar * exp(fit_baseline_app2$coef_table["rta", 1] * rta_no_nafta)
-  )
+ch2_application2[, rta_no_nafta := fifelse(
+  exporter %in% countries_rta & importer %in% countries_rta, 0, rta
+)]
+ch2_application2[, tij_cfl := tij_bar * exp(fit_baseline_app2$coef_table["rta", 1] * rta_no_nafta)]
 ```
 
 ### Step III: Solve the counterfactual model
@@ -733,84 +683,67 @@ fit_counterfactual_app2 <- fepoisson(
 With the fitted model we add the fixed effects.
 
 ```{r ch2_app2_counterfactual_3}
-fe_exporter_cfl <- fit_counterfactual_app2$fixed_effects$exporter |>
-  tibble::enframe(name = "exporter", value = "fe_exporter_cfl")
+fe_exporter_cfl <- data.table(
+  exporter = names(fit_counterfactual_app2$fixed_effects$exporter),
+  fe_exporter_cfl = fit_counterfactual_app2$fixed_effects$exporter
+)
 
-fe_importer_cfl <- fit_counterfactual_app2$fixed_effects$importer |>
-  tibble::enframe(name = "importer", value = "fe_importer_cfl")
+fe_importer_cfl <- data.table(
+  importer = names(fit_counterfactual_app2$fixed_effects$importer),
+  fe_importer_cfl = fit_counterfactual_app2$fixed_effects$importer
+)
 
-ch2_application2 <- ch2_application2 |>
-  left_join(fe_exporter_cfl, by = "exporter") |>
-  left_join(fe_importer_cfl, by = "importer")
+ch2_application2[fe_exporter_cfl, on = "exporter", fe_exporter_cfl := i.fe_exporter_cfl]
+ch2_application2[fe_importer_cfl, on = "importer", fe_importer_cfl := i.fe_importer_cfl]
 ```
 
 As we did in stage 2, we compute the multilateral resistance terms.
 
 ```{r ch2_app2_counterfactual_4}
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    omr_cfl = y * e_r / exp(fe_exporter_cfl),
-    imr_cfl = e / (exp(fe_importer_cfl) * e_r)
-  )
+ch2_application2[, c("omr_cfl", "imr_cfl") := .(
+  y * e_r / exp(fe_exporter_cfl),
+  e / (exp(fe_importer_cfl) * e_r)
+)]
 ```
 
 Up to this point, we are ready to compute the conditional general equilibrium effects of trade.
 
 ```{r ch2_app2_counterfactual_5}
-ch2_application2 <- ch2_application2 |>
-  mutate(tradehat_cfl = predict(fit_counterfactual_app2, ch2_application2)) |>
-  group_by(exporter) |>
-  mutate(xi_cfl = sum(tradehat_cfl * (exporter != importer), na.rm = T)) |>
-  ungroup()
+ch2_application2[, tradehat_cfl := predict(fit_counterfactual_app2, ch2_application2)]
+ch2_application2[, xi_cfl := sum(tradehat_cfl * (exporter != importer), na.rm = TRUE), by = exporter]
 ```
 
 Now we are going to compute the full endowment general equilibrium effects. We start by repeating the steps to obtain changes in $t_{ij}$ $\phi$ from the last section.
 
 ```{r ch2_app2_counterfactual_6}
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    change_tij = tij_cfl / tij_bln,
-    phi = ifelse(importer == exporter, e / y, 0)
-  ) |>
-  group_by(exporter) |>
-  mutate(phi = max(phi, na.rm = T)) |>
-  ungroup()
+ch2_application2[, c("change_tij", "phi") := .(
+  tij_cfl / tij_bln,
+  fifelse(importer == exporter, e / y, 0)
+)]
+ch2_application2[, phi := max(phi, na.rm = TRUE), by = exporter]
 ```
 
 Now we compute changes in $p_i$, $p_j$ and $trade^{CFL}$, which is just a repetition of the previous steps with some adaptation.
 
 ```{r ch2_app2_counterfactual_7}
-ch2_application2 <- ch2_application2 |>
-  group_by(exporter) |>
-  mutate(change_p_i = ((exp(fe_exporter_cfl) / e_r) / (exp(fe_exporter_cns) / e_r))^(1 / (1 - sigma))) |>
-  ungroup() |>
-  group_by(importer) |>
-  mutate(
-    change_p_j = ifelse(importer == exporter, change_p_i, 0),
-    change_p_j = max(change_p_j, na.rm = T)
-  ) |>
-  ungroup()
-
-ch2_application2 <- ch2_application2 |>
-  mutate(trade_cfl = tradehat_cfl * change_p_i * change_p_j)
+ch2_application2[, change_p_i := ((exp(fe_exporter_cfl) / e_r) / (exp(fe_exporter_cns) / e_r))^(1 / (1 - sigma)), by = exporter]
+ch2_application2[, change_p_j := fifelse(importer == exporter, change_p_i, 0)]
+ch2_application2[, change_p_j := max(change_p_j, na.rm = TRUE), by = importer]
+ch2_application2[, trade_cfl := tradehat_cfl * change_p_i * change_p_j]
 ```
 
 Then we need a `while()` loop, but before, we need to duplicate some columns under new names for the loop operations.
 
 ```{r ch2_app2_counterfactual_8}
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    omr_cfl_0 = omr_cfl,
-    imr_cfl_0 = imr_cfl,
-    change_imr_full_0 = 1,
-    change_omr_full_0 = 1,
-    change_p_i_0 = change_p_i,
-    change_p_j_0 = change_p_j,
-    fe_exporter_cfl_0 = fe_exporter_cfl,
-    fe_importer_cfl_0 = fe_importer_cfl,
-    tradehat_0 = tradehat_cfl,
-    e_r_cfl_0 = e_r
-  )
+ch2_application2[, c(
+  "omr_cfl_0", "imr_cfl_0", "change_imr_full_0", "change_omr_full_0",
+  "change_p_i_0", "change_p_j_0", "fe_exporter_cfl_0", "fe_importer_cfl_0",
+  "tradehat_0", "e_r_cfl_0"
+) := .(
+  omr_cfl, imr_cfl, 1, 1,
+  change_p_i, change_p_j, fe_exporter_cfl, fe_importer_cfl,
+  tradehat_cfl, e_r
+)]
 ```
 
 Furthermore, now we run the loop, where the step $N$ depends on the step $N-1$ as in the previous section.
@@ -818,8 +751,7 @@ Furthermore, now we run the loop, where the step $N$ depends on the step $N-1$ a
 ```{r ch2_app2_counterfactual_9}
 i2 <- 1
 while (sd_dif > 1e-3 | max_dif > 1e-3) {
-  ch2_application2 <- ch2_application2 |>
-    mutate(trade_1 = tradehat_0 * change_p_i_0 * change_p_j_0 / (change_omr_full_0 * change_imr_full_0))
+  ch2_application2[, trade_1 := tradehat_0 * change_p_i_0 * change_p_j_0 / (change_omr_full_0 * change_imr_full_0)]
 
   # repeat the counterfactual model
   fit_counterfactual_app2_2 <- fepoisson(
@@ -829,54 +761,40 @@ while (sd_dif > 1e-3 | max_dif > 1e-3) {
     control = list(iter_max = 500, return_fe = TRUE)
   )
 
-  fe_exporter_cfl <- fit_counterfactual_app2_2$fixed_effects$exporter |>
-    tibble::enframe(name = "exporter", value = "fe_exporter_cfl")
+  fe_exporter_cfl <- data.table(
+    exporter = names(fit_counterfactual_app2_2$fixed_effects$exporter),
+    fe_exporter_cfl = fit_counterfactual_app2_2$fixed_effects$exporter
+  )
 
-  fe_importer_cfl <- fit_counterfactual_app2_2$fixed_effects$importer |>
-    tibble::enframe(name = "importer", value = "fe_importer_cfl")
+  fe_importer_cfl <- data.table(
+    importer = names(fit_counterfactual_app2_2$fixed_effects$importer),
+    fe_importer_cfl = fit_counterfactual_app2_2$fixed_effects$importer
+  )
 
-  ch2_application2$fe_exporter_cfl <- NULL
-  ch2_application2$fe_importer_cfl <- NULL
-
-  ch2_application2 <- ch2_application2 |>
-    left_join(fe_exporter_cfl, by = "exporter") |>
-    left_join(fe_importer_cfl, by = "importer")
+  ch2_application2[fe_exporter_cfl, on = "exporter", fe_exporter_cfl := i.fe_exporter_cfl]
+  ch2_application2[fe_importer_cfl, on = "importer", fe_importer_cfl := i.fe_importer_cfl]
 
   # compute the conditional general equilibrium effects of trade
-  ch2_application2 <- ch2_application2 |>
-    mutate(tradehat_1 = predict(fit_counterfactual_app2_2, ch2_application2)) |>
-    group_by(exporter) |>
-    mutate(y_cfl_1 = sum(tradehat_1, na.rm = T)) |>
-    ungroup() |>
-    mutate(e_cfl_1 = ifelse(importer == exporter, phi * y_cfl_1, 0)) |>
-    group_by(importer) |>
-    mutate(e_cfl_1 = max(e_cfl_1, na.rm = T)) |>
-    ungroup() |>
-    mutate(
-      e_r_cfl_1 = ifelse(importer == ref_country0, e_cfl_1, 0),
-      e_r_cfl_1 = max(e_r_cfl_1, na.rm = T)
-    )
+  ch2_application2[, tradehat_1 := predict(fit_counterfactual_app2_2, ch2_application2)]
+  ch2_application2[, y_cfl_1 := sum(tradehat_1, na.rm = TRUE), by = exporter]
+  ch2_application2[, e_cfl_1 := fifelse(importer == exporter, phi * y_cfl_1, 0)]
+  ch2_application2[, e_cfl_1 := max(e_cfl_1, na.rm = TRUE), by = importer]
+  ch2_application2[, e_r_cfl_1 := fifelse(importer == ref_country0, e_cfl_1, 0)]
+  ch2_application2[, e_r_cfl_1 := max(e_r_cfl_1, na.rm = TRUE)]
 
   # compute the change in prices for exporters and importers
-  ch2_application2 <- ch2_application2 |>
-    mutate(change_p_i_1 = ((exp(fe_exporter_cfl) / e_r_cfl_1) /
-      (exp(fe_exporter_cfl_0) / e_r_cfl_0))^(1 / (1 - sigma)))
+  ch2_application2[, change_p_i_1 := ((exp(fe_exporter_cfl) / e_r_cfl_1) /
+    (exp(fe_exporter_cfl_0) / e_r_cfl_0))^(1 / (1 - sigma))]
 
   # compute the change in prices for exporters and importers
-  ch2_application2 <- ch2_application2 |>
-    group_by(importer) |>
-    mutate(
-      change_p_j_1 = ifelse(importer == exporter, change_p_i_1, 0),
-      change_p_j_1 = max(change_p_j_1, na.rm = T)
-    ) |>
-    ungroup()
+  ch2_application2[, change_p_j_1 := fifelse(importer == exporter, change_p_i_1, 0)]
+  ch2_application2[, change_p_j_1 := max(change_p_j_1, na.rm = TRUE), by = importer]
 
   # compute both outward and inward multilateral resistance
-  ch2_application2 <- ch2_application2 |>
-    mutate(
-      omr_cfl_1 = (y_cfl_1 * e_r_cfl_1) / exp(fe_exporter_cfl),
-      imr_cfl_1 = e_cfl_1 / (exp(fe_importer_cfl) * e_r_cfl_1)
-    )
+  ch2_application2[, c("omr_cfl_1", "imr_cfl_1") := .(
+    (y_cfl_1 * e_r_cfl_1) / exp(fe_exporter_cfl),
+    e_cfl_1 / (exp(fe_importer_cfl) * e_r_cfl_1)
+  )]
 
   # update the differences
   max_dif <- abs(max(ch2_application2$change_p_i_0 - change_price_i_old, na.rm = T))
@@ -884,22 +802,23 @@ while (sd_dif > 1e-3 | max_dif > 1e-3) {
   change_price_i_old <- ch2_application2$change_p_i_0
 
   # compute changes in outward and inward multilateral resistance
-  ch2_application2 <- ch2_application2 |>
-    mutate(
-      change_omr_full_1 = omr_cfl_1 / omr_cfl_0,
-      change_imr_full_1 = imr_cfl_1 / imr_cfl_0,
-      omr_cfl_0 = omr_cfl_1,
-      imr_cfl_0 = imr_cfl_1,
-      change_omr_full_0 = change_omr_full_1,
-      change_imr_full_0 = change_imr_full_1,
-      change_p_i_0 = change_p_i_1,
-      change_p_j_0 = change_p_j_1,
-      fe_exporter_cfl_0 = fe_exporter_cfl,
-      fe_importer_cfl_0 = fe_importer_cfl,
-      tradehat_0 = tradehat_1,
-      e_r_cfl_0 = e_r_cfl_1
-    ) |>
-    select(-fe_exporter_cfl, -fe_importer_cfl)
+  ch2_application2[, c(
+    "change_omr_full_1", "change_imr_full_1",
+    "omr_cfl_0", "imr_cfl_0",
+    "change_p_i_0", "change_p_j_0",
+    "fe_exporter_cfl_0", "fe_importer_cfl_0",
+    "tradehat_0", "e_r_cfl_0"
+  ) := .(
+    omr_cfl_1 / omr_cfl_0,
+    imr_cfl_1 / imr_cfl_0,
+    omr_cfl_1, imr_cfl_1,
+    change_p_i_1, change_p_j_1,
+    fe_exporter_cfl, fe_importer_cfl,
+    tradehat_1, e_r_cfl_1
+  )]
+
+  ch2_application2[, c("change_omr_full_0", "change_imr_full_0") := .(change_omr_full_1, change_imr_full_1)]
+  ch2_application2[, c("fe_exporter_cfl", "fe_importer_cfl") := NULL]
 
   i2 <- i2 + 1
 }
@@ -908,50 +827,36 @@ while (sd_dif > 1e-3 | max_dif > 1e-3) {
 The last loop allows us to obtain changes in $p_i^{full}$, $p_j^{full}$ and $y^{full}$.
 
 ```{r ch2_app2_counterfactual_10}
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    change_p_i_full = ((exp(fe_exporter_cfl_0) / e_r_cfl_0) /
-      (exp(fe_exporter_cns) / e_r))^(1 / (1 - sigma)),
-    change_p_j_full = change_p_i_full * (exporter == importer)
-  ) |>
-  group_by(importer) |>
-  mutate(change_p_j_full = max(change_p_j_full, na.rm = T)) |>
-  ungroup() |>
-  mutate(y_full = change_p_i_full * y)
+ch2_application2[, change_p_i_full := ((exp(fe_exporter_cfl_0) / e_r_cfl_0) /
+  (exp(fe_exporter_cns) / e_r))^(1 / (1 - sigma))]
+ch2_application2[, change_p_j_full := change_p_i_full * (exporter == importer)]
+ch2_application2[, change_p_j_full := max(change_p_j_full, na.rm = TRUE), by = importer]
+ch2_application2[, y_full := change_p_i_full * y]
 ```
 
 Now we compute $e^{full} and $e_r^{full}$.
 
 ```{r ch2_app2_counterfactual_11}
-ch2_application2 <- ch2_application2 |>
-  mutate(e_full = change_p_j_full * e * (exporter == importer)) |>
-  group_by(importer) |>
-  mutate(e_full = max(e_full, na.rm = T)) |>
-  ungroup() |>
-  mutate(
-    e_full_r = e_full * (importer == ref_country0),
-    e_full_r = max(e_full_r, na.rm = T)
-  )
+ch2_application2[, e_full := change_p_j_full * e * (exporter == importer)]
+ch2_application2[, e_full := max(e_full, na.rm = TRUE), by = importer]
+ch2_application2[, e_full_r := e_full * (importer == ref_country0)]
+ch2_application2[, e_full_r := max(e_full_r, na.rm = TRUE)]
 ```
 
 We also need `omr_full` and `imr_full`. This part of the code needs *attention* because the IMR full term is computed in a different way compared to the previous section. Please see the script *RTAsEffects.do*.
 
 ```{r ch2_app2_counterfactual_12}
-ch2_application2 <- ch2_application2 |>
-  mutate(
-    omr_full = y_full * e_r_cfl_0 / exp(fe_exporter_cfl_0),
-    imr_full = e_cfl_1 / (exp(fe_importer_cfl_0) * e_r_cfl_0)
-  )
+ch2_application2[, c("omr_full", "imr_full") := .(
+  y_full * e_r_cfl_0 / exp(fe_exporter_cfl_0),
+  e_cfl_1 / (exp(fe_importer_cfl_0) * e_r_cfl_0)
+)]
 ```
 
 To complete this step, we compute $\xi^{full}$.
 
 ```{r ch2_app2_counterfactual_13}
-ch2_application2 <- ch2_application2 |>
-  mutate(x_full = (y_full * e_full * tij_cfl) / (imr_full * omr_full)) |>
-  group_by(exporter) |>
-  mutate(xi_full = sum(x_full * (importer != exporter), na.rm = T)) |>
-  ungroup()
+ch2_application2[, x_full := (y_full * e_full * tij_cfl) / (imr_full * omr_full)]
+ch2_application2[, xi_full := sum(x_full * (importer != exporter), na.rm = TRUE), by = exporter]
 ```
 
 ### Step IV: Collect, construct, and report indexes of interest
@@ -961,52 +866,59 @@ This step aims to reproduce the table from page 116 in @yotov2016advanced.
 To ease the task of creating the table from the book, we divide between exporter and importer indexes.
 
 ```{r ch2_app2_counterfactual_14}
-exporter_indexes <- ch2_application2 |>
-  select(
-    exporter, starts_with("omr_"), change_p_i_full,
-    starts_with("xi_"), y, y_full
-  ) |>
-  distinct() |>
-  mutate(exporter = ifelse(exporter == ref_country0, ref_country, exporter)) |>
-  arrange(exporter) |>
-  mutate(
-    change_p_i_full = (1 - change_p_i_full) * 100,
-    change_omr_cfl = ((omr_bln / omr_cfl)^(1 / (1 - sigma)) - 1) * 100,
-    change_omr_full = ((omr_bln / omr_full)^(1 / (1 - sigma)) - 1) * 100,
-    change_xi_cfl = (xi_bln / xi_cfl - 1) * 100,
-    change_xi_full = (xi_bln / xi_full - 1) * 100
-  ) |>
-  select(exporter, starts_with("change"), starts_with("y"))
+exporter_indexes <- unique(ch2_application2[, .(
+  exporter, omr_bln, omr_cfl, omr_full, change_p_i_full,
+  xi_bln, xi_cfl, xi_full, y, y_full
+)])
 
-importer_indexes <- ch2_application2 |>
-  select(importer, imr_bln, imr_cfl, imr_full) |>
-  distinct() |>
-  mutate(importer = ifelse(importer == ref_country0, ref_country, importer)) |>
-  arrange(importer) |>
-  mutate(
-    change_imr_cfl = ((imr_bln / imr_cfl)^(1 / (1 - sigma)) - 1) * 100,
-    change_imr_full = ((imr_bln / imr_full)^(1 / (1 - sigma)) - 1) * 100
-  )
+exporter_indexes[, exporter := fifelse(exporter == ref_country0, ref_country, exporter)]
+
+setorder(exporter_indexes, exporter)
+
+exporter_indexes[, c("change_p_i_full", "change_omr_cfl", "change_omr_full", "change_xi_cfl", "change_xi_full") := .(
+  (1 - change_p_i_full) * 100,
+  ((omr_bln / omr_cfl)^(1 / (1 - sigma)) - 1) * 100,
+  ((omr_bln / omr_full)^(1 / (1 - sigma)) - 1) * 100,
+  (xi_bln / xi_cfl - 1) * 100,
+  (xi_bln / xi_full - 1) * 100
+)]
+
+exporter_indexes <- exporter_indexes[, .(
+  exporter, change_p_i_full, change_omr_cfl, change_omr_full,
+  change_xi_cfl, change_xi_full, y, y_full
+)]
+
+importer_indexes <- unique(ch2_application2[, .(importer, imr_bln, imr_cfl, imr_full)])
+
+importer_indexes[, importer := fifelse(importer == ref_country0, ref_country, importer)]
+
+setorder(importer_indexes, importer)
+
+importer_indexes[, c("change_imr_cfl", "change_imr_full") := .(
+  ((imr_bln / imr_cfl)^(1 / (1 - sigma)) - 1) * 100,
+  ((imr_bln / imr_full)^(1 / (1 - sigma)) - 1) * 100
+)]
 ```
 
 Finally, we can replicate the table that we wanted to. Instead of printing the raw table, we format it as HTML in a separate chunk. Note that this result matches the Stata
 code but in the book flipped the GDP and OMR columns.
 
 ```{r ch2_app2_counterfactual_15, echo=FALSE}
-indexes_final <- exporter_indexes |>
-  left_join(importer_indexes, by = c("exporter" = "importer")) |>
-  mutate(
-    rgdp_bln = y / (imr_bln^(1 / (1 - sigma))),
-    rgdp_full = y_full / (imr_full^(1 / (1 - sigma))),
-    change_rgdp_full = (rgdp_bln / rgdp_full - 1) * 100
-  ) |>
-  select(
-    exporter, change_xi_cfl, change_xi_full,
-    change_rgdp_full, change_imr_full, change_omr_full, change_p_i_full
-  )
-
-indexes_final <- indexes_final |>
-  mutate_if(is.numeric, function(x) round(x, 2))
+indexes_final <- merge(
+  exporter_indexes, importer_indexes,
+  by.x = "exporter", by.y = "importer", all.x = TRUE
+)
+indexes_final[, c("rgdp_bln", "rgdp_full") := .(
+  y / (imr_bln^(1 / (1 - sigma))),
+  y_full / (imr_full^(1 / (1 - sigma)))
+)]
+indexes_final[, change_rgdp_full := (rgdp_bln / rgdp_full - 1) * 100]
+indexes_final <- indexes_final[, .(
+  exporter, change_xi_cfl, change_xi_full,
+  change_rgdp_full, change_imr_full, change_omr_full, change_p_i_full
+)]
+numeric_cols <- names(indexes_final)[sapply(indexes_final, is.numeric)]
+indexes_final[, (numeric_cols) := lapply(.SD, round, 2), .SDcols = numeric_cols]
 
 DT::datatable(indexes_final, options = list(scrollX = T))
 ```
