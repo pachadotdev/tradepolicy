@@ -127,7 +127,7 @@ ch2_application1[, c("tij_bln", "omr_bln", "imr_bln") := .(
 To complete this estimation stage, we need to create a column with the estimated international trade for given output and expenditures. We start by adding a column with the estimated trade for the baseline model, and then we group by the exporter and summarise to obtain the required column $\xi$-baseline.
 
 ```{r ch2_app1_baseline_5}
-ch2_application1[, tradehat_bln := predict(fit_baseline_app1, ch2_application1)]
+ch2_application1[, tradehat_bln := predict(fit_baseline_app1)]
 ch2_application1[, xi_bln := sum(tradehat_bln * (exporter != importer), na.rm = TRUE), by = exporter]
 ```
 
@@ -206,7 +206,7 @@ ch2_application1[, c("omr_cfl", "imr_cfl") := .(
 Box #2 also shows how to compute trade's conditional general equilibrium effects, similar to what we did in step I.
 
 ```{r ch2_app1_counterfactual_6}
-ch2_application1[, tradehat_cfl := predict(fit_counterfactual_app1, ch2_application1)]
+ch2_application1[, tradehat_cfl := predict(fit_counterfactual_app1)]
 ch2_application1[, xi_cfl := sum(tradehat_cfl * (exporter != importer), na.rm = TRUE), by = exporter]
 ```
 
@@ -281,7 +281,7 @@ while (sd_dif > 1e-5 | max_dif > 1e-5) {
   ch2_application1[fe_importer_cfl_1, on = "importer", fe_importer_cfl_1 := i.fe_importer_cfl_1]
 
   # compute the conditional general equilibrium effects of trade
-  ch2_application1[, tradehat_1 := predict(fit_counterfactual_app1_2, ch2_application1)]
+  ch2_application1[, tradehat_1 := predict(fit_counterfactual_app1_2)]
   ch2_application1[, y_cfl_1 := sum(tradehat_1, na.rm = TRUE), by = exporter]
   ch2_application1[, e_cfl_1 := fifelse(importer == exporter, phi * y_cfl_1, 0)]
   ch2_application1[, e_cfl_1 := max(e_cfl_1, na.rm = TRUE), by = importer]
@@ -601,7 +601,7 @@ fit_costs_app2 <- fepoisson(
 With the regression, we add the fitted values to the sub-table.
 
 ```{r ch2_app2_costs_4}
-ch2_application2_2[, tij_no_rta := predict(fit_costs_app2, newdata = ch2_application2_2)]
+ch2_application2_2[, tij_no_rta := predict(fit_costs_app2, ch2_application2_2)]
 ch2_application2_2 <- ch2_application2_2[, .(exporter, importer, tij_no_rta)]
 ```
 
@@ -629,7 +629,7 @@ fit_constrained_app2 <- fepoisson(
 With the fitted model, we can add the prediction and the $\xi^{BLN}$ column.
 
 ```{r ch2_app2_constrained_2}
-ch2_application2[, tradehat_bln := predict(fit_constrained_app2, ch2_application2)]
+ch2_application2[, tradehat_bln := predict(fit_constrained_app2)]
 ch2_application2[, xi_bln := sum(tradehat_bln * (exporter != importer), na.rm = TRUE), by = exporter]
 ```
 
@@ -708,7 +708,7 @@ ch2_application2[, c("omr_cfl", "imr_cfl") := .(
 Up to this point, we are ready to compute the conditional general equilibrium effects of trade.
 
 ```{r ch2_app2_counterfactual_5}
-ch2_application2[, tradehat_cfl := predict(fit_counterfactual_app2, ch2_application2)]
+ch2_application2[, tradehat_cfl := predict(fit_counterfactual_app2)]
 ch2_application2[, xi_cfl := sum(tradehat_cfl * (exporter != importer), na.rm = TRUE), by = exporter]
 ```
 
@@ -774,7 +774,7 @@ while (sd_dif > 1e-3 | max_dif > 1e-3) {
   ch2_application2[fe_importer_cfl, on = "importer", fe_importer_cfl := i.fe_importer_cfl]
 
   # compute the conditional general equilibrium effects of trade
-  ch2_application2[, tradehat_1 := predict(fit_counterfactual_app2_2, ch2_application2)]
+  ch2_application2[, tradehat_1 := predict(fit_counterfactual_app2_2)]
   ch2_application2[, y_cfl_1 := sum(tradehat_1, na.rm = TRUE), by = exporter]
   ch2_application2[, e_cfl_1 := fifelse(importer == exporter, phi * y_cfl_1, 0)]
   ch2_application2[, e_cfl_1 := max(e_cfl_1, na.rm = TRUE), by = importer]
@@ -902,21 +902,26 @@ importer_indexes[, c("change_imr_cfl", "change_imr_full") := .(
 Finally, we can replicate the table that we wanted to. Instead of printing the raw table, we format it as HTML in a separate chunk. Note that this result matches the Stata
 code but in the book flipped the GDP and OMR columns.
 
-```{r ch2_app2_counterfactual_15, echo=FALSE}
+```{r ch2_app2_counterfactual_15}
 indexes_final <- merge(
   exporter_indexes, importer_indexes,
   by.x = "exporter", by.y = "importer", all.x = TRUE
 )
+
 indexes_final[, c("rgdp_bln", "rgdp_full") := .(
   y / (imr_bln^(1 / (1 - sigma))),
   y_full / (imr_full^(1 / (1 - sigma)))
 )]
+
 indexes_final[, change_rgdp_full := (rgdp_bln / rgdp_full - 1) * 100]
+
 indexes_final <- indexes_final[, .(
   exporter, change_xi_cfl, change_xi_full,
   change_rgdp_full, change_imr_full, change_omr_full, change_p_i_full
 )]
+
 numeric_cols <- names(indexes_final)[sapply(indexes_final, is.numeric)]
+
 indexes_final[, (numeric_cols) := lapply(.SD, round, 2), .SDcols = numeric_cols]
 
 indexes_final

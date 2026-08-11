@@ -15,29 +15,37 @@ For the analysis, this provides functions to compute robust clustered standard e
 
 ## From CRAN
 
-```
+```R
 install.packages("tradepolicy")
 ```
 
 ## From GitHub
 
-```
+```R
 # install.packages("remotes")
 remotes::install_github("pachadotdev/tradepolicy")
+```
+
+## Rebuild the site
+
+Run this from the terminal
+
+```bash
+quarto render
 ```
 
 ## Cite this work
 
 If you use `tradepolicy` in academic works or other publication, please cite as follows:
 
-```
+```latex
 Vargas Sepulveda, Mauricio (2026). tradepolicy: An Advanced Guide to Trade Policy Analysis. R
   package version 0.8.0. https://pacha.dev/tradepolicy/
 ```
 
 BibTeX entry:
 
-```
+```latex
 @Manual{,
   title = {tradepolicy: Replication of 'An Advanced Guide To Trade Policy Analysis'},
   author = {Vargas Sepulveda, Mauricio},
